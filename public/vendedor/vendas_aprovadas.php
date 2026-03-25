@@ -1,0 +1,186 @@
+<?php declare(strict_types=1);
+// filepath: c:\xampp\htdocs\mercado_admin\public\vendedor\vendas_aprovadas.php
+require_once __DIR__ . '/../../src/auth.php';
+require_once __DIR__ . '/../../src/db.php';
+require_once __DIR__ . '/../../src/vendor_portal.php';
+
+exigirVendedor();
+
+$conn = (new Database())->connect();
+
+$activeMenu = 'aprovadas';
+$pageTitle  = 'Vendas Aprovadas';
+
+$uid = (int)($_SESSION['user_id'] ?? 0);
+$q   = trim((string)($_GET['q'] ?? ''));
+
+$sql = "
+SELECT
+  oi.order_id,
+  o.user_id AS comprador_id,
+  u.nome AS comprador_nome,
+  u.email AS comprador_email,
+  o.criado_em,
+  o.status AS status_pedido,
+  COUNT(oi.id) AS linhas,
+  COALESCE(SUM(oi.quantidade),0) AS qtd_total,
+  COALESCE(SUM(oi.subtotal),0) AS total_venda
+FROM order_items oi
+INNER JOIN orders o ON o.id = oi.order_id
+LEFT JOIN users u ON u.id = o.user_id
+WHERE oi.vendedor_id = ?
+  AND oi.moderation_status = 'aprovada'
+";
+$types = 'i';
+$args  = [$uid];
+
+if ($q !== '') {
+  $sql .= " AND (oi.order_id = ? OR o.user_id = ? OR u.nome LIKE ? OR u.email LIKE ?)";
+  $types .= 'iiss';
+    $args[] = (int)$q;
+    $args[] = (int)$q;
+  $args[] = '%' . $q . '%';
+  $args[] = '%' . $q . '%';
+}
+
+$sql .= "
+GROUP BY oi.order_id, o.user_id, u.nome, u.email, o.criado_em, o.status
+ORDER BY oi.order_id DESC
+LIMIT 200
+";
+
+$st = $conn->prepare($sql);
+$st->bind_param($types, ...$args);
+$st->execute();
+$itens = $st->get_result()->fetch_all(MYSQLI_ASSOC);
+$st->close();
+
+include __DIR__ . '/../../views/partials/header.php';
+include __DIR__ . '/../../views/partials/vendor_layout_start.php';
+?>
+
+<div class="max-w-7xl mx-auto">
+  <div class="bg-blackx2 border border-blackx3 rounded-2xl p-5">
+    <form method="get" class="mb-4">
+      <input
+        type="text"
+        name="q"
+        value="<?= htmlspecialchars($q, ENT_QUOTES, 'UTF-8') ?>"
+        placeholder="Buscar por pedido ou comprador"
+        class="w-full md:w-96 bg-blackx border border-blackx3 rounded-xl px-4 py-2 outline-none focus:border-greenx"
+      >
+    </form>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-zinc-400 border-b border-blackx3">
+            <th class="text-left py-3 pr-3">Pedido</th>
+            <th class="text-left py-3 pr-3">Comprador</th>
+            <th class="text-left py-3 pr-3">Itens</th>
+            <th class="text-left py-3 pr-3">Total</th>
+            <th class="text-left py-3 pr-3">Data</th>
+            <th class="text-left py-3 pr-3">Status</th>
+            <th class="text-left py-3">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($itens as $v): ?>
+            <tr class="border-b border-blackx3/50 hover:bg-blackx/40 transition">
+              <td class="py-3 pr-3">#<?= (int)$v['order_id'] ?></td>
+              <td class="py-3 pr-3"><?= htmlspecialchars((string)($v['comprador_nome'] ?: ('#' . (int)$v['comprador_id'])), ENT_QUOTES, 'UTF-8') ?><br><span class="text-xs text-zinc-500"><?= htmlspecialchars((string)($v['comprador_email'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span></td>
+              <td class="py-3 pr-3"><?= (int)$v['qtd_total'] ?> (<?= (int)$v['linhas'] ?> linhas)</td>
+              <td class="py-3 pr-3 font-medium">R$ <?= number_format((float)$v['total_venda'], 2, ',', '.') ?></td>
+              <td class="py-3 pr-3"><?= htmlspecialchars((string)$v['criado_em'], ENT_QUOTES, 'UTF-8') ?></td>
+              <td class="py-3 pr-3"><span class="px-2.5 py-1 rounded-full text-xs font-medium bg-greenx/15 border border-greenx/40 text-greenx">Aprovada</span></td>
+              <td class="py-3">
+                <button class="text-greenx hover:underline" type="button" onclick="abrirDetalhes(<?= (int)$v['order_id'] ?>)">
+                  Ver detalhes
+                </button>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+
+          <?php if (empty($itens)): ?>
+            <tr><td colspan="7" class="py-6 text-zinc-500">Nenhuma venda aprovada.</td></tr>
+          <?php endif; ?>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<dialog id="dlgVenda" class="bg-blackx2 border border-blackx3 rounded-2xl p-0 w-[95vw] max-w-2xl text-white">
+  <div class="p-5 border-b border-blackx3 flex items-center justify-between">
+    <h3 class="text-lg font-semibold">Detalhes da venda</h3>
+    <button onclick="document.getElementById('dlgVenda').close()" class="text-zinc-400 hover:text-white">Fechar</button>
+  </div>
+  <div id="dlgBody" class="p-5 text-sm text-zinc-200">Carregando...</div>
+</dialog>
+
+<script>
+async function abrirDetalhes(orderId) {
+  const dlg = document.getElementById('dlgVenda');
+  const body = document.getElementById('dlgBody');
+  body.textContent = 'Carregando...';
+  dlg.showModal();
+
+  try {
+    const r = await fetch('/mercado_admin/public/vendedor/api_venda_detalhe.php?order_id=' + encodeURIComponent(orderId));
+    const j = await r.json();
+
+    if (!j.ok) {
+      body.innerHTML = `<div class="text-red-400">${j.msg || 'Erro ao carregar.'}</div>`;
+      return;
+    }
+
+    const d = j.pedido;
+    const rows = (j.itens || []).map(i => {
+      const img = i.produto_imagem_url || '';
+      const desc = String(i.produto_descricao || '').trim();
+      return `
+      <tr class="border-b border-blackx3/50 align-top">
+        <td class="py-2 pr-3">
+          <div class="flex gap-2">
+            ${img ? `<img src="${img}" alt="Produto" class="w-12 h-12 rounded-lg object-cover border border-blackx3"/>` : `<div class="w-12 h-12 rounded-lg border border-blackx3 bg-blackx"></div>`}
+            <div>
+              <div class="font-medium">${i.produto_nome}</div>
+              <div class="text-xs text-zinc-500">ID produto: #${i.product_id ?? '-'}</div>
+              ${desc ? `<div class="text-xs text-zinc-400 mt-0.5">${desc}</div>` : ''}
+            </div>
+          </div>
+        </td>
+        <td class="py-2 pr-3">${i.quantidade}</td>
+        <td class="py-2 pr-3">R$ ${Number(i.preco_unit).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
+        <td class="py-2">R$ ${Number(i.subtotal).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
+      </tr>`;
+    }).join('');
+
+    body.innerHTML = `
+      <div class="grid md:grid-cols-2 gap-2 mb-4">
+        <div><span class="text-zinc-400">Pedido:</span> #${d.order_id}</div>
+        <div><span class="text-zinc-400">Comprador:</span> ${d.comprador_nome || ('#' + d.comprador_id)}${d.comprador_email ? ` <span class="text-zinc-500 text-xs">(${d.comprador_email})</span>` : ''}</div>
+        <div><span class="text-zinc-400">Data:</span> ${d.criado_em}</div>
+        <div><span class="text-zinc-400">Total:</span> <b>R$ ${Number(d.total_venda).toLocaleString('pt-BR',{minimumFractionDigits:2})}</b></div>
+      </div>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-zinc-400 border-b border-blackx3">
+            <th class="text-left py-2 pr-3">Produto</th>
+            <th class="text-left py-2 pr-3">Qtd</th>
+            <th class="text-left py-2 pr-3">Preço Unit.</th>
+            <th class="text-left py-2">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>${rows || '<tr><td colspan="4" class="py-3 text-zinc-500">Sem itens.</td></tr>'}</tbody>
+      </table>
+    `;
+  } catch (e) {
+    body.innerHTML = '<div class="text-red-400">Falha na requisição.</div>';
+  }
+}
+</script>
+
+<?php
+include __DIR__ . '/../../views/partials/vendor_layout_end.php';
+include __DIR__ . '/../../views/partials/footer.php';

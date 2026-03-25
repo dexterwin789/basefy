@@ -1,0 +1,1213 @@
+/* =====================================================================
+ *  Theme CSS — Dynamic color tokens + Light mode overrides
+ *  Loaded after Tailwind CDN in header.php
+ * ===================================================================== */
+
+/* ── Utility: scrollbar-hide ─────────────────────────────────────────── */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* ── Light mode global overrides ─────────────────────────────────────── */
+html.light-mode body {
+  color: #111827 !important;
+  background-color: var(--t-bg-body) !important;
+}
+
+/* Text overrides — HIGH CONTRAST values */
+html.light-mode .text-white       { color: #111827 !important; }
+html.light-mode .text-zinc-100    { color: #1e293b !important; }
+html.light-mode .text-zinc-200    { color: #1e293b !important; }
+html.light-mode .text-zinc-300    { color: #334155 !important; }
+html.light-mode .text-zinc-400    { color: #475569 !important; }
+html.light-mode .text-zinc-500    { color: #475569 !important; }
+html.light-mode .text-gray-400    { color: #4B5563 !important; }
+html.light-mode .text-gray-500    { color: #374151 !important; }
+html.light-mode .text-slate-400   { color: #475569 !important; }
+html.light-mode .text-slate-500   { color: #334155 !important; }
+
+/* ── PRESERVE light/white text on accent (purple) backgrounds ─────── */
+/* UNIVERSAL: ANY element with solid accent bg → force white text + children */
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]),
+html.light-mode [class*="from-greenx"] {
+  color: #fff !important;
+}
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]) *,
+html.light-mode [class*="from-greenx"] * {
+  color: #fff !important;
+}
+/* NUCLEAR: override .text-white inside accent backgrounds — higher specificity than the global override */
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]) .text-white,
+html.light-mode [class*="from-greenx"] .text-white,
+html.light-mode [class*="bg-gradient-to-r"][class*="from-greenx"] .text-white,
+html.light-mode button[class*="from-greenx"].text-white,
+html.light-mode a[class*="from-greenx"].text-white,
+html.light-mode button.text-white[class*="from-greenx"],
+html.light-mode a.text-white[class*="from-greenx"] {
+  color: #fff !important;
+}
+/* Buttons & links with accent gradient — explicit white text override */
+html.light-mode button[class*="from-greenx"],
+html.light-mode a[class*="from-greenx"],
+html.light-mode button[class*="bg-greenx"]:not([class*="bg-greenx/"]),
+html.light-mode a[class*="bg-greenx"]:not([class*="bg-greenx/"]) {
+  color: #fff !important;
+}
+html.light-mode button[class*="from-greenx"] *,
+html.light-mode a[class*="from-greenx"] *,
+html.light-mode button[class*="bg-greenx"]:not([class*="bg-greenx/"]) *,
+html.light-mode a[class*="bg-greenx"]:not([class*="bg-greenx/"]) * {
+  color: #fff !important;
+}
+/* Buttons & links with accent gradient via parent from-greenx */
+html.light-mode [class*="from-greenx"] button,
+html.light-mode [class*="from-greenx"] a,
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]) button,
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]) a {
+  color: #fff !important;
+}
+/* SVG icons inside accent backgrounds */
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]) svg,
+html.light-mode [class*="from-greenx"] svg {
+  color: #fff !important;
+}
+/* Como funciona step badges (1,2,3) — always white on accent bg */
+html.light-mode .bg-greenx,
+html.light-mode .bg-greenx .text-white,
+html.light-mode .bg-greenx * {
+  color: #fff !important;
+}
+/* Exceptions: elements INSIDE accent bg that should keep their own color */
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]) .text-greenx,
+html.light-mode [class*="from-greenx"] .text-greenx {
+  color: var(--t-accent) !important;
+}
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]) .text-transparent,
+html.light-mode [class*="from-greenx"] .text-transparent {
+  color: transparent !important;
+}
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]) .bg-clip-text,
+html.light-mode [class*="from-greenx"] .bg-clip-text {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Badge/tag accent opaque bg — keep accent text */
+html.light-mode [class*="bg-greenx/"] .text-greenx,
+html.light-mode [class*="bg-greenx/"].text-greenx { color: var(--t-accent) !important; }
+
+/* Category name pill — always white text on dark/accent bg */
+html.light-mode .cat-name-pill { color: #fff !important; }
+
+/* Gradient text clip must stay transparent */
+html.light-mode .text-transparent { color: transparent !important; }
+html.light-mode .bg-clip-text { -webkit-text-fill-color: transparent !important; }
+
+/* Headings / strong text */
+html.light-mode h1, html.light-mode h2, html.light-mode h3,
+html.light-mode h4, html.light-mode h5, html.light-mode h6 {
+  color: #111827 !important;
+}
+/* Exception: headings inside accent backgrounds stay white */
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]) h1,
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]) h2,
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]) h3,
+html.light-mode [class*="from-greenx"] h1,
+html.light-mode [class*="from-greenx"] h2,
+html.light-mode [class*="from-greenx"] h3 { color: #fff !important; }
+
+/* Background overrides — standard Tailwind colors used in cards etc */
+html.light-mode .bg-black\/40,
+html.light-mode .bg-black\/50,
+html.light-mode .bg-black\/60 {
+  background-color: rgba(0,0,0,0.04) !important;
+}
+
+/* Opacity-based backgrounds */
+html.light-mode .bg-white\/5,
+html.light-mode .bg-white\/\[0\.02\],
+html.light-mode .bg-white\/\[0\.04\],
+html.light-mode .bg-white\/\[0\.06\] {
+  background-color: rgba(0,0,0,0.02) !important;
+}
+html.light-mode .bg-white\/\[0\.08\],
+html.light-mode .bg-white\/10 {
+  background-color: rgba(0,0,0,0.04) !important;
+}
+
+/* Border overrides */
+html.light-mode .border-white\/\[0\.06\],
+html.light-mode .border-white\/\[0\.08\],
+html.light-mode .border-white\/\[0\.10\],
+html.light-mode .border-white\/\[0\.15\] {
+  border-color: var(--t-bg-border) !important;
+}
+html.light-mode .border-zinc-700,
+html.light-mode .border-zinc-800 {
+  border-color: #D1D5DB !important;
+}
+
+/* Bg/opacity overrides for hover states */
+html.light-mode .hover\:bg-white\/\[0\.04\]:hover,
+html.light-mode .hover\:bg-white\/\[0\.08\]:hover,
+html.light-mode .hover\:bg-white\/5:hover {
+  background-color: rgba(0,0,0,0.04) !important;
+}
+
+/* Glass effect */
+html.light-mode .glass {
+  background: rgba(255,255,255,0.8) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: var(--t-bg-border) !important;
+}
+
+/* Scrollbar */
+html.light-mode ::-webkit-scrollbar-track { background: #f1f5f9; }
+html.light-mode ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+html.light-mode ::-webkit-scrollbar-thumb:hover { background: var(--t-accent); }
+
+/* Nav header in light mode */
+html.light-mode header.sticky {
+  background: rgba(255,255,255,0.98) !important;
+  border-color: var(--t-bg-border) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Sidebar / card in light mode.
+   aside gets transparent bg so it doesn't leak white behind rounded child cards */
+html.light-mode aside {
+  background-color: transparent !important;
+}
+html.light-mode [class*="bg-blackx2"] {
+  background-color: var(--t-bg-card) !important;
+}
+html.light-mode [class*="bg-blackx"]:not([class*="bg-blackx2"]):not([class*="bg-blackx3"]) {
+  background-color: var(--t-bg-body) !important;
+}
+html.light-mode [class*="border-blackx3"] {
+  border-color: var(--t-bg-border) !important;
+}
+
+/* Cards — light shadow instead of dark glow */
+html.light-mode .product-card,
+html.light-mode [class*="rounded"][class*="bg-blackx2"] {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+}
+html.light-mode .product-card:hover {
+  box-shadow: 0 12px 40px -8px rgba(0,0,0,0.12), 0 0 0 1px rgba(var(--t-accent-rgb),0.25);
+}
+
+/* Shimmer in light */
+html.light-mode .shimmer-bg {
+  background: linear-gradient(90deg,transparent,rgba(0,0,0,0.02),transparent);
+  background-size: 200% 100%;
+}
+
+/* Input fields light mode */
+html.light-mode input,
+html.light-mode textarea,
+html.light-mode select {
+  background-color: #FFFFFF !important;
+  border-color: #D1D5DB !important;
+  color: #111827 !important;
+}
+html.light-mode input::placeholder,
+html.light-mode textarea::placeholder {
+  color: #9CA3AF !important;
+}
+html.light-mode input:focus,
+html.light-mode textarea:focus,
+html.light-mode select:focus {
+  border-color: var(--t-accent) !important;
+  box-shadow: 0 0 0 3px rgba(var(--t-accent-rgb),0.15) !important;
+}
+
+/* Table in light mode */
+html.light-mode table th {
+  color: #374151 !important;
+  background-color: #F9FAFB !important;
+  border-color: #E5E7EB !important;
+}
+html.light-mode table td {
+  color: #1F2937 !important;
+  border-color: #F3F4F6 !important;
+}
+html.light-mode table tr:hover td {
+  background-color: rgba(var(--t-accent-rgb),0.04) !important;
+}
+
+/* Buttons in light mode */
+html.light-mode .bg-zinc-800,
+html.light-mode .bg-zinc-900 {
+  background-color: #F3F4F6 !important;
+  color: #111827 !important;
+}
+
+/* Stat cards / dashboard boxes */
+html.light-mode .bg-gradient-to-br,
+html.light-mode .bg-gradient-to-r {
+  opacity: 1;
+}
+
+/* SVG icons in light mode */
+html.light-mode svg.text-zinc-400,
+html.light-mode svg.text-zinc-500 {
+  color: #6B7280 !important;
+}
+
+/* ── Badge / Status contrast in light mode ───────────────────────────── */
+
+/* Add subtle border to help badges stand out on white — each color gets its own border */
+html.light-mode [class*="bg-greenx\/10"],
+html.light-mode [class*="bg-greenx\/15"] {
+  border: 1px solid rgba(var(--t-accent-rgb),0.35);
+}
+html.light-mode .bg-red-500\/10,
+html.light-mode .bg-red-500\/15 {
+  border: 1px solid rgba(220,38,38,0.30);
+}
+html.light-mode .bg-yellow-500\/10,
+html.light-mode .bg-yellow-500\/15 {
+  border: 1px solid rgba(180,83,9,0.30);
+}
+html.light-mode .bg-greenx\/10 {
+  border: 1px solid rgba(37,99,235,0.30);
+}
+html.light-mode .bg-purple-500\/10 {
+  border: 1px solid rgba(147,51,234,0.30);
+}
+
+/* Darken pastel text colors for WCAG-compliant contrast on white */
+html.light-mode .text-red-300    { color: #DC2626 !important; }  /* red-600 */
+html.light-mode .text-red-400    { color: #DC2626 !important; }
+html.light-mode .text-yellow-300 { color: #92400E !important; }  /* amber-800 */
+html.light-mode .text-yellow-400 { color: #B45309 !important; }  /* amber-700 */
+html.light-mode .text-zinc-300   { color: #1F2937 !important; }
+html.light-mode .text-zinc-400   { color: #374151 !important; }
+
+/* Ensure accent badges (greenx) text has enough contrast */
+html.light-mode .text-greenx {
+  color: var(--t-accent-hover) !important;
+}
+
+/* Make success/error/warning icon SVGs visible in light mode */
+html.light-mode svg.text-red-400,
+html.light-mode svg.text-red-300 {
+  color: #DC2626 !important;
+}
+html.light-mode svg.text-yellow-400,
+html.light-mode svg.text-yellow-300 {
+  color: #D97706 !important;
+}
+
+/* ── Theme toggle transition ─────────────────────────────────────────── */
+body,
+.bg-blackx, .bg-blackx2, .bg-blackx3,
+aside, header, main, input, textarea, select,
+.product-card, footer, table, th, td {
+  transition: background-color 0.35s ease, color 0.25s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* ── Accent gradient button text — auto contrast per theme ────────────── */
+/* Green theme: accent is bright, dark text OK.
+   Blue theme: accent is medium blue — needs white text for WCAG compliance */
+.text-black[class*="from-greenx"],
+.text-black[class*="from-greenx2"],
+.text-black[class*="bg-greenx"]:not([class*="bg-greenx/"]) {
+  color: var(--t-text-on-accent) !important;
+}
+
+/* ── Pulse animation re-keyed to active accent ───────────────────────── */
+@keyframes pulse-accent {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(var(--t-pulse-rgb),0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(var(--t-pulse-rgb),0); }
+}
+.pulse-green { animation: pulse-accent 2s ease-in-out infinite; }
+
+/* ── Light mode storefront footer ────────────────────────────────────── */
+html.light-mode footer {
+  background-color: var(--t-bg-card) !important;
+  border-color: var(--t-bg-border) !important;
+  color: #374151 !important;
+}
+html.light-mode footer a { color: #1F2937 !important; }
+html.light-mode footer a:hover { color: var(--t-accent) !important; }
+
+/* ── Dropdown / Modal overlays ───────────────────────────────────────── */
+html.light-mode [class*="bg-zinc-900\/"],
+html.light-mode [class*="bg-gray-900\/"] {
+  background-color: rgba(255,255,255,0.95) !important;
+}
+
+/* ── Dark/Light mode toggle button ───────────────────────────────────── */
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  border-radius: 0.75rem;
+  border: 1px solid var(--t-bg-border);
+  background: transparent;
+  color: #a1a1aa;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+}
+.theme-toggle-btn:hover {
+  color: var(--t-accent);
+  border-color: var(--t-accent);
+}
+html.light-mode .theme-toggle-btn {
+  color: #6B7280;
+  border-color: #D1D5DB;
+}
+html.light-mode .theme-toggle-btn:hover {
+  color: var(--t-accent);
+  border-color: var(--t-accent);
+  background-color: rgba(var(--t-accent-rgb),0.06);
+}
+
+/* ── Placeholder / empty state text ──────────────────────────────────── */
+html.light-mode .text-white\/60,
+html.light-mode .text-white\/70,
+html.light-mode .text-white\/80 {
+  color: #4B5563 !important;
+}
+
+/* ── GAP FIXES — Comprehensive light mode coverage ──────────────────── */
+
+/* bg-white opacity values not already covered */
+html.light-mode .bg-white\/\[0\.01\] { background-color: rgba(0,0,0,0.008) !important; }
+html.light-mode .bg-white\/\[0\.03\] { background-color: rgba(0,0,0,0.015) !important; }
+html.light-mode .bg-white\/\[0\.1\]  { background-color: rgba(0,0,0,0.06) !important; }
+html.light-mode .bg-white\/20        { background-color: rgba(0,0,0,0.1) !important; }
+
+/* border-white opacity values not already covered */
+html.light-mode .border-white\/\[0\.04\] { border-color: var(--t-bg-border) !important; }
+html.light-mode .border-white\/\[0\.12\] { border-color: var(--t-bg-border) !important; }
+html.light-mode .border-white\/10        { border-color: var(--t-bg-border) !important; }
+html.light-mode .border-white\/20        { border-color: var(--t-bg-border) !important; }
+
+/* hover:bg-white states */
+html.light-mode .hover\:bg-white\/\[0\.06\]:hover { background-color: rgba(0,0,0,0.04) !important; }
+html.light-mode .hover\:bg-white\/\[0\.1\]:hover  { background-color: rgba(0,0,0,0.06) !important; }
+html.light-mode .hover\:bg-white\/20:hover         { background-color: rgba(0,0,0,0.1) !important; }
+
+/* hover:border-white states */
+html.light-mode .hover\:border-white\/\[0\.1\]:hover  { border-color: var(--t-bg-border) !important; }
+html.light-mode .hover\:border-white\/\[0\.12\]:hover { border-color: var(--t-bg-border) !important; }
+html.light-mode .hover\:border-white\/\[0\.15\]:hover { border-color: var(--t-accent) !important; }
+
+/* text-white/40 */
+html.light-mode .text-white\/40 { color: #6B7280 !important; }
+
+/* text-zinc-600 consistency */
+html.light-mode .text-zinc-600 { color: #4B5563 !important; }
+
+/* prose-invert (product description) — CRITICAL */
+html.light-mode .prose-invert {
+  --tw-prose-body: #374151 !important;
+  --tw-prose-headings: #111827 !important;
+  --tw-prose-links: var(--t-accent) !important;
+  --tw-prose-bold: #111827 !important;
+  --tw-prose-code: #111827 !important;
+}
+
+/* ── Chat & Vendor Chat widget – light mode ──────────────────────────── */
+
+/* -- Panels ----------------------------------------------------------- */
+html.light-mode .chat-panel,
+html.light-mode .vchat-panel {
+  background: #FFFFFF !important;
+  border-color: var(--t-bg-border) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06) !important;
+}
+
+/* -- FAB badge border ------------------------------------------------- */
+html.light-mode .chat-fab .chat-fab-badge,
+html.light-mode .vchat-fab .vchat-fab-badge {
+  border-color: var(--t-bg-body) !important;
+}
+
+/* -- Panel header ----------------------------------------------------- */
+html.light-mode .chat-panel-header,
+html.light-mode .vchat-panel-header {
+  border-bottom-color: var(--t-bg-border) !important;
+}
+html.light-mode .chat-panel-header .chat-info .chat-name,
+html.light-mode .vchat-panel-header .vchat-info .vchat-name {
+  color: #111827 !important;
+}
+
+/* -- Close / Back buttons --------------------------------------------- */
+html.light-mode .chat-panel-close,
+html.light-mode .chat-back-btn,
+html.light-mode .vchat-panel-close,
+html.light-mode .vchat-back-btn {
+  background: rgba(0,0,0,0.04) !important;
+  border-color: var(--t-bg-border) !important;
+  color: #6B7280 !important;
+}
+html.light-mode .chat-panel-close:hover,
+html.light-mode .chat-back-btn:hover,
+html.light-mode .vchat-panel-close:hover,
+html.light-mode .vchat-back-btn:hover {
+  background: rgba(0,0,0,0.08) !important;
+  color: #111827 !important;
+}
+
+/* -- Conversation list ------------------------------------------------ */
+html.light-mode .chat-conv-item,
+html.light-mode .vchat-conv-item {
+  border-bottom-color: rgba(0,0,0,0.06) !important;
+}
+html.light-mode .chat-conv-item:hover,
+html.light-mode .vchat-conv-item:hover {
+  background: rgba(0,0,0,0.03) !important;
+}
+html.light-mode .chat-conv-item .conv-name,
+html.light-mode .vchat-conv-item .vconv-name {
+  color: #111827 !important;
+}
+html.light-mode .chat-conv-item .conv-preview,
+html.light-mode .vchat-conv-item .vconv-preview {
+  color: #6B7280 !important;
+}
+html.light-mode .chat-conv-item .conv-time,
+html.light-mode .vchat-conv-item .vconv-time {
+  color: #9CA3AF !important;
+}
+html.light-mode .chat-conv-item .conv-avatar,
+html.light-mode .vchat-conv-item .vconv-avatar {
+  background: linear-gradient(135deg, #E5E7EB, #D1D5DB) !important;
+}
+
+/* -- Message bubbles -------------------------------------------------- */
+html.light-mode .chat-msg.theirs,
+html.light-mode .vchat-msg.theirs {
+  background: #F3F4F6 !important;
+  color: #111827 !important;
+  border-color: #E5E7EB !important;
+}
+html.light-mode .chat-msg.mine,
+html.light-mode .vchat-msg.mine {
+  color: var(--t-text-on-accent) !important;
+}
+
+/* -- Typing indicator ------------------------------------------------- */
+html.light-mode .chat-typing,
+html.light-mode .vchat-typing {
+  background: #F3F4F6 !important;
+  border-color: #E5E7EB !important;
+}
+html.light-mode .chat-typing span,
+html.light-mode .vchat-typing span {
+  background: #9CA3AF !important;
+}
+
+/* -- Input bar -------------------------------------------------------- */
+html.light-mode .chat-input-bar,
+html.light-mode .vchat-input-bar {
+  background: rgba(0,0,0,0.02) !important;
+  border-top-color: var(--t-bg-border) !important;
+}
+html.light-mode .chat-input-bar textarea,
+html.light-mode .vchat-input-bar textarea {
+  background: #FFFFFF !important;
+  border-color: var(--t-bg-border) !important;
+  color: #111827 !important;
+}
+html.light-mode .chat-input-bar textarea::placeholder,
+html.light-mode .vchat-input-bar textarea::placeholder {
+  color: #9CA3AF !important;
+}
+
+/* -- Inline chat button (product/vendor pages) ------------------------ */
+html.light-mode .chat-inline-btn {
+  color: var(--t-accent) !important;
+}
+
+/* -- Product context bar ---------------------------------------------- */
+html.light-mode .chat-product-bar,
+html.light-mode .vchat-product-bar {
+  background: rgba(0,0,0,0.02) !important;
+  border-color: var(--t-bg-border) !important;
+}
+
+/* -- Empty state ------------------------------------------------------ */
+html.light-mode .chat-empty svg,
+html.light-mode .vchat-empty svg {
+  color: #D1D5DB !important;
+}
+
+/* -- Scrollbars ------------------------------------------------------- */
+html.light-mode .chat-messages,
+html.light-mode .chat-conv-list,
+html.light-mode .vchat-messages,
+html.light-mode .vchat-conv-list {
+  scrollbar-color: rgba(0,0,0,0.1) transparent !important;
+}
+html.light-mode .chat-messages::-webkit-scrollbar-thumb,
+html.light-mode .chat-conv-list::-webkit-scrollbar-thumb,
+html.light-mode .vchat-messages::-webkit-scrollbar-thumb,
+html.light-mode .vchat-conv-list::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.1) !important;
+}
+
+/* -- Dashboard chat page (admin/chat.php) ----------------------------- */
+html.light-mode .chat-main-header .mh-name { color: #111827 !important; }
+html.light-mode .chat-main-input textarea {
+  background: rgba(0,0,0,0.04) !important;
+  border-color: #D1D5DB !important;
+  color: #111827 !important;
+}
+
+/* -- Full chat page (public/chat.php) — light mode -------------------- */
+html.light-mode .chat-page {
+  background: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+}
+html.light-mode .chat-sidebar {
+  background: #FAFAFA !important;
+  border-right-color: #E5E7EB !important;
+}
+html.light-mode .chat-sidebar-header {
+  border-bottom-color: #E5E7EB !important;
+}
+html.light-mode .chat-sidebar-header h3 {
+  color: #111827 !important;
+}
+html.light-mode .chat-sidebar-list {
+  scrollbar-color: rgba(0,0,0,0.1) transparent !important;
+}
+html.light-mode .chat-sidebar-item {
+  border-bottom-color: rgba(0,0,0,0.06) !important;
+}
+html.light-mode .chat-sidebar-item:hover {
+  background: rgba(0,0,0,0.03) !important;
+}
+html.light-mode .chat-sidebar-item.active {
+  background: rgba(var(--t-accent-rgb),0.06) !important;
+}
+html.light-mode .chat-sidebar-item .sb-avatar {
+  background: linear-gradient(135deg, #E5E7EB, #D1D5DB) !important;
+}
+html.light-mode .chat-sidebar-item .sb-name {
+  color: #111827 !important;
+}
+html.light-mode .chat-sidebar-item .sb-preview {
+  color: #6B7280 !important;
+}
+html.light-mode .chat-sidebar-item .sb-time {
+  color: #9CA3AF !important;
+}
+html.light-mode .chat-main-header {
+  border-bottom-color: #E5E7EB !important;
+  background: rgba(0,0,0,0.01) !important;
+}
+html.light-mode .chat-main-header .mh-product {
+  color: #6B7280 !important;
+}
+html.light-mode .chat-main-messages {
+  scrollbar-color: rgba(0,0,0,0.1) transparent !important;
+}
+html.light-mode .chat-main-messages .chat-msg.theirs {
+  background: #F3F4F6 !important;
+  color: #111827 !important;
+  border-color: #E5E7EB !important;
+}
+html.light-mode .chat-main-messages .chat-msg.theirs .msg-time {
+  color: #9CA3AF !important;
+}
+html.light-mode .chat-main-messages .msg-date {
+  color: #9CA3AF !important;
+}
+html.light-mode .chat-main-input {
+  background: rgba(0,0,0,0.02) !important;
+  border-top-color: #E5E7EB !important;
+}
+html.light-mode .chat-main-input textarea {
+  background: #FFFFFF !important;
+  border-color: #D1D5DB !important;
+  color: #111827 !important;
+}
+html.light-mode .chat-main-input textarea::placeholder {
+  color: #9CA3AF !important;
+}
+html.light-mode .chat-empty-state svg {
+  color: #D1D5DB !important;
+}
+html.light-mode .chat-empty-state h4 {
+  color: #6B7280 !important;
+}
+html.light-mode .chat-empty-state p {
+  color: #9CA3AF !important;
+}
+
+/* ── Admin Dashboard — light mode font/card contrast ─────────────────── */
+html.light-mode .bg-blackx2.border.border-blackx3 {
+  background-color: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+}
+html.light-mode .bg-blackx2.border.border-blackx3 .text-zinc-400,
+html.light-mode .bg-blackx2.border-blackx3 .text-zinc-400 {
+  color: #6B7280 !important;
+}
+html.light-mode .bg-blackx2 .text-2xl {
+  color: #111827 !important;
+}
+html.light-mode .bg-blackx2 .text-lg {
+  color: #111827 !important;
+}
+html.light-mode .bg-blackx2 .text-xs.font-semibold.text-zinc-400 {
+  color: #6B7280 !important;
+}
+/* Dashboard action link in light mode */
+html.light-mode a.rounded-xl.border.border-blackx3 {
+  border-color: #D1D5DB !important;
+  color: #374151 !important;
+}
+html.light-mode a.rounded-xl.border.border-blackx3:hover {
+  border-color: var(--t-accent) !important;
+  color: var(--t-accent) !important;
+}
+
+/* ── Chat Monitor (admin/chat.php) — light mode ──────────────────────── */
+html.light-mode .chat-stat-card {
+  background: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+}
+html.light-mode .chat-stat-card .stat-label {
+  color: #6B7280 !important;
+}
+html.light-mode .chat-table-wrap {
+  background: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+}
+html.light-mode .chat-table th {
+  background: #F9FAFB !important;
+  color: #6B7280 !important;
+  border-bottom-color: #E5E7EB !important;
+}
+html.light-mode .chat-table td {
+  color: #374151 !important;
+  border-bottom-color: #F3F4F6 !important;
+}
+html.light-mode .chat-table tr:hover td {
+  background: rgba(var(--t-accent-rgb),0.04) !important;
+}
+html.light-mode .chat-table .conv-name {
+  color: #111827 !important;
+}
+html.light-mode .chat-table .conv-email {
+  color: #6B7280 !important;
+}
+html.light-mode .chat-table .conv-preview {
+  color: #9CA3AF !important;
+}
+html.light-mode .chat-no-data {
+  color: #9CA3AF !important;
+}
+html.light-mode .chat-no-data svg {
+  color: #D1D5DB !important;
+}
+html.light-mode .chat-modal {
+  background: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+}
+html.light-mode .chat-modal-header {
+  border-bottom-color: #E5E7EB !important;
+}
+html.light-mode .chat-modal-header .modal-title {
+  color: #111827 !important;
+}
+html.light-mode .chat-modal-header .modal-subtitle {
+  color: #6B7280 !important;
+}
+html.light-mode .chat-modal-close {
+  background: #F3F4F6 !important;
+  border-color: #E5E7EB !important;
+  color: #6B7280 !important;
+}
+html.light-mode .chat-modal-close:hover {
+  background: #E5E7EB !important;
+  color: #111827 !important;
+}
+html.light-mode .chat-modal-overlay {
+  background: rgba(0,0,0,0.4) !important;
+}
+html.light-mode .admin-msg.buyer {
+  background: #F3E8FF !important;
+  color: #4C1D95 !important;
+  border-color: #C4B5FD !important;
+}
+html.light-mode .admin-msg.buyer .admin-msg-sender {
+  color: #7C3AED !important;
+}
+html.light-mode .admin-msg.vendor {
+  background: #FAF5FF !important;
+  color: #581C87 !important;
+  border-color: #DBC9FF !important;
+}
+html.light-mode .admin-msg.vendor .admin-msg-sender {
+  color: #8800E4 !important;
+}
+html.light-mode .admin-msg .admin-msg-time {
+  color: #9CA3AF !important;
+}
+html.light-mode .admin-msg-date {
+  color: #9CA3AF !important;
+}
+html.light-mode .chat-loading {
+  color: #9CA3AF !important;
+}
+/* Chat filter bar in light mode */
+html.light-mode form.rounded-2xl.border.border-blackx3 {
+  background: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+}
+html.light-mode form.rounded-2xl input[name="q"] {
+  background: #F9FAFB !important;
+  border-color: #E5E7EB !important;
+  color: #111827 !important;
+}
+
+/* ── Blue border fix — accent-colored borders for accent-colored elements ── */
+/* When elements have blue icons/text, their borders should match, not be black */
+html.light-mode [class*="border-greenx\/"] {
+  border-color: rgba(136,0,228,0.3) !important;
+}
+html.light-mode [class*="border-greenx\/"] {
+  border-color: rgba(var(--t-accent-rgb),0.3) !important;
+}
+
+/* ── Product card category badge — stronger visibility ───────────────── */
+.product-card .bg-greenx\/90 {
+  background-color: var(--t-accent) !important;
+  color: var(--t-text-on-accent) !important;
+}
+html.light-mode .product-card span[class*="bg-greenx"] {
+  background-color: var(--t-accent) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+/* ── Favorites active state — always red, both themes ────────────────── */
+.border-red-400\/40 { border-color: rgba(248,113,113,0.4) !important; }
+.bg-red-500\/\[0\.08\] { background-color: rgba(239,68,68,0.08) !important; }
+html.light-mode .border-red-400\/40 { border-color: rgba(220,38,38,0.4) !important; }
+html.light-mode .bg-red-500\/\[0\.08\] { background-color: rgba(220,38,38,0.08) !important; }
+html.light-mode .text-red-400 { color: #DC2626 !important; }
+html.light-mode .hover\:text-red-400:hover { color: #DC2626 !important; }
+html.light-mode .hover\:border-red-400\/30:hover { border-color: rgba(220,38,38,0.3) !important; }
+
+/* ── Nav icon buttons — hover/active in BOTH themes ──────────────────── */
+.nav-icon-btn {
+  transition: all 0.2s ease;
+}
+.nav-icon-btn:hover {
+  background-color: rgba(136,0,228,0.10) !important;
+  border-color: rgba(136,0,228,0.45) !important;
+  color: #A855F7 !important;
+  box-shadow: 0 0 0 1px rgba(136,0,228,0.15);
+}
+.nav-icon-btn:active {
+  background-color: rgba(136,0,228,0.15) !important;
+  border-color: rgba(136,0,228,0.6) !important;
+  color: #8800E4 !important;
+  box-shadow: 0 0 0 1px rgba(136,0,228,0.25);
+}
+html.light-mode .nav-icon-btn:hover {
+  background-color: rgba(136,0,228,0.08) !important;
+  border-color: rgba(136,0,228,0.45) !important;
+  color: #7C3AED !important;
+  box-shadow: 0 0 0 1px rgba(136,0,228,0.12);
+}
+html.light-mode .nav-icon-btn:active {
+  background-color: rgba(136,0,228,0.12) !important;
+  border-color: rgba(136,0,228,0.6) !important;
+  color: #6D28D9 !important;
+  box-shadow: 0 0 0 1px rgba(136,0,228,0.2);
+}
+
+/* Favoritos icon — red hover/active in BOTH themes */
+.nav-icon-btn[href*="favorito"]:hover {
+  background-color: rgba(239,68,68,0.10) !important;
+  border-color: rgba(239,68,68,0.45) !important;
+  color: #f87171 !important;
+  box-shadow: 0 0 0 1px rgba(239,68,68,0.15);
+}
+.nav-icon-btn[href*="favorito"]:active {
+  background-color: rgba(239,68,68,0.15) !important;
+  border-color: rgba(239,68,68,0.6) !important;
+  color: #ef4444 !important;
+  box-shadow: 0 0 0 1px rgba(239,68,68,0.25);
+}
+html.light-mode .nav-icon-btn[href*="favorito"]:hover {
+  background-color: rgba(220,38,38,0.08) !important;
+  border-color: rgba(220,38,38,0.4) !important;
+  color: #DC2626 !important;
+}
+html.light-mode .nav-icon-btn[href*="favorito"]:active {
+  background-color: rgba(220,38,38,0.12) !important;
+  border-color: rgba(220,38,38,0.6) !important;
+  color: #B91C1C !important;
+}
+
+/* Fav button in product cards — more prominent */
+.fav-btn {
+  transition: all 0.2s ease;
+  background: rgba(0,0,0,0.55) !important;
+  border-color: rgba(255,255,255,0.2) !important;
+  color: rgba(255,255,255,0.7) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.fav-btn:hover {
+  transform: scale(1.15);
+  background: rgba(239,68,68,0.3) !important;
+  border-color: rgba(248,113,113,0.6) !important;
+  color: #f87171 !important;
+  box-shadow: 0 2px 12px rgba(239,68,68,0.25);
+}
+.fav-btn.fav-active {
+  background: rgba(239,68,68,0.3) !important;
+  border-color: rgba(248,113,113,0.7) !important;
+  color: #ef4444 !important;
+  transform: scale(1.1);
+  box-shadow: 0 2px 12px rgba(239,68,68,0.3);
+}
+html.light-mode .fav-btn {
+  background: rgba(255,255,255,0.75) !important;
+  border-color: rgba(0,0,0,0.15) !important;
+  color: rgba(0,0,0,0.45) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+html.light-mode .fav-btn.fav-active {
+  background: rgba(220,38,38,0.12) !important;
+  border-color: rgba(220,38,38,0.4) !important;
+  color: #DC2626 !important;
+}
+html.light-mode .fav-btn:hover {
+  background: rgba(220,38,38,0.12) !important;
+  border-color: rgba(220,38,38,0.35) !important;
+  color: #DC2626 !important;
+}
+
+/* ── Product card borders in light mode ───────────────────────────────── */
+html.light-mode .product-card {
+  border: 1px solid rgba(0,0,0,0.12) !important;
+  background: #fff !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+html.light-mode .product-card:hover {
+  border-color: rgba(var(--t-accent-rgb,34,197,94), 0.4) !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.10), 0 0 0 1px rgba(var(--t-accent-rgb,34,197,94), 0.15);
+  transform: translateY(-2px);
+}
+/* ── Category grid cards in light mode ─────────────────────────────── */
+html.light-mode .bg-blackx2.border.rounded-2xl {
+  background: #fff !important;
+  border-color: rgba(0,0,0,0.10) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+html.light-mode .bg-blackx2.border.rounded-2xl:hover {
+  border-color: rgba(var(--t-accent-rgb),0.35) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+}
+
+/* ── Light-mode text contrast inside cards & colored containers ──── */
+/* Ensure text inside bg-blackx2 cards is always visible */
+html.light-mode .bg-blackx2 .text-zinc-100,
+html.light-mode .bg-blackx2 .text-zinc-200 { color: #111827 !important; }
+html.light-mode .bg-blackx2 .text-zinc-300 { color: #1F2937 !important; }
+html.light-mode .bg-blackx2 .text-zinc-400 { color: #374151 !important; }
+html.light-mode .bg-blackx2 .text-zinc-500 { color: #4B5563 !important; }
+html.light-mode .bg-blackx2 .text-zinc-600 { color: #4B5563 !important; }
+html.light-mode .bg-blackx2 .text-white:not(.keep-white):not([class*="from-greenx"]):not([class*="bg-greenx"]):not(.cat-name-pill) { color: #111827 !important; }
+
+/* Inside colored accent containers like bg-greenx/10, bg-blue/10, etc */
+html.light-mode [class*="bg-greenx\/"] .text-zinc-300,
+html.light-mode [class*="bg-greenx\/"] .text-zinc-400 { color: #1F2937 !important; }
+html.light-mode [class*="bg-red-500\/"] .text-zinc-300,
+html.light-mode [class*="bg-red-500\/"] .text-zinc-400 { color: #1F2937 !important; }
+html.light-mode [class*="bg-greenx\/"] .text-zinc-300,
+html.light-mode [class*="bg-greenx\/"] .text-zinc-400 { color: #1F2937 !important; }
+html.light-mode [class*="bg-yellow-500\/"] .text-zinc-300,
+html.light-mode [class*="bg-yellow-500\/"] .text-zinc-400 { color: #1F2937 !important; }
+html.light-mode [class*="bg-purple-500\/"] .text-zinc-300,
+html.light-mode [class*="bg-purple-500\/"] .text-zinc-400 { color: #1F2937 !important; }
+
+/* Stronger text in product detail columns */
+html.light-mode .bg-blackx p,
+html.light-mode .bg-blackx span:not(.text-greenx):not(.text-red-400):not(.text-purple-400):not(.text-yellow-400):not(.text-orange-400):not(.text-purple-400) {
+  color: #374151;
+}
+html.light-mode .bg-blackx h1, html.light-mode .bg-blackx h2,
+html.light-mode .bg-blackx h3, html.light-mode .bg-blackx h4 {
+  color: #111827 !important;
+}
+
+/* Stats / metric values inside cards */
+html.light-mode .bg-blackx2 .text-2xl,
+html.light-mode .bg-blackx2 .text-3xl,
+html.light-mode .bg-blackx2 .text-4xl {
+  color: #111827 !important;
+}
+
+/* ── General content sections in light mode ────────────────────────── */
+html.light-mode .border-white\/\[0\.04\] { border-color: rgba(0,0,0,0.06) !important; }
+html.light-mode .border-white\/\[0\.06\] { border-color: rgba(0,0,0,0.08) !important; }
+html.light-mode .border-white\/\[0\.08\] { border-color: rgba(0,0,0,0.10) !important; }
+html.light-mode .border-white\/\[0\.10\] { border-color: rgba(0,0,0,0.12) !important; }
+html.light-mode .bg-white\/\[0\.01\] { background-color: rgba(0,0,0,0.01) !important; }
+html.light-mode .bg-white\/\[0\.02\] { background-color: rgba(0,0,0,0.015) !important; }
+html.light-mode .bg-white\/\[0\.03\] { background-color: rgba(255,255,255,0.9) !important; }
+html.light-mode .bg-white\/\[0\.04\] { background-color: rgba(255,255,255,0.95) !important; }
+/* ── Auth pages (login/register) light mode ──────────────────────────── */
+html.light-mode .auth-blob { opacity: .05 !important; }
+html.light-mode .auth-card {
+  background: rgba(255,255,255,.95) !important;
+  border-color: rgba(var(--t-accent-rgb),.18) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 0 0 1px rgba(var(--t-accent-rgb),0.06) !important;
+}
+html.light-mode .auth-card .auth-input {
+  background: #fff !important;
+  border-color: rgba(var(--t-accent-rgb),.22) !important;
+  color: #111827 !important;
+}
+html.light-mode .auth-card .auth-input:focus {
+  border-color: var(--t-accent) !important;
+  box-shadow: 0 0 0 3px rgba(var(--t-accent-rgb),.12) !important;
+}
+html.light-mode .auth-card .auth-input::placeholder { color: #9CA3AF !important; }
+html.light-mode .auth-card .auth-icon { color: var(--t-accent) !important; opacity: .65; }
+html.light-mode .auth-card .auth-input:focus ~ .auth-icon,
+html.light-mode .auth-card .relative:focus-within .auth-icon { opacity: 1; }
+html.light-mode .auth-card .auth-btn { color: var(--t-text-on-accent) !important; }
+html.light-mode .auth-card label { color: #374151 !important; }
+/* Left panel branding in light mode */
+html.light-mode .auth-left-panel {
+  background: linear-gradient(135deg, rgba(var(--t-accent-rgb),.08), rgba(var(--t-accent-rgb),.02)) !important;
+}
+html.light-mode .auth-left-panel .text-zinc-300 { color: #475569 !important; }
+html.light-mode .auth-left-panel .text-zinc-600 { color: #6B7280 !important; }
+/* Left panel feature icon wrappers — borders match accent */
+html.light-mode .auth-features li > div:first-child {
+  border: 1px solid rgba(var(--t-accent-rgb),.2) !important;
+}
+/* Auth toggle button light mode */
+html.light-mode .auth-card .theme-toggle-btn {
+  background: rgba(var(--t-accent-rgb),.06) !important;
+  border-color: rgba(var(--t-accent-rgb),.2) !important;
+  color: var(--t-accent) !important;
+  opacity: .7;
+}
+html.light-mode .auth-card .theme-toggle-btn:hover {
+  border-color: var(--t-accent) !important;
+  color: var(--t-accent) !important;
+  opacity: 1;
+}
+/* Account type cards (register page) */
+html.light-mode .tipo-card div[class*="border-white"] {
+  border-color: rgba(var(--t-accent-rgb),.15) !important;
+  background: rgba(var(--t-accent-rgb),.02) !important;
+}
+html.light-mode .tipo-card div[class*="border-greenx"] {
+  border-color: var(--t-accent) !important;
+  background: rgba(var(--t-accent-rgb),.06) !important;
+}
+/* Google OAuth button */
+html.light-mode .auth-card a[class*="border-white"][class*="bg-white"] {
+  background: rgba(0,0,0,.03) !important;
+  border-color: rgba(var(--t-accent-rgb),.15) !important;
+}
+html.light-mode .auth-card .bg-blackx2\/80 {
+  background: rgba(255,255,255,.95) !important;
+}
+/* Auth card shadow glow in light mode */
+html.light-mode .auth-left-panel .auth-features li > div:first-child svg,
+html.light-mode .auth-left-panel .auth-features li > div:first-child i { color: var(--t-accent) !important; }
+
+/* =====================================================================
+ *  PREMIUM BASEFY ENHANCEMENTS — Purple Luxury Theme
+ * ===================================================================== */
+
+/* ── Premium Glow Effects ─────────────────────────────────────────────── */
+
+/* Accent buttons: subtle outer glow */
+[class*="bg-greenx"]:not([class*="bg-greenx/"]) {
+  box-shadow: 0 0 20px -4px rgba(var(--t-accent-rgb), 0.35),
+              inset 0 1px 0 rgba(255,255,255,0.10);
+}
+[class*="bg-greenx"]:not([class*="bg-greenx/"]):hover {
+  box-shadow: 0 0 32px -2px rgba(var(--t-accent-rgb), 0.50),
+              inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+/* Gradient buttons premium polish */
+[class*="from-greenx"][class*="to-greenxd"] {
+  box-shadow: 0 4px 24px -4px rgba(var(--t-accent-rgb), 0.40),
+              inset 0 1px 0 rgba(255,255,255,0.12);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+[class*="from-greenx"][class*="to-greenxd"]:hover {
+  box-shadow: 0 8px 32px -4px rgba(var(--t-accent-rgb), 0.55),
+              inset 0 1px 0 rgba(255,255,255,0.18);
+  transform: translateY(-1px);
+}
+
+/* ── Premium Card Styles ──────────────────────────────────────────────── */
+
+/* Product cards: glass morphism hover */
+.product-card {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.product-card:hover {
+  border-color: rgba(var(--t-accent-rgb), 0.20);
+  box-shadow: 0 20px 60px -12px rgba(0,0,0,0.50),
+              0 0 0 1px rgba(var(--t-accent-rgb), 0.08),
+              0 0 40px -8px rgba(var(--t-accent-rgb), 0.12);
+  transform: translateY(-4px);
+}
+
+/* Card content area premium separator */
+.product-card > div:last-child {
+  position: relative;
+}
+
+/* ── Premium Navigation ───────────────────────────────────────────────── */
+
+/* Nav bar frosted glass */
+header.sticky {
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border-bottom: 1px solid rgba(var(--t-accent-rgb), 0.06) !important;
+}
+
+/* Active nav accent underline glow */
+.nav-icon-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 3px;
+  border-radius: 99px;
+  background: var(--t-accent);
+  box-shadow: 0 0 12px rgba(var(--t-accent-rgb), 0.50);
+}
+
+/* ── Premium Input Styles ─────────────────────────────────────────────── */
+
+/* Inputs: accent focus ring */
+input:focus, textarea:focus, select:focus {
+  border-color: rgba(var(--t-accent-rgb), 0.40) !important;
+  box-shadow: 0 0 0 3px rgba(var(--t-accent-rgb), 0.10),
+              0 0 16px -4px rgba(var(--t-accent-rgb), 0.15) !important;
+  outline: none;
+}
+
+/* ── Premium Badge / Tag Styles ───────────────────────────────────────── */
+
+/* Accent badges: inner glow */
+[class*="bg-greenx/"][class*="border-greenx/"] {
+  text-shadow: 0 0 8px rgba(var(--t-accent-rgb), 0.30);
+}
+
+/* ── Premium Scroll & Transitions ─────────────────────────────────────── */
+
+/* Smooth scroll everywhere */
+html { scroll-behavior: smooth; }
+
+/* Premium page transitions */
+main, .page-content, section {
+  animation: fadeSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Selection color */
+::selection {
+  background: rgba(var(--t-accent-rgb), 0.30);
+  color: #fff;
+}
+
+/* ── Premium Shadows & Depth ──────────────────────────────────────────── */
+
+/* Page-level ambient glow (dark mode only) */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -20%;
+  width: 60%;
+  height: 100%;
+  background: radial-gradient(ellipse, rgba(var(--t-accent-rgb), 0.03) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+html.light-mode body::before { display: none; }
+
+/* ── Premium Scrollbar (dark mode) ────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--t-accent-rgb), 0.25);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--t-accent-rgb), 0.45);
+}
+
+/* ── Premium Accent Text Glow ─────────────────────────────────────────── */
+.text-greenx, [class*="text-greenx"] {
+  text-shadow: 0 0 20px rgba(var(--t-accent-rgb), 0.15);
+}
+
+/* Price text premium */
+.text-greenx.font-black,
+.text-greenx.font-bold,
+p.text-greenx {
+  text-shadow: 0 0 24px rgba(var(--t-accent-rgb), 0.25);
+}
+
+/* ── Light Mode Premium Adjustments ───────────────────────────────────── */
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]) {
+  box-shadow: 0 4px 16px -4px rgba(var(--t-accent-rgb), 0.30);
+}
+html.light-mode [class*="bg-greenx"]:not([class*="bg-greenx/"]):hover {
+  box-shadow: 0 8px 24px -4px rgba(var(--t-accent-rgb), 0.40);
+}
+html.light-mode .product-card:hover {
+  box-shadow: 0 16px 48px -12px rgba(0,0,0,0.15),
+              0 0 0 1px rgba(var(--t-accent-rgb), 0.12),
+              0 0 32px -8px rgba(var(--t-accent-rgb), 0.08);
+}
+/* Como Funciona: stronger accent border on icon containers + badges in light */
+html.light-mode .cf-card [class*="border-greenx"] {
+  border-color: rgba(var(--t-accent-rgb), 0.35) !important;
+}
+html.light-mode .cf-card [class*="bg-greenx/10"] {
+  background: rgba(var(--t-accent-rgb), 0.08) !important;
+  border: 1px solid rgba(var(--t-accent-rgb), 0.25);
+  border-radius: 8px;
+}
+html.light-mode body::before { display: none; }
+
+/* ── Utility: keep-white — force white text even in light mode (for dark overlays) ── */
+/* MUST be last to win cascade over all other light-mode color overrides */
+html.light-mode .keep-white,
+html.light-mode .bg-blackx2 .keep-white,
+html.light-mode .bg-blackx .keep-white,
+.keep-white { color: #fff !important; }

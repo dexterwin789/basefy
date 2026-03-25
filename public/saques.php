@@ -1,0 +1,269 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../src/auth.php';
+require_once __DIR__ . '/../src/db.php';
+require_once __DIR__ . '/../src/wallet_portal.php';
+
+exigirLogin();
+
+$conn = (new Database())->connect();
+$uid = (int)($_SESSION['user_id'] ?? 0);
+
+/* ── Verification gate for new saque requests ── */
+$isVerificado = contaVerificada($uid);
+
+/* ensure columns exist */
+try { $conn->query("ALTER TABLE wallet_withdrawals ADD COLUMN IF NOT EXISTS tipo_chave VARCHAR(30)"); } catch (Throwable $e) {}
+try { $conn->query("ALTER TABLE wallet_withdrawals ADD COLUMN IF NOT EXISTS transaction_id VARCHAR(60)"); } catch (Throwable $e) {}
+
+/* ---------- filter params ---------- */
+$fStatus = trim((string)($_GET['status'] ?? ''));
+$fDe     = trim((string)($_GET['de'] ?? ''));
+$fAte    = trim((string)($_GET['ate'] ?? ''));
+$allowedSaqStatus = ['pendente', 'aprovado', 'pago', 'recusado'];
+if ($fStatus !== '' && !in_array($fStatus, $allowedSaqStatus, true)) $fStatus = '';
+
+/* ---------- build filtered query ---------- */
+$where = "user_id = ?";
+$types = 'i';
+$params = [$uid];
+
+if ($fStatus !== '') { $where .= " AND status = ?"; $types .= 's'; $params[] = $fStatus; }
+if ($fDe !== '')     { $where .= " AND DATE(criado_em) >= ?"; $types .= 's'; $params[] = $fDe; }
+if ($fAte !== '')    { $where .= " AND DATE(criado_em) <= ?"; $types .= 's'; $params[] = $fAte; }
+
+/* count */
+$stC = $conn->prepare("SELECT COUNT(*) FROM wallet_withdrawals WHERE $where");
+$cBind = array_merge([$types], $params);
+$cRefs = [];
+foreach ($cBind as $k => $v) $cRefs[$k] = &$cBind[$k];
+call_user_func_array([$stC, 'bind_param'], $cRefs);
+$stC->execute();
+$totalRegistros = (int)$stC->get_result()->fetch_row()[0];
+$stC->close();
+
+$pp = in_array(($_pp = (int)($_GET['pp'] ?? 10)), [5,10,20]) ? $_pp : 10;
+$pagina = max(1, (int)($_GET['p'] ?? 1));
+$totalPaginas = max(1, (int)ceil($totalRegistros / $pp));
+
+/* data page */
+$sql = "SELECT id, valor, status, chave_pix, tipo_chave, observacao, transaction_id, criado_em
+        FROM wallet_withdrawals WHERE $where ORDER BY id DESC LIMIT ? OFFSET ?";
+$types2 = $types . 'ii';
+$params2 = array_merge($params, [$pp, ($pagina - 1) * $pp]);
+$st = $conn->prepare($sql);
+$bind2 = array_merge([$types2], $params2);
+$refs2 = [];
+foreach ($bind2 as $k => $v) $refs2[$k] = &$bind2[$k];
+call_user_func_array([$st, 'bind_param'], $refs2);
+$st->execute();
+$saques = $st->get_result()->fetch_all(MYSQLI_ASSOC);
+$st->close();
+
+$statusBadge = static function (string $status): string {
+    $s = strtolower(trim($status));
+    if (in_array($s, ['pago', 'paid', 'aprovado', 'approved'], true)) {
+        return 'bg-greenx/15 border border-greenx/40 text-greenx';
+    }
+    if (in_array($s, ['pendente', 'pending', 'processando', 'processing'], true)) {
+        return 'bg-orange-500/15 border border-orange-400/40 text-orange-300';
+    }
+    return 'bg-blackx border border-blackx3 text-zinc-300';
+};
+
+$pageTitle = 'Meus Saques';
+$activeMenu = 'saques';
+
+/* summary stats (all, unfiltered) */
+$stAll = $conn->prepare("SELECT valor, status FROM wallet_withdrawals WHERE user_id = ?");
+$stAll->bind_param('i', $uid);
+$stAll->execute();
+$allSaqs = $stAll->get_result()->fetch_all(MYSQLI_ASSOC);
+$stAll->close();
+$totalSaques = 0; $totalAprovados = 0; $totalPendentes = 0;
+foreach ($allSaqs as $sw) {
+    $valSaq = (float)($sw['valor'] ?? 0);
+    $stSaq  = strtolower(trim((string)($sw['status'] ?? '')));
+    $totalSaques += $valSaq;
+    if (in_array($stSaq, ['pago', 'paid', 'aprovado', 'approved'], true)) $totalAprovados += $valSaq;
+    if (in_array($stSaq, ['pendente', 'pending'], true)) $totalPendentes += $valSaq;
+}
+
+include __DIR__ . '/../views/partials/header.php';
+include __DIR__ . '/../views/partials/user_layout_start.php';
+?>
+
+<div class="space-y-4" x-data="{ obsModal: false, obsText: '', obsTrx: '' }">
+  <div class="bg-blackx2 border border-blackx3 rounded-2xl p-5">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+      <div>
+        <h2 class="text-lg font-semibold">Minhas solicitações de saque</h2>
+        <p class="text-sm text-zinc-400 mt-0.5">Aqui você acompanha apenas os seus saques solicitados e aprovados.</p>
+      </div>
+      <?php if ($isVerificado): ?>
+        <a href="<?= BASE_PATH ?>/saques/novo" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-greenx to-greenxd hover:from-greenx2 hover:to-greenxd text-white font-semibold px-5 py-2.5 text-sm transition-all whitespace-nowrap">
+          <i data-lucide="plus" class="w-4 h-4"></i> Solicitar novo saque
+        </a>
+      <?php else: ?>
+        <a href="<?= BASE_PATH ?>/verificacao" class="inline-flex items-center gap-2 rounded-xl bg-greenx hover:bg-greenx text-white font-semibold px-5 py-2.5 text-sm transition-all whitespace-nowrap">
+          <i data-lucide="shield-check" class="w-4 h-4"></i> Verificar conta
+        </a>
+      <?php endif; ?>
+    </div>
+    <?php if (!$isVerificado): ?>
+    <div class="rounded-xl border border-orange-500/30 bg-orange-500/[0.06] px-4 py-3 mb-4 flex items-start gap-3">
+      <i data-lucide="alert-triangle" class="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5"></i>
+      <div>
+        <p class="text-sm font-medium text-orange-300">Verificação necessária</p>
+        <p class="text-xs text-orange-200/60 mt-0.5">Para solicitar novos saques, é necessário completar a <a href="<?= BASE_PATH ?>/verificacao" class="underline text-purple-400">verificação da conta</a>.</p>
+      </div>
+    </div>
+    <?php endif; ?>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div class="flex items-center gap-3 p-3 rounded-xl bg-blackx border border-blackx3">
+        <div class="w-10 h-10 rounded-xl bg-greenx/15 border border-greenx/30 flex items-center justify-center flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div>
+          <p class="text-[11px] text-zinc-500 uppercase tracking-wide">Total solicitado</p>
+          <p class="font-bold text-sm">R$ <?= number_format($totalSaques, 2, ',', '.') ?></p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 p-3 rounded-xl bg-blackx border border-blackx3">
+        <div class="w-10 h-10 rounded-xl bg-greenx/15 border border-greenx/30 flex items-center justify-center flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-greenx"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div>
+          <p class="text-[11px] text-zinc-500 uppercase tracking-wide">Aprovados</p>
+          <p class="font-bold text-sm text-greenx">R$ <?= number_format($totalAprovados, 2, ',', '.') ?></p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 p-3 rounded-xl bg-blackx border border-blackx3">
+        <div class="w-10 h-10 rounded-xl bg-orange-500/15 border border-orange-400/30 flex items-center justify-center flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-400"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <p class="text-[11px] text-zinc-500 uppercase tracking-wide">Pendentes</p>
+          <p class="font-bold text-sm text-orange-300">R$ <?= number_format($totalPendentes, 2, ',', '.') ?></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-blackx2 border border-blackx3 rounded-2xl p-5">
+    <form method="get" class="mb-4 rounded-2xl border border-blackx3 bg-blackx/50 p-3 md:p-4">
+      <div class="flex flex-col md:flex-row md:items-end md:flex-nowrap gap-3">
+        <div class="md:w-44">
+          <label class="block text-xs text-zinc-500 mb-1">Status</label>
+          <select name="status" class="w-full bg-blackx border border-blackx3 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-greenx">
+            <option value="">Todos</option>
+            <?php foreach ($allowedSaqStatus as $s): ?>
+              <option value="<?= htmlspecialchars($s, ENT_QUOTES, 'UTF-8') ?>" <?= $fStatus === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <div class="md:w-40">
+          <label class="block text-xs text-zinc-500 mb-1">De</label>
+          <input type="date" name="de" value="<?= htmlspecialchars($fDe, ENT_QUOTES, 'UTF-8') ?>"
+                 class="w-full bg-blackx border border-blackx3 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-greenx">
+        </div>
+        <div class="md:w-40">
+          <label class="block text-xs text-zinc-500 mb-1">Até</label>
+          <input type="date" name="ate" value="<?= htmlspecialchars($fAte, ENT_QUOTES, 'UTF-8') ?>"
+                 class="w-full bg-blackx border border-blackx3 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-greenx">
+        </div>
+        <div class="hidden md:flex md:w-auto md:ml-auto items-center gap-2">
+          <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-greenx to-greenxd hover:from-greenx2 hover:to-greenxd text-white font-semibold px-4 py-2.5 whitespace-nowrap transition-all">
+            <i data-lucide="sliders-horizontal" class="w-4 h-4"></i> Filtrar
+          </button>
+          <a href="<?= BASE_PATH ?>/saques" title="Limpar filtros" class="inline-flex items-center justify-center rounded-xl border border-blackx3 w-10 h-10 text-zinc-300 hover:border-greenx hover:text-white transition-all">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          </a>
+        </div>
+      </div>
+      <div class="mt-3 md:hidden flex items-center gap-2">
+        <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-greenx to-greenxd hover:from-greenx2 hover:to-greenxd text-white font-semibold px-4 py-2.5 transition-all">
+          <i data-lucide="sliders-horizontal" class="w-4 h-4"></i> Filtrar
+        </button>
+        <a href="<?= BASE_PATH ?>/saques" title="Limpar filtros" class="inline-flex items-center justify-center rounded-xl border border-blackx3 w-10 h-10 text-zinc-300 hover:border-greenx hover:text-white transition-all">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </form>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-zinc-400 border-b border-blackx3">
+            <th class="text-left py-3 pr-3">ID</th>
+            <th class="text-left py-3 pr-3">Transação</th>
+            <th class="text-left py-3 pr-3">Valor</th>
+            <th class="text-left py-3 pr-3">Status</th>
+            <th class="text-left py-3 pr-3">PIX</th>
+            <th class="text-left py-3 pr-3">Obs</th>
+            <th class="text-left py-3">Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($saques as $s): ?>
+            <?php
+              $obsRaw = (string)($s['observacao'] ?? '');
+              $obsClean = preg_replace('/\s*\|\s*aprovado_manual_por=\d+/i', '', $obsRaw) ?? $obsRaw;
+              $obsClean = preg_replace('/\s*\|\s*blackcat_withdrawal_id=\S+/i', '', $obsClean) ?? $obsClean;
+              $trxId = (string)($s['transaction_id'] ?? '');
+              if ($trxId === '') { $trxId = 'TRX' . str_pad((string)$s['id'], 6, '0', STR_PAD_LEFT); }
+              $tipoChave = (string)($s['tipo_chave'] ?? '');
+            ?>
+            <tr class="border-b border-blackx3/50 hover:bg-blackx/40 transition">
+              <td class="py-3 pr-3">#<?= (int)$s['id'] ?></td>
+              <td class="py-3 pr-3"><span class="font-mono text-xs bg-blackx border border-blackx3 rounded-lg px-2 py-1"><?= htmlspecialchars($trxId, ENT_QUOTES, 'UTF-8') ?></span></td>
+              <td class="py-3 pr-3 font-medium">R$ <?= number_format((float)$s['valor'], 2, ',', '.') ?></td>
+              <td class="py-3 pr-3"><span class="px-2.5 py-1 rounded-full text-xs font-medium <?= $statusBadge((string)$s['status']) ?>"><?= htmlspecialchars((string)$s['status'], ENT_QUOTES, 'UTF-8') ?></span></td>
+              <td class="py-3 pr-3"><?php if ($tipoChave !== ''): ?><span class="text-xs text-zinc-500">(<?= htmlspecialchars($tipoChave, ENT_QUOTES, 'UTF-8') ?>)</span> <?php endif; ?><?= htmlspecialchars((string)$s['chave_pix'], ENT_QUOTES, 'UTF-8') ?></td>
+              <td class="py-3 pr-3">
+                <?php if (trim($obsClean) !== ''): ?>
+                  <button type="button"
+                    @click="obsText = <?= htmlspecialchars(json_encode($obsClean, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>; obsTrx = '<?= htmlspecialchars($trxId, ENT_QUOTES, 'UTF-8') ?>'; obsModal = true"
+                    class="px-2.5 py-1 rounded-lg text-xs font-medium bg-blackx border border-blackx3 hover:border-greenx/40 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-1"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Ver
+                  </button>
+                <?php else: ?>
+                  <span class="text-zinc-600 text-xs">—</span>
+                <?php endif; ?>
+              </td>
+              <td class="py-3"><?= fmtDate((string)$s['criado_em']) ?></td>
+            </tr>
+          <?php endforeach; ?>
+          <?php if (!$saques): ?>
+            <tr><td colspan="7" class="py-6 text-zinc-500 text-center">Nenhuma solicitação de saque encontrada.</td></tr>
+          <?php endif; ?>
+        </tbody>
+      </table>
+    </div>
+
+    <?php
+      $paginaAtual = $pagina;
+      include __DIR__ . '/../views/partials/pagination.php';
+    ?>
+  </div>
+
+  <!-- Observation Modal -->
+  <template x-if="obsModal">
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4" @click.self="obsModal = false" @keydown.escape.window="obsModal = false">
+      <div class="w-full max-w-lg bg-blackx2 border border-blackx3 rounded-2xl p-5 space-y-4" @click.stop>
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold text-lg">Observações — <span class="font-mono text-sm text-greenx" x-text="obsTrx"></span></h3>
+          <button type="button" @click="obsModal = false" class="rounded-lg bg-blackx border border-blackx3 px-3 py-1 text-sm hover:border-red-500/40 transition">Fechar</button>
+        </div>
+        <div class="bg-blackx border border-blackx3 rounded-xl p-4 text-sm text-zinc-300 whitespace-pre-wrap max-h-64 overflow-y-auto" x-text="obsText"></div>
+      </div>
+    </div>
+  </template>
+</div>
+
+<?php
+include __DIR__ . '/../views/partials/user_layout_end.php';
+include __DIR__ . '/../views/partials/footer.php';

@@ -1,0 +1,22 @@
+{
+    "name": "mercado_admin",
+    "description": "Admin registration and login system for Mercado Livre style application.",
+    "type": "project",
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "vlucas/phpdotenv": "^5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "src\\": "src/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

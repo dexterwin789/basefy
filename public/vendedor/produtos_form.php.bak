@@ -1,0 +1,247 @@
+<?php
+// filepath: c:\xampp\htdocs\mercado_admin\public\vendedor\produtos_form.php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../src/auth.php';
+require_once __DIR__ . '/../../src/db.php';
+require_once __DIR__ . '/../../src/vendor_portal.php';
+require_once __DIR__ . '/../../src/upload_paths.php';
+
+exigirVendedor();
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
+
+$db = new Database();
+$conn = $db->connect();
+$uid = (int)($_SESSION['user_id'] ?? 0);
+
+function basePublicPathVendor(): string {
+    $script = str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
+    return (string)preg_replace('#/vendedor/.*$#', '', $script);
+}
+
+function imgUrlVendor(?string $path): string {
+    $path = trim((string)$path);
+    if ($path === '') return '';
+  if (str_starts_with($path, '/admin/uploads/')) $path = str_replace('/admin/uploads/', '/uploads/', $path);
+  return uploadsPublicUrl($path);
+}
+
+function uploadProdutoVendor(array $file): ?string {
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) return null;
+
+    $ext = strtolower(pathinfo((string)$file['name'], PATHINFO_EXTENSION));
+    if (!in_array($ext, ['jpg','jpeg','png','webp'], true)) return null;
+
+    $dir = uploadsEnsureSubdir('produtos');
+    if (!is_dir($dir)) mkdir($dir, 0775, true);
+
+    $name = uniqid('prod_', true) . '.' . $ext;
+    $dest = $dir . DIRECTORY_SEPARATOR . $name;
+
+    if (!move_uploaded_file((string)$file['tmp_name'], $dest)) return null;
+    return '/uploads/produtos/' . $name;
+}
+
+$id = (int)($_GET['id'] ?? 0);
+$produto = $id > 0 ? obterMeuProduto($conn, $uid, $id) : null;
+$categorias = listarCategoriasProdutoAtivasVendor($conn);
+
+$erro = '';
+if (empty($_SESSION['vendor_product_form_token'])) {
+  $_SESSION['vendor_product_form_token'] = bin2hex(random_bytes(16));
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $token = (string)($_POST['form_token'] ?? '');
+  $sessionToken = (string)($_SESSION['vendor_product_form_token'] ?? '');
+  if ($sessionToken === '' || $token === '' || !hash_equals($sessionToken, $token)) {
+    $erro = 'Envio duplicado ou inválido. Atualize a página e tente novamente.';
+  } else {
+    unset($_SESSION['vendor_product_form_token']);
+
+    $idPost = (int)($_POST['id'] ?? 0);
+    $categoriaId = (int)($_POST['categoria_id'] ?? 0);
+    $nome = trim((string)($_POST['nome'] ?? ''));
+    $descricao = trim((string)($_POST['descricao'] ?? ''));
+    $preco = (float)($_POST['preco'] ?? 0);
+    $img = uploadProdutoVendor($_FILES['imagem'] ?? []);
+
+    [$ok, $msg] = salvarMeuProduto($conn, $uid, $idPost, $categoriaId, $nome, $descricao, $preco, $img);
+    if ($ok) {
+        header('Location: produtos.php');
+        exit;
+    }
+    $erro = $msg;
+  }
+
+  if (empty($_SESSION['vendor_product_form_token'])) {
+    $_SESSION['vendor_product_form_token'] = bin2hex(random_bytes(16));
+  }
+}
+
+$pageTitle = $produto ? 'Editar Produto' : 'Adicionar Produto';
+$activeMenu = 'meus_produtos';
+$subnavItems = [
+    ['label' => 'Listar', 'href' => 'produtos.php', 'active' => false],
+    ['label' => $produto ? 'Editar' : 'Adicionar', 'href' => '#', 'active' => true],
+];
+
+include __DIR__ . '/../../views/partials/header.php';
+include __DIR__ . '/../../views/partials/vendor_layout_start.php';
+
+$imgAtual = imgUrlVendor($produto['imagem'] ?? '');
+$precoInicial = isset($produto['preco']) ? number_format((float)$produto['preco'], 2, ',', '.') : '0,00';
+$formToken = (string)($_SESSION['vendor_product_form_token'] ?? '');
+?>
+
+<div class="max-w-4xl mx-auto">
+  <div class="mb-4 rounded-2xl border border-blackx3 bg-blackx2 p-5 md:p-6">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <p class="text-xs uppercase tracking-widest text-zinc-500 font-semibold">Catálogo</p>
+        <h2 class="text-xl md:text-2xl font-bold mt-1"><?= $produto ? 'Editar produto' : 'Adicionar novo produto' ?></h2>
+        <p class="text-sm text-zinc-400 mt-1">Preencha os dados com atenção para publicar seu produto com qualidade profissional.</p>
+      </div>
+      <a href="/mercado_admin/public/vendedor/produtos.php" class="inline-flex items-center gap-2 rounded-xl border border-blackx3 bg-blackx px-3.5 py-2 text-sm text-zinc-300 hover:border-greenx hover:text-white transition-all">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        Voltar
+      </a>
+    </div>
+  </div>
+
+  <div class="bg-blackx2 border border-blackx3 rounded-2xl p-5 md:p-6 shadow-2xl shadow-black/20">
+  <?php if ($erro): ?>
+    <div class="mb-4 rounded-lg border border-red-500/60 text-red-300 px-3 py-2"><?= htmlspecialchars($erro) ?></div>
+  <?php endif; ?>
+
+  <form method="post" enctype="multipart/form-data" class="space-y-5" id="produto-form">
+    <?php if ($produto): ?>
+      <input type="hidden" name="id" value="<?= (int)$produto['id'] ?>">
+    <?php endif; ?>
+    <input type="hidden" name="form_token" value="<?= htmlspecialchars($formToken, ENT_QUOTES, 'UTF-8') ?>">
+
+    <input id="preco" type="hidden" name="preco" value="<?= htmlspecialchars(str_replace(',', '.', str_replace('.', '', $precoInicial))) ?>">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+      <label class="block text-sm mb-1 text-zinc-300">Categoria</label>
+      <select name="categoria_id" required class="w-full rounded-lg bg-blackx border border-blackx3 px-3 py-2">
+        <option value="">Selecione a categoria</option>
+        <?php foreach ($categorias as $c): ?>
+          <option value="<?= (int)$c['id'] ?>" <?= (int)($produto['categoria_id'] ?? 0) === (int)$c['id'] ? 'selected' : '' ?>>
+            <?= htmlspecialchars((string)$c['nome']) ?>
+          </option>
+        <?php endforeach; ?>
+      </select>
+      </div>
+
+      <div>
+        <label class="block text-sm mb-1 text-zinc-300">Valor (R$)</label>
+        <input id="preco_display" type="text" inputmode="numeric" value="<?= htmlspecialchars($precoInicial) ?>"
+               class="w-full rounded-lg bg-blackx border border-blackx3 px-3 py-2" placeholder="0,00">
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm mb-1 text-zinc-300">Nome</label>
+      <input name="nome" maxlength="120" required
+             value="<?= htmlspecialchars((string)($produto['nome'] ?? '')) ?>"
+             class="w-full rounded-lg bg-blackx border border-blackx3 px-3 py-2"
+             placeholder="Nome do produto">
+    </div>
+
+    <div>
+      <label class="block text-sm mb-1 text-zinc-300">Descrição</label>
+      <textarea name="descricao" rows="4" class="w-full rounded-lg bg-blackx border border-blackx3 px-3 py-2"
+                placeholder="Descrição"><?= htmlspecialchars((string)($produto['descricao'] ?? '')) ?></textarea>
+    </div>
+
+    <div>
+      <label class="block text-sm mb-1 text-zinc-300">Imagem</label>
+      <input id="imagemInput" type="file" name="imagem" accept=".jpg,.jpeg,.png,.webp"
+             class="w-full rounded-lg bg-blackx border border-blackx3 px-3 py-2">
+      <img id="imgPreview" src="<?= htmlspecialchars($imgAtual) ?>"
+           class="mt-2 h-24 w-24 object-cover rounded border border-blackx3 <?= $imgAtual ? '' : 'hidden' ?>">
+    </div>
+
+    <div class="pt-2 flex items-center justify-end gap-3">
+      <a href="/mercado_admin/public/vendedor/produtos.php" class="rounded-lg border border-blackx3 text-zinc-300 px-5 py-2.5 hover:border-greenx hover:text-white transition-all">
+        Cancelar
+      </a>
+      <button id="produto-submit" type="submit" class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-greenx to-emerald-600 text-black font-semibold px-5 py-2.5 hover:from-greenx2 hover:to-emerald-700 shadow-lg shadow-greenx/20 transition-all">
+        <i data-lucide="save" class="w-4 h-4" id="produto-submit-icon"></i>
+        <span id="produto-submit-label">Salvar produto</span>
+      </button>
+    </div>
+  </form>
+  </div>
+</div>
+
+<script>
+(function () {
+  const form = document.getElementById('produto-form');
+  const submitBtn = document.getElementById('produto-submit');
+  const submitLabel = document.getElementById('produto-submit-label');
+  const submitIcon = document.getElementById('produto-submit-icon');
+
+  if (form && submitBtn && submitLabel && submitIcon) {
+    form.addEventListener('submit', () => {
+      if (submitBtn.disabled) return;
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+      submitLabel.textContent = 'Salvando...';
+      submitIcon.setAttribute('data-lucide', 'loader-2');
+      submitIcon.classList.add('animate-spin');
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    });
+  }
+
+  const display = document.getElementById('preco_display');
+  const hidden = document.getElementById('preco');
+
+  function onlyDigits(v){ return (v || '').replace(/\D/g, ''); }
+  function toBRL(digits){
+    if (!digits) return '0,00';
+    const n = Number(digits) / 100;
+    return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function brlToFloat(brl){
+    const s = (brl || '').replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, '');
+    return Number(s || 0).toFixed(2);
+  }
+
+  if (display && hidden) {
+    display.value = toBRL(onlyDigits(display.value));
+    hidden.value = brlToFloat(display.value);
+
+    display.addEventListener('input', () => {
+      display.value = toBRL(onlyDigits(display.value));
+      hidden.value = brlToFloat(display.value);
+    });
+  }
+
+  const input = document.getElementById('imagemInput');
+  const preview = document.getElementById('imgPreview');
+  if (input && preview) {
+    input.addEventListener('change', () => {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        preview.src = String(e.target?.result || '');
+        preview.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+})();
+</script>
+
+<?php
+include __DIR__ . '/../../views/partials/vendor_layout_end.php';
+include __DIR__ . '/../../views/partials/footer.php';

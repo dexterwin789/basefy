@@ -1,0 +1,231 @@
+<?php
+// filepath: c:\xampp\htdocs\mercado_admin\public\admin\produtos_form.php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../src/auth.php';
+require_once __DIR__ . '/../../src/db.php';
+require_once __DIR__ . '/../../src/admin_produtos.php';
+require_once __DIR__ . '/../../src/upload_paths.php';
+
+exigirAdmin();
+
+$db = new Database();
+$conn = $db->connect();
+
+function basePublicPathProdForm(): string {
+    $script = str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
+    return (string)preg_replace('#/admin/.*$#', '', $script);
+}
+
+function produtoImagemUrlForm(?string $path): string {
+    $path = trim((string)$path);
+    if ($path === '') return '';
+    if (str_starts_with($path, '/admin/uploads/')) {
+        $path = str_replace('/admin/uploads/', '/uploads/', $path);
+    }
+    return uploadsPublicUrl($path);
+}
+
+function salvarImagemProdutoForm(array $file): ?string {
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) return null;
+
+    $ext = strtolower(pathinfo((string)$file['name'], PATHINFO_EXTENSION));
+    if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) return null;
+
+    $dir = uploadsEnsureSubdir('produtos');
+    if (!is_dir($dir)) mkdir($dir, 0775, true);
+
+    $name = uniqid('prod_', true) . '.' . $ext;
+    $dest = $dir . DIRECTORY_SEPARATOR . $name;
+
+    if (!move_uploaded_file((string)$file['tmp_name'], $dest)) return null;
+
+    return '/uploads/produtos/' . $name;
+}
+
+function brToFloat(string $v): float {
+    $v = trim($v);
+    if ($v === '') return 0.0;
+    $v = str_replace('.', '', $v);
+    $v = str_replace(',', '.', $v);
+    return (float)preg_replace('/[^\d.]/', '', $v);
+}
+
+$id = (int)($_GET['id'] ?? 0);
+$produto = $id > 0 ? obterProdutoPorId($conn, $id) : null;
+
+$categorias = listarCategoriasProdutoAtivas($conn);
+$vendedores = listarVendedoresAprovados($conn);
+
+$erro = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $idPost = (int)($_POST['id'] ?? 0);
+
+    $imagemNova = salvarImagemProdutoForm($_FILES['imagem'] ?? []);
+    $imagemAtual = (string)($_POST['imagem_atual'] ?? '');
+    $imagemFinal = $imagemNova ?: $imagemAtual;
+
+    $preco = isset($_POST['preco']) ? (float)$_POST['preco'] : brToFloat((string)($_POST['preco_display'] ?? '0,00'));
+
+    [$ok, $msg] = salvarProduto(
+        $conn,
+        $idPost,
+        (int)($_POST['vendedor_id'] ?? 0),
+        (int)($_POST['categoria_id'] ?? 0),
+        (string)($_POST['nome'] ?? ''),
+        (string)($_POST['descricao'] ?? ''),
+        $preco,
+        $imagemFinal
+    );
+
+    if ($ok) {
+        header('Location: produtos.php');
+        exit;
+    }
+    $erro = $msg;
+}
+
+$pageTitle = $produto ? 'Editar Produto' : 'Novo Produto';
+$activeMenu = 'produtos';
+$topActions = [['label' => 'Voltar', 'href' => 'produtos.php']];
+$subnavItems = [
+    ['label' => 'Listar', 'href' => 'produtos.php', 'active' => false],
+    ['label' => $produto ? 'Editar' : 'Adicionar', 'href' => '#', 'active' => true],
+];
+
+include __DIR__ . '/../../views/partials/header.php';
+include __DIR__ . '/../../views/partials/admin_layout_start.php';
+
+$imgAtual = produtoImagemUrlForm($produto['imagem'] ?? '');
+$precoInicial = isset($produto['preco']) ? number_format((float)$produto['preco'], 2, ',', '.') : '0,00';
+?>
+
+<div class="max-w-3xl mx-auto bg-blackx2 border border-blackx3 rounded-xl p-5">
+    <?php if ($erro): ?>
+        <div class="mb-4 rounded-lg border border-red-500/60 text-red-300 px-3 py-2">
+            <?= htmlspecialchars($erro) ?>
+        </div>
+    <?php endif; ?>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+        <?php if ($produto): ?>
+            <input type="hidden" name="id" value="<?= (int)$produto['id'] ?>">
+        <?php endif; ?>
+        <input type="hidden" name="imagem_atual" value="<?= htmlspecialchars((string)($produto['imagem'] ?? '')) ?>">
+        <input type="hidden" id="preco" name="preco" value="<?= htmlspecialchars(str_replace(',', '.', str_replace('.', '', $precoInicial))) ?>">
+
+        <div>
+            <label class="block text-sm mb-1 text-zinc-300">Vendedor</label>
+            <select name="vendedor_id" required class="w-full rounded-lg bg-blackx border border-blackx3 px-3 py-2">
+                <option value="">Selecione o vendedor</option>
+                <?php foreach ($vendedores as $v): ?>
+                    <option value="<?= (int)$v['id'] ?>" <?= (int)($produto['vendedor_id'] ?? 0) === (int)$v['id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($v['nome']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1 text-zinc-300">Categoria</label>
+            <select name="categoria_id" required class="w-full rounded-lg bg-blackx border border-blackx3 px-3 py-2">
+                <option value="">Selecione a categoria</option>
+                <?php foreach ($categorias as $c): ?>
+                    <option value="<?= (int)$c['id'] ?>" <?= (int)($produto['categoria_id'] ?? 0) === (int)$c['id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($c['nome']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1 text-zinc-300">Nome</label>
+            <input name="nome" maxlength="120" required
+                   value="<?= htmlspecialchars((string)($produto['nome'] ?? '')) ?>"
+                   class="w-full rounded-lg bg-blackx border border-blackx3 px-3 py-2"
+                   placeholder="Nome do produto">
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1 text-zinc-300">Descrição</label>
+            <textarea name="descricao" rows="4"
+                      class="w-full rounded-lg bg-blackx border border-blackx3 px-3 py-2"
+                      placeholder="Descrição"><?= htmlspecialchars((string)($produto['descricao'] ?? '')) ?></textarea>
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1 text-zinc-300">Valor (R$)</label>
+            <input id="preco_display" name="preco_display" type="text" inputmode="numeric"
+                   value="<?= htmlspecialchars($precoInicial) ?>"
+                   class="w-full rounded-lg bg-blackx border border-blackx3 px-3 py-2"
+                   placeholder="0,00">
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1 text-zinc-300">Imagem</label>
+            <input id="imagemInput" type="file" name="imagem" accept=".jpg,.jpeg,.png,.webp"
+                   class="w-full rounded-lg bg-blackx border border-blackx3 px-3 py-2">
+            <img id="imgPreview"
+                 src="<?= htmlspecialchars($imgAtual) ?>"
+                 class="mt-2 h-24 w-24 object-cover rounded border border-blackx3 <?= $imgAtual ? '' : 'hidden' ?>">
+        </div>
+
+        <div class="pt-2">
+            <button type="submit" class="rounded-lg bg-greenx text-black font-semibold px-5 py-2.5 hover:opacity-90">
+                Salvar
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+(function () {
+    const display = document.getElementById('preco_display');
+    const hidden = document.getElementById('preco');
+
+    function onlyDigits(v) { return (v || '').replace(/\D/g, ''); }
+    function formatBRLFromDigits(digits) {
+        if (!digits) return '0,00';
+        const num = Number(digits) / 100;
+        return num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function brlToFloat(brl) {
+        const s = (brl || '').replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, '');
+        const n = Number(s || 0);
+        return n.toFixed(2);
+    }
+
+    if (display && hidden) {
+        const init = onlyDigits(display.value);
+        display.value = formatBRLFromDigits(init);
+        hidden.value = brlToFloat(display.value);
+
+        display.addEventListener('input', function () {
+            const d = onlyDigits(display.value);
+            display.value = formatBRLFromDigits(d);
+            hidden.value = brlToFloat(display.value);
+        });
+    }
+
+    const input = document.getElementById('imagemInput');
+    const preview = document.getElementById('imgPreview');
+
+    if (input && preview) {
+        input.addEventListener('change', function () {
+            const file = input.files && input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = String(e.target?.result || '');
+                preview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+})();
+</script>
+
+<?php
+include __DIR__ . '/../../views/partials/admin_layout_end.php';
+include __DIR__ . '/../../views/partials/footer.php';

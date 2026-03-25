@@ -1,0 +1,8 @@
+# File: /mercado_admin/mercado_admin/.htaccess
+
+Options +FollowSymLinks
+RewriteEngine On
+
+# Redirect to the public directory
+RewriteRule ^$ public/ [L]
+RewriteRule (.*) public/$1 [L]

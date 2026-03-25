@@ -1,0 +1,191 @@
+<?php
+// filepath: c:\xampp\htdocs\mercado_admin\views\partials\header.php
+declare(strict_types=1);
+require_once __DIR__ . '/../../src/config.php';
+require_once __DIR__ . '/../../src/theme.php';
+require_once __DIR__ . '/../../src/db.php';
+
+// Load active theme
+try {
+    $_themeConn = (new Database())->connect();
+} catch (\Throwable $_dbErr) {
+    error_log('[header.php] DB connect failed: ' . $_dbErr->getMessage());
+    $_themeConn = null;
+}
+
+// One-time migration: switch to Basefy theme with dark mode
+if ($_themeConn !== null) {
+    try {
+        $_migFlag = themeSettingGet($_themeConn, '_migrated_basefy_v1', '');
+        if ($_migFlag === '') {
+            themeSettingSet($_themeConn, 'active_theme', 'basefy');
+            themeSettingSet($_themeConn, 'color_mode', 'dark');
+            themeSettingSet($_themeConn, '_migrated_basefy_v1', '1');
+        }
+    } catch (\Throwable $_migErr) {}
+}
+
+if ($_themeConn !== null) {
+    try {
+        $_activeTheme = themeGetActive($_themeConn);
+    } catch (\Throwable $_thErr) {
+        $_activeTheme = ['colors' => ['blackx'=>'#0E0324','blackx2'=>'#160636','blackx3'=>'#221048','greenx'=>'#8800E4','greenx2'=>'#7200C0','greenxd'=>'#6200AA'], 'color_mode' => 'dark'];
+    }
+} else {
+    $_activeTheme = ['colors' => ['blackx'=>'#0E0324','blackx2'=>'#160636','blackx3'=>'#221048','greenx'=>'#8800E4','greenx2'=>'#7200C0','greenxd'=>'#6200AA'], 'color_mode' => 'dark'];
+}
+$_activeThemeKey = (string)($_activeTheme['active_theme'] ?? 'green');
+$_themeColors = $_activeTheme['colors'];
+$_themeMode   = $_activeTheme['color_mode'];
+
+if ($_themeConn !== null) {
+    try {
+        $_twColors = themeTailwindColors($_themeConn);
+    } catch (\Throwable $_twErr) {
+        $_twColors = ['blackx'=>'#0E0324','blackx2'=>'#160636','blackx3'=>'#221048','greenx'=>'#8800E4','greenx2'=>'#7200C0','greenxd'=>'#6200AA'];
+    }
+} else {
+    $_twColors = ['blackx'=>'#0E0324','blackx2'=>'#160636','blackx3'=>'#221048','greenx'=>'#8800E4','greenx2'=>'#7200C0','greenxd'=>'#6200AA'];
+}
+?>
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="<?= htmlspecialchars($_activeThemeKey, ENT_QUOTES, 'UTF-8') ?>"<?= $_themeMode === 'light' ? ' class="light-mode"' : '' ?>>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title><?= htmlspecialchars($pageTitle ?? APP_NAME) ?></title>
+  <meta name="description" content="Marketplace digital com pagamento via PIX e carteira integrada.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Montserrat', 'sans-serif'] },
+          colors: {
+            blackx: '<?= $_twColors['blackx'] ?>',
+            blackx2: '<?= $_twColors['blackx2'] ?>',
+            blackx3: '<?= $_twColors['blackx3'] ?>',
+            greenx: '<?= $_twColors['greenx'] ?>',
+            greenx2: '<?= $_twColors['greenx2'] ?>',
+            greenxd: '<?= $_twColors['greenxd'] ?>'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    <?php if ($_themeConn !== null): try { echo themeRenderCSSVars($_themeConn); } catch (\Throwable $_cssErr) {} endif; ?>
+  </style>
+  <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/themes.css">
+  <style>
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    @keyframes pulse-green { 0%, 100% { box-shadow: 0 0 0 0 rgba(var(--t-pulse-rgb),0.3); } 50% { box-shadow: 0 0 0 8px rgba(var(--t-pulse-rgb),0); } }
+    .animate-fade-in-up { animation: fadeInUp 0.5s ease-out both; }
+    .animate-fade-in { animation: fadeIn 0.4s ease-out both; }
+    .animate-scale-in { animation: scaleIn 0.3s ease-out both; }
+    .stagger-1 { animation-delay: 0.05s; }
+    .stagger-2 { animation-delay: 0.1s; }
+    .stagger-3 { animation-delay: 0.15s; }
+    .stagger-4 { animation-delay: 0.2s; }
+    .stagger-5 { animation-delay: 0.25s; }
+    .stagger-6 { animation-delay: 0.3s; }
+    .stagger-7 { animation-delay: 0.35s; }
+    .stagger-8 { animation-delay: 0.4s; }
+    .shimmer-bg { background: linear-gradient(90deg,transparent,rgba(255,255,255,0.03),transparent); background-size: 200% 100%; animation: shimmer 3s infinite; }
+    .pulse-green { animation: pulse-green 2s ease-in-out infinite; }
+    /* Page transition loader */
+    #page-loader{position:fixed;top:0;left:0;width:100%;height:3px;z-index:99999;pointer-events:none;opacity:0;transition:opacity .15s}
+    #page-loader.active{opacity:1}
+    #page-loader .bar{height:100%;background:linear-gradient(90deg,var(--t-accent,#8800E4),var(--t-gradient-to,var(--t-accent-hover,#7200C0)),var(--t-accent,#8800E4));background-size:200% 100%;animation:loaderSlide 1.2s ease-in-out infinite;width:0;border-radius:0 2px 2px 0;transition:width .3s ease}
+    @keyframes loaderSlide{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .product-card { transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; position: relative; }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px -8px rgba(0,0,0,0.5), 0 0 0 1px rgba(var(--t-accent-rgb),0.15); }
+    .product-card img { transition: transform 0.4s ease; }
+    .product-card:hover img { transform: scale(1.05); }
+    .line-clamp-2 { display: -webkit-box !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; text-overflow: ellipsis; }
+    .glass { background: rgba(18,19,22,0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type="number"] { -moz-appearance: textfield; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--t-bg-body); }
+    ::-webkit-scrollbar-thumb { background: var(--t-bg-border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--t-scrollbar-hover); }
+  </style>
+</head>
+<body class="min-h-screen bg-blackx text-white font-sans antialiased">
+<script>
+/* Real-time theme toggle — no page reload */
+function toggleThemeMode(){
+  var isLight = document.documentElement.classList.contains('light-mode');
+  var newMode = isLight ? 'dark' : 'light';
+  fetch('<?= BASE_PATH ?>/api/theme_toggle.php',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({mode:newMode})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if(!data.ok) return;
+    // Toggle light-mode class
+    if(newMode==='light'){
+      document.documentElement.classList.add('light-mode');
+    } else {
+      document.documentElement.classList.remove('light-mode');
+    }
+    // Apply CSS custom properties
+    var c = data.active.colors;
+    var root = document.documentElement.style;
+    Object.keys(c).forEach(function(k){
+      root.setProperty('--t-'+k.replace(/_/g,'-'), c[k]);
+    });
+    root.setProperty('--t-mode', newMode);
+    // Update Tailwind colors
+    if(data.tailwind && window.tailwind){
+      tailwind.config.theme.extend.colors.blackx  = data.tailwind.blackx;
+      tailwind.config.theme.extend.colors.blackx2 = data.tailwind.blackx2;
+      tailwind.config.theme.extend.colors.blackx3 = data.tailwind.blackx3;
+      tailwind.config.theme.extend.colors.greenx  = data.tailwind.greenx;
+      tailwind.config.theme.extend.colors.greenx2 = data.tailwind.greenx2;
+      tailwind.config.theme.extend.colors.greenxd = data.tailwind.greenxd;
+    }
+    // Toggle icons (sun/moon)
+    document.querySelectorAll('.theme-icon-sun').forEach(function(el){ el.style.display = newMode==='light'?'none':'block'; });
+    document.querySelectorAll('.theme-icon-moon').forEach(function(el){ el.style.display = newMode==='light'?'block':'none'; });
+  })
+  .catch(function(e){ console.error('Theme toggle failed',e); });
+}
+/* Switch active theme (green/blue) — real-time */
+function switchTheme(themeName){
+  fetch('<?= BASE_PATH ?>/api/theme_toggle.php',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({theme:themeName})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if(!data.ok) return;
+    var c = data.active.colors;
+    var root = document.documentElement.style;
+    Object.keys(c).forEach(function(k){
+      root.setProperty('--t-'+k.replace(/_/g,'-'), c[k]);
+    });
+    if(data.tailwind && window.tailwind){
+      tailwind.config.theme.extend.colors.blackx  = data.tailwind.blackx;
+      tailwind.config.theme.extend.colors.blackx2 = data.tailwind.blackx2;
+      tailwind.config.theme.extend.colors.blackx3 = data.tailwind.blackx3;
+      tailwind.config.theme.extend.colors.greenx  = data.tailwind.greenx;
+      tailwind.config.theme.extend.colors.greenx2 = data.tailwind.greenx2;
+      tailwind.config.theme.extend.colors.greenxd = data.tailwind.greenxd;
+    }
+  })
+  .catch(function(e){ console.error('Theme switch failed',e); });
+}
+</script>

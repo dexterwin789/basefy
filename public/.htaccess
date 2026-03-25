@@ -1,0 +1,23 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # --- Redirect /index.php to / ---
+    RewriteCond %{THE_REQUEST} /index\.php[\s?] [NC]
+    RewriteRule ^index\.php/?$ / [R=301,L]
+
+    # --- Redirect any .php URL to clean version (GET only) ---
+    RewriteCond %{THE_REQUEST} \s/+(.+?)\.php[\s?] [NC]
+    RewriteRule ^ /%1 [R=301,L]
+
+    # --- Existing files/directories: serve directly ---
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # --- Clean URL → .php file ---
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^ %{REQUEST_URI}.php [L]
+
+    # --- Fallback to index.php ---
+    RewriteRule ^ index.php [L]
+</IfModule>

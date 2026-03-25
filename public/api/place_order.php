@@ -1,0 +1,230 @@
+<?php
+declare(strict_types=1);
+header('Content-Type: application/json; charset=utf-8');
+
+// Debug log helper — writes to /storage/logs/checkout_debug.log
+function _checkoutLog(string $step, array $data = []): void
+{
+    $logDir = __DIR__ . '/../../storage/logs';
+    if (!is_dir($logDir)) @mkdir($logDir, 0777, true);
+    $line = date('Y-m-d H:i:s') . " [{$step}] " . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n";
+    @file_put_contents($logDir . '/checkout_debug.log', $line, FILE_APPEND | LOCK_EX);
+}
+
+try {
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+
+    require_once __DIR__ . '/../../src/db.php';
+    require_once __DIR__ . '/../../src/auth.php';
+    require_once __DIR__ . '/../../src/config.php';
+    require_once __DIR__ . '/../../src/storefront.php';
+    require_once __DIR__ . '/../../src/blackcat_api.php';
+
+    _checkoutLog('START', ['method' => $_SERVER['REQUEST_METHOD'], 'session_user' => $_SESSION['user_id'] ?? null]);
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        echo json_encode(['ok' => false, 'error' => 'POST only']);
+        exit;
+    }
+
+    if (!usuarioLogado()) {
+        http_response_code(401);
+        echo json_encode(['ok' => false, 'error' => 'Não autenticado']);
+        exit;
+    }
+
+    $userId = (int)($_SESSION['user_id'] ?? 0);
+    if ($userId <= 0) {
+        http_response_code(401);
+        echo json_encode(['ok' => false, 'error' => 'User ID inválido']);
+        exit;
+    }
+
+    $conn = (new Database())->connect();
+    $useWallet = ((string)($_POST['use_wallet'] ?? '0')) === '1';
+
+    _checkoutLog('CREATE_ORDER', ['userId' => $userId, 'useWallet' => $useWallet]);
+
+    [$ok, $msg, $result] = sfCreateOrderFromCart($conn, $userId, $useWallet);
+
+    _checkoutLog('ORDER_RESULT', ['ok' => $ok, 'msg' => $msg, 'result' => $result]);
+
+    if (!$ok) {
+        echo json_encode(['ok' => false, 'error' => $msg]);
+        exit;
+    }
+
+    $orderId  = (int)($result['order_id'] ?? 0);
+    $pixTotal = (float)($result['pix_total'] ?? 0);
+
+    if ($orderId <= 0) {
+        echo json_encode(['ok' => false, 'error' => 'Pedido criado sem ID.']);
+        exit;
+    }
+
+    // Fully paid with wallet — no PIX needed
+    if ($pixTotal <= 0) {
+        _checkoutLog('WALLET_FULL', ['orderId' => $orderId]);
+
+        // Get the chat conversation ID (created by escrowInitializeOrderItems → chatAutoOpenAfterPurchase)
+        $chatConvId = 0;
+        try {
+            require_once __DIR__ . '/../../src/chat.php';
+            $stConvItem = $conn->prepare("SELECT oi.vendedor_id, oi.product_id FROM order_items oi WHERE oi.order_id = ? AND oi.vendedor_id IS NOT NULL AND oi.vendedor_id > 0 ORDER BY oi.id ASC LIMIT 1");
+            if ($stConvItem) {
+                $stConvItem->bind_param('i', $orderId);
+                $stConvItem->execute();
+                $convItemRow = $stConvItem->get_result()->fetch_assoc();
+                $stConvItem->close();
+                if ($convItemRow) {
+                    $convVendor = (int)$convItemRow['vendedor_id'];
+                    $convProduct = (int)($convItemRow['product_id'] ?? 0);
+                    $convCheck = chatGetOrCreateConversation($conn, $userId, $convVendor, $convProduct > 0 ? $convProduct : null);
+                    if ($convCheck) $chatConvId = (int)$convCheck['id'];
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        $basePath = defined('BASE_PATH') ? BASE_PATH : '';
+        $redirectUrl = $basePath . '/pedido_detalhes?id=' . $orderId
+            . ($chatConvId > 0 ? '&open_chat=' . $chatConvId : '');
+
+        echo json_encode([
+            'ok' => true,
+            'pix' => false,
+            'orderId' => $orderId,
+            'chatConvId' => $chatConvId,
+            'redirect' => $redirectUrl,
+            'message' => 'Pedido pago com saldo da carteira!',
+        ]);
+        exit;
+    }
+
+    // ----- Generate PIX -----
+    _checkoutLog('PIX_START', ['orderId' => $orderId, 'pixTotal' => $pixTotal]);
+
+    $stU = $conn->prepare('SELECT nome, email FROM users WHERE id=? LIMIT 1');
+    $stU->bind_param('i', $userId);
+    $stU->execute();
+    $buyer = $stU->get_result()->fetch_assoc() ?: ['nome' => 'Cliente', 'email' => 'c@l.com'];
+    $stU->close();
+
+    $amountCentavos = (int)round($pixTotal * 100);
+    $externalRef = 'order:' . $orderId;
+
+    $payload = [
+        'amount'        => $amountCentavos,
+        'currency'      => 'BRL',
+        'paymentMethod' => 'pix',
+        'items'         => [[
+            'title'     => 'Pedido #' . $orderId,
+            'unitPrice' => $amountCentavos,
+            'quantity'  => 1,
+            'tangible'  => false,
+        ]],
+        'customer' => [
+            'name'     => (string)$buyer['nome'],
+            'email'    => (string)$buyer['email'],
+            'phone'    => '11999999999',
+            'document' => ['number' => '00000000000', 'type' => 'cpf'],
+        ],
+        'pix'         => ['expiresInDays' => 1],
+        'postbackUrl' => APP_URL . '/webhooks/blackcat',
+        'externalRef' => $externalRef,
+        'metadata'    => 'Pedido #' . $orderId,
+    ];
+
+    [$okApi, $resp] = blackcatCreatePixSale($payload);
+
+    _checkoutLog('BLACKCAT_RESP', [
+        'okApi' => $okApi,
+        'respKeys' => array_keys($resp ?? []),
+        'dataKeys' => array_keys($resp['data'] ?? []),
+        'paymentDataKeys' => array_keys($resp['data']['paymentData'] ?? []),
+    ]);
+
+    if (!$okApi) {
+        _checkoutLog('BLACKCAT_FAIL', ['resp' => $resp]);
+        echo json_encode([
+            'ok' => false,
+            'error' => 'Erro BlackCat: ' . (string)($resp['message'] ?? 'Desconhecido'),
+            'orderId' => $orderId,
+            'debug' => ['respKeys' => array_keys($resp ?? [])],
+        ]);
+        exit;
+    }
+
+    $data   = $resp['data'] ?? [];
+    $provId = (string)($data['transactionId'] ?? '');
+    $st     = strtoupper((string)($data['status'] ?? 'PENDING'));
+    $rawJ   = json_encode($resp, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+    // Store in DB (non-fatal if fails)
+    try {
+        $ins = $conn->prepare("INSERT INTO payment_transactions
+            (provider, order_id, user_id, external_ref, provider_transaction_id, status, payment_method, amount_centavos, raw_response)
+            VALUES ('blackcat', ?, ?, ?, ?, ?, 'pix', ?, ?)
+            ON DUPLICATE KEY UPDATE status=VALUES(status), raw_response=VALUES(raw_response), updated_at=CURRENT_TIMESTAMP");
+        $ins->bind_param('iisssis', $orderId, $userId, $externalRef, $provId, $st, $amountCentavos, $rawJ);
+        $ins->execute();
+    } catch (Throwable $dbErr) {
+        _checkoutLog('DB_INSERT_ERR', ['msg' => $dbErr->getMessage()]);
+    }
+
+    // Extract QR data
+    $pd  = (array)($data['paymentData'] ?? $resp['paymentData'] ?? []);
+    $b64 = (string)($pd['qrCodeBase64'] ?? '');
+    $qrUrl = (string)($pd['qrCodeUrl'] ?? '');
+    $copyPaste = (string)($pd['pixCode'] ?? $pd['qrCode'] ?? $pd['copyPaste'] ?? '');
+
+    $qrImage = '';
+    if ($b64 !== '') {
+        $qrImage = str_starts_with($b64, 'data:') ? $b64 : ('data:image/png;base64,' . $b64);
+    } elseif ($qrUrl !== '') {
+        $qrImage = $qrUrl;
+    }
+
+    _checkoutLog('PIX_EXTRACTED', [
+        'b64len' => strlen($b64),
+        'qrUrl' => $qrUrl,
+        'copyPasteLen' => strlen($copyPaste),
+        'qrImageLen' => strlen($qrImage),
+        'pdKeys' => array_keys($pd),
+    ]);
+
+    if ($qrImage === '') {
+        echo json_encode([
+            'ok' => false,
+            'error' => 'PIX gerado mas sem QR Code.',
+            'orderId' => $orderId,
+            'debug' => [
+                'pdKeys' => array_keys($pd),
+                'dataKeys' => array_keys($data),
+                'b64empty' => $b64 === '',
+                'qrUrlEmpty' => $qrUrl === '',
+            ],
+        ]);
+        exit;
+    }
+
+    _checkoutLog('SUCCESS', ['orderId' => $orderId, 'qrImageLen' => strlen($qrImage)]);
+
+    echo json_encode([
+        'ok' => true,
+        'pix' => true,
+        'orderId' => $orderId,
+        'valor' => $pixTotal,
+        'qrImage' => $qrImage,
+        'copyPaste' => $copyPaste,
+    ]);
+
+} catch (Throwable $e) {
+    _checkoutLog('FATAL', ['msg' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine(), 'trace' => $e->getTraceAsString()]);
+    http_response_code(500);
+    echo json_encode([
+        'ok' => false,
+        'error' => 'Erro interno: ' . $e->getMessage(),
+        'debug' => ['file' => basename($e->getFile()), 'line' => $e->getLine()],
+    ]);
+}

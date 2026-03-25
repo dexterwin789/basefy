@@ -1,0 +1,65 @@
+body {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+}
+
+a {
+    color: #00ff00; /* Green highlight color */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header, .footer {
+    background-color: #111111;
+    padding: 10px;
+    text-align: center;
+}
+
+.button {
+    background-color: #00ff00; /* Green button */
+    color: #000000;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #00cc00; /* Darker green on hover */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #444444;
+    border-radius: 5px;
+    background-color: #222222;
+    color: #ffffff;
+}
+
+.input:focus {
+    border-color: #00ff00; /* Green focus border */
+    outline: none;
+}
+
+.alert {
+    background-color: #ff0000; /* Red alert background */
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
