@@ -318,17 +318,19 @@ include __DIR__ . '/../../views/partials/admin_layout_start.php';
 </div>
 
 <!-- Details Modal -->
-<div id="verifModal" class="fixed inset-0 z-50 hidden overflow-y-auto" style="overscroll-behavior:contain">
-  <div class="fixed inset-0 bg-black/70 backdrop-blur-sm" onclick="closeVerifModal()"></div>
-  <div class="relative min-h-full flex items-start justify-center p-4 md:p-8">
-    <div class="relative w-full max-w-5xl bg-blackx2 border border-blackx3 rounded-2xl shadow-2xl" onclick="event.stopPropagation()">
-      <div class="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-blackx3 bg-blackx2 rounded-t-2xl">
-        <h2 class="text-lg font-bold flex items-center gap-2"><i data-lucide="shield-check" class="w-5 h-5 text-purple-400"></i> Detalhes da Verificação</h2>
-        <button onclick="closeVerifModal()" class="w-8 h-8 rounded-lg border border-blackx3 flex items-center justify-center text-zinc-400 hover:text-white hover:border-red-400 transition">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
+<div id="verifModal" class="hidden" style="position:fixed;inset:0;z-index:9999">
+  <div style="position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px)" onclick="closeVerifModal()"></div>
+  <div style="position:fixed;inset:0;overflow-y:auto;display:flex;justify-content:center;padding:1rem" onclick="closeVerifModal()">
+    <div style="position:relative;width:100%;max-width:64rem;margin:auto 0;flex-shrink:0" onclick="event.stopPropagation()">
+      <div class="bg-blackx2 border border-blackx3 rounded-2xl shadow-2xl">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-blackx3">
+          <h2 class="text-lg font-bold flex items-center gap-2"><i data-lucide="shield-check" class="w-5 h-5 text-purple-400"></i> Detalhes da Verificação</h2>
+          <button onclick="closeVerifModal()" class="w-8 h-8 rounded-lg border border-blackx3 flex items-center justify-center text-zinc-400 hover:text-white hover:border-red-400 transition">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div id="verifModalBody" class="p-4 md:p-6 space-y-5"></div>
       </div>
-      <div id="verifModalBody" class="p-4 md:p-6 space-y-5"></div>
     </div>
   </div>
 </div>
@@ -489,6 +491,12 @@ function escHtml(s) { var d = document.createElement('div'); d.textContent = s; 
 function escAttr(s) { return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeVerifModal(); });
+
+// Move modal to body root so no parent overflow:hidden can clip it
+document.addEventListener('DOMContentLoaded', function() {
+    var m = document.getElementById('verifModal');
+    if (m) document.body.appendChild(m);
+});
 </script>
 
 <?php include __DIR__ . '/../../views/partials/admin_layout_end.php'; include __DIR__ . '/../../views/partials/footer.php'; ?>
