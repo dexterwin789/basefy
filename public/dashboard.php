@@ -113,9 +113,9 @@ include __DIR__ . '/../views/partials/user_layout_start.php';
   <div class="bg-blackx2 border border-blackx3 rounded-2xl p-4">
     <h3 class="font-semibold mb-3">Ações rápidas</h3>
     <div class="flex flex-wrap gap-2">
-      <a href="/mercado_admin/public/meus_pedidos.php" class="rounded-xl border border-blackx3 px-3 py-2 text-sm hover:border-greenx transition">Ver meus pedidos</a>
-      <a href="/mercado_admin/public/wallet.php" class="rounded-xl border border-blackx3 px-3 py-2 text-sm hover:border-greenx transition">Abrir carteira</a>
-      <a href="/mercado_admin/public/minha_conta.php" class="rounded-xl border border-blackx3 px-3 py-2 text-sm hover:border-greenx transition">Atualizar conta</a>
+      <a href="<?= BASE_PATH ?>/meus_pedidos" class="rounded-xl border border-blackx3 px-3 py-2 text-sm hover:border-greenx transition">Ver meus pedidos</a>
+      <a href="<?= BASE_PATH ?>/wallet" class="rounded-xl border border-blackx3 px-3 py-2 text-sm hover:border-greenx transition">Abrir carteira</a>
+      <a href="<?= BASE_PATH ?>/minha-conta" class="rounded-xl border border-blackx3 px-3 py-2 text-sm hover:border-greenx transition">Atualizar conta</a>
     </div>
   </div>
 

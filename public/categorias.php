@@ -48,24 +48,10 @@ $cartCount = sfCartCount();
 
 // Count products per category (for grid view)
 $catCounts = [];
-$catImages = [];
 if ($showCategoryGrid) {
     $rs = $conn->query("SELECT categoria_id, COUNT(*) AS total FROM products WHERE ativo = 1 GROUP BY categoria_id");
     while ($rs && ($r = $rs->fetch_assoc())) {
         $catCounts[(int)$r['categoria_id']] = (int)$r['total'];
-    }
-    // Fetch a representative product image per category
-    $cols = sfProductColumns($conn);
-    $imgCol = $cols['image'] ?? 'imagem';
-    $actCol = $cols['active'] ?? 'ativo';
-    $catCol = $cols['category'] ?? 'categoria_id';
-    $imgRs = $conn->query("SELECT DISTINCT ON ({$catCol}) {$catCol} AS cid, {$imgCol} AS img FROM products WHERE {$actCol} = 1 AND {$imgCol} IS NOT NULL AND {$imgCol} != '' ORDER BY {$catCol}, id DESC");
-    if (!$imgRs) {
-        // Fallback for MySQL (no DISTINCT ON)
-        $imgRs = $conn->query("SELECT p.{$catCol} AS cid, p.{$imgCol} AS img FROM products p INNER JOIN (SELECT {$catCol}, MAX(id) AS mid FROM products WHERE {$actCol} = 1 AND {$imgCol} IS NOT NULL AND {$imgCol} != '' GROUP BY {$catCol}) t ON p.id = t.mid");
-    }
-    while ($imgRs && ($ir = $imgRs->fetch_assoc())) {
-        $catImages[(int)$ir['cid']] = sfImageUrl((string)($ir['img'] ?? ''));
     }
 }
 
@@ -176,7 +162,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
             <a href="<?= $catLink ?>"
                class="group relative bg-blackx2 border border-white/[0.06] rounded-2xl overflow-hidden hover:border-greenx/30 transition-all animate-fade-in-up stagger-<?= min($ci + 1, 8) ?>">
                 <div class="aspect-square flex flex-col items-center justify-center gap-3 p-4 bg-gradient-to-br <?= $grad ?> group-hover:scale-105 transition-transform duration-300 relative">
-                    <?php $catImg = $catImages[(int)$cat['id']] ?? ''; if ($catImg !== '' && !str_contains($catImg, 'placehold.co')): ?>
+                    <?php $catImg = sfImageUrl((string)($cat['imagem'] ?? '')); if ($catImg !== '' && !str_contains($catImg, 'placehold.co')): ?>
                     <img src="<?= htmlspecialchars($catImg, ENT_QUOTES, 'UTF-8') ?>" alt="" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-300">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
                     <?php endif; ?>

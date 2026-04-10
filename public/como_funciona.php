@@ -78,28 +78,13 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     </section>
 
     <!-- =========== TABS: Comprador / Vendedor =========== -->
-    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-20" x-data="{ tab: 'comprador' }">
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-20">
 
-        <!-- Tab switcher -->
-        <div class="flex justify-center mb-12 cf-fade-in cf-delay-1">
-            <div class="inline-flex rounded-2xl bg-blackx2 border border-blackx3 p-1.5 shadow-xl shadow-black/30">
-                <button @click="tab='comprador'" class="relative flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-semibold transition-all"
-                    :class="tab==='comprador' ? 'bg-gradient-to-r from-greenx to-greenxd text-white shadow-lg shadow-greenx/25' : 'text-zinc-400 hover:text-white'">
-                    <i data-lucide="shopping-bag" class="w-4 h-4"></i> Quero Comprar
-                </button>
-                <button @click="tab='vendedor'" class="relative flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-semibold transition-all"
-                    :class="tab==='vendedor' ? 'bg-gradient-to-r from-greenx to-greenxd text-white shadow-lg shadow-greenx/25' : 'text-zinc-400 hover:text-white'">
-                    <i data-lucide="store" class="w-4 h-4"></i> Quero Vender
-                </button>
-            </div>
-        </div>
-
-        <!-- ═══ PROCESSO DO COMPRADOR ═══ -->
-        <div x-show="tab==='comprador'" x-transition.opacity.duration.300ms>
+        <!-- ═══ PROCESSO UNIFICADO ═══ -->
             <div class="grid gap-8 md:gap-6">
 
                 <!-- Step 1 -->
-                <div class="cf-fade-in cf-delay-2">
+                <div class="cf-fade-in cf-delay-1">
                     <div class="flex flex-col md:flex-row items-start gap-5 bg-blackx2/80 border border-blackx3 rounded-2xl p-6 md:p-8 cf-card cf-glow hover:border-greenx/30 transition-all">
                         <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-greenx/20 to-greenx/5 border border-greenx/20 flex items-center justify-center cf-float">
                             <span class="text-greenx font-black text-xl">1</span>
@@ -111,21 +96,21 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                             </div>
                             <p class="text-zinc-400 text-sm leading-relaxed">
                                 Registre-se em poucos segundos. Basta informar nome, e-mail e criar uma senha. 
-                                Você também pode usar o Google para login rápido. Sem taxas, sem burocracia.
+                                Você também pode usar o Google para login rápido. Com uma única conta, você compra e vende na plataforma.
                             </p>
                             <div class="mt-4 flex flex-wrap gap-2">
                                 <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="zap" class="w-3 h-3"></i> Cadastro rápido</span>
                                 <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="shield-check" class="w-3 h-3"></i> 100% gratuito</span>
+                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="repeat" class="w-3 h-3"></i> Compre e venda com a mesma conta</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Connector -->
                 <div class="flex justify-center"><div class="w-px h-8 bg-gradient-to-b from-greenx/30 to-transparent"></div></div>
 
                 <!-- Step 2 -->
-                <div class="cf-fade-in cf-delay-3">
+                <div class="cf-fade-in cf-delay-2">
                     <div class="flex flex-col md:flex-row items-start gap-5 bg-blackx2/80 border border-blackx3 rounded-2xl p-6 md:p-8 cf-card cf-glow hover:border-greenx/30 transition-all">
                         <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-greenx/20 to-greenx/5 border border-greenx/20 flex items-center justify-center cf-float" style="animation-delay:0.5s">
                             <span class="text-greenx font-black text-xl">2</span>
@@ -133,15 +118,18 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                         <div class="flex-1">
                             <div class="flex items-center gap-3 mb-2">
                                 <i data-lucide="search" class="w-5 h-5 text-greenx"></i>
-                                <h3 class="text-lg font-bold">Encontre o que procura</h3>
+                                <h3 class="text-lg font-bold">Explore ou cadastre produtos</h3>
                             </div>
                             <p class="text-zinc-400 text-sm leading-relaxed">
-                                Navegue pelo catálogo por categorias, pesquise por nome ou explore as lojas dos vendedores. 
-                                Cada produto tem descrição completa, fotos e avaliações de outros compradores.
+                                <strong class="text-white">Quer comprar?</strong> Navegue pelo catálogo por categorias, pesquise por nome ou explore as lojas. 
+                                Cada produto tem descrição completa, fotos e avaliações de outros compradores.<br>
+                                <strong class="text-white">Quer vender?</strong> Acesse o painel e cadastre seus produtos com descrição, imagens e preço. 
+                                Suportamos <strong class="text-zinc-300">Produto</strong>, <strong class="text-zinc-300">Dinâmico</strong> (variantes com preços diferentes) e <strong class="text-zinc-300">Serviço</strong>.
                             </p>
                             <div class="mt-4 flex flex-wrap gap-2">
                                 <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="grid-3x3" class="w-3 h-3"></i> Categorias organizadas</span>
                                 <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="star" class="w-3 h-3"></i> Avaliações reais</span>
+                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="package-plus" class="w-3 h-3"></i> Painel de vendedor</span>
                             </div>
                         </div>
                     </div>
@@ -150,7 +138,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                 <div class="flex justify-center"><div class="w-px h-8 bg-gradient-to-b from-greenx/30 to-transparent"></div></div>
 
                 <!-- Step 3 -->
-                <div class="cf-fade-in cf-delay-4">
+                <div class="cf-fade-in cf-delay-3">
                     <div class="flex flex-col md:flex-row items-start gap-5 bg-blackx2/80 border border-blackx3 rounded-2xl p-6 md:p-8 cf-card cf-glow hover:border-greenx/30 transition-all">
                         <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-greenx/20 to-greenx/5 border border-greenx/20 flex items-center justify-center cf-float" style="animation-delay:1s">
                             <span class="text-greenx font-black text-xl">3</span>
@@ -158,12 +146,12 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                         <div class="flex-1">
                             <div class="flex items-center gap-3 mb-2">
                                 <i data-lucide="credit-card" class="w-5 h-5 text-greenx"></i>
-                                <h3 class="text-lg font-bold">Pague com PIX instantâneo</h3>
+                                <h3 class="text-lg font-bold">Pague ou receba com PIX instantâneo</h3>
                             </div>
                             <p class="text-zinc-400 text-sm leading-relaxed">
-                                Adicione produtos ao carrinho e finalize com PIX. O pagamento é confirmado automaticamente 
-                                em segundos. Seu dinheiro fica protegido pelo sistema de <strong class="text-greenx">escrow</strong> — 
-                                o vendedor só recebe após a sua confirmação.
+                                As transações são feitas via PIX com confirmação automática em segundos. 
+                                O dinheiro fica protegido pelo sistema de <strong class="text-greenx">escrow</strong> — 
+                                o vendedor só recebe após a confirmação da entrega pelo comprador.
                             </p>
                             <div class="mt-4 flex flex-wrap gap-2">
                                 <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="qr-code" class="w-3 h-3"></i> PIX QR Code</span>
@@ -177,7 +165,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                 <div class="flex justify-center"><div class="w-px h-8 bg-gradient-to-b from-greenx/30 to-transparent"></div></div>
 
                 <!-- Step 4 -->
-                <div class="cf-fade-in cf-delay-5">
+                <div class="cf-fade-in cf-delay-4">
                     <div class="flex flex-col md:flex-row items-start gap-5 bg-blackx2/80 border border-blackx3 rounded-2xl p-6 md:p-8 cf-card cf-glow hover:border-greenx/30 transition-all">
                         <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-greenx/20 to-greenx/5 border border-greenx/20 flex items-center justify-center cf-float" style="animation-delay:1.5s">
                             <span class="text-greenx font-black text-xl">4</span>
@@ -188,7 +176,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                                 <h3 class="text-lg font-bold">Acompanhe e converse pelo chat</h3>
                             </div>
                             <p class="text-zinc-400 text-sm leading-relaxed">
-                                Após a compra, use o chat integrado para se comunicar diretamente com o vendedor. 
+                                Após a compra, use o chat integrado para se comunicar diretamente. 
                                 Combine detalhes da entrega, tire dúvidas e acompanhe o progresso do pedido em tempo real 
                                 pela página "Meus Pedidos".
                             </p>
@@ -203,7 +191,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                 <div class="flex justify-center"><div class="w-px h-8 bg-gradient-to-b from-greenx/30 to-transparent"></div></div>
 
                 <!-- Step 5 -->
-                <div class="cf-fade-in cf-delay-6">
+                <div class="cf-fade-in cf-delay-5">
                     <div class="flex flex-col md:flex-row items-start gap-5 bg-blackx2/80 border border-blackx3 rounded-2xl p-6 md:p-8 cf-card cf-glow hover:border-greenx/30 transition-all">
                         <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-greenx/20 to-greenx/5 border border-greenx/20 flex items-center justify-center cf-float" style="animation-delay:2s">
                             <span class="text-greenx font-black text-xl">5</span>
@@ -211,158 +199,23 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                         <div class="flex-1">
                             <div class="flex items-center gap-3 mb-2">
                                 <i data-lucide="check-circle-2" class="w-5 h-5 text-greenx"></i>
-                                <h3 class="text-lg font-bold">Confirme e avalie</h3>
+                                <h3 class="text-lg font-bold">Confirme, avalie e receba</h3>
                             </div>
                             <p class="text-zinc-400 text-sm leading-relaxed">
-                                Recebeu o produto ou serviço? Confirme a entrega no sistema. Só então o pagamento é liberado 
-                                ao vendedor. Deixe uma avaliação para ajudar outros compradores e fortalecer a comunidade.
+                                <strong class="text-white">Comprou?</strong> Confirme a entrega no sistema e deixe uma avaliação para ajudar a comunidade.<br>
+                                <strong class="text-white">Vendeu?</strong> Quando o comprador confirma, o valor é liberado para sua 
+                                <strong class="text-greenx">carteira digital</strong>. Saque via PIX a qualquer momento.
                             </p>
                             <div class="mt-4 flex flex-wrap gap-2">
                                 <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="thumbs-up" class="w-3 h-3"></i> Confirme a entrega</span>
                                 <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="star" class="w-3 h-3"></i> Avalie o vendedor</span>
+                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="wallet" class="w-3 h-3"></i> Saque via PIX</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
             </div>
-        </div>
-
-        <!-- ═══ PROCESSO DO VENDEDOR ═══ -->
-        <div x-show="tab==='vendedor'" x-transition.opacity.duration.300ms>
-            <div class="grid gap-8 md:gap-6">
-
-                <!-- Step 1 -->
-                <div class="cf-fade-in cf-delay-2">
-                    <div class="flex flex-col md:flex-row items-start gap-5 bg-blackx2/80 border border-blackx3 rounded-2xl p-6 md:p-8 cf-card cf-glow hover:border-greenx/30 transition-all">
-                        <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-greenx/20 to-greenx/5 border border-greenx/20 flex items-center justify-center cf-float">
-                            <span class="text-greenx font-black text-xl">1</span>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center gap-3 mb-2">
-                                <i data-lucide="user-plus" class="w-5 h-5 text-greenx"></i>
-                                <h3 class="text-lg font-bold">Crie sua conta de vendedor</h3>
-                            </div>
-                            <p class="text-zinc-400 text-sm leading-relaxed">
-                                Registre-se escolhendo o perfil "Vendedor". Você terá acesso ao painel exclusivo 
-                                com todas as ferramentas para gerenciar seus produtos, pedidos e finanças.
-                            </p>
-                            <div class="mt-4 flex flex-wrap gap-2">
-                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="layout-dashboard" class="w-3 h-3"></i> Painel completo</span>
-                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="bar-chart-3" class="w-3 h-3"></i> Métricas em tempo real</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex justify-center"><div class="w-px h-8 bg-gradient-to-b from-greenx/30 to-transparent"></div></div>
-
-                <!-- Step 2 -->
-                <div class="cf-fade-in cf-delay-3">
-                    <div class="flex flex-col md:flex-row items-start gap-5 bg-blackx2/80 border border-blackx3 rounded-2xl p-6 md:p-8 cf-card cf-glow hover:border-greenx/30 transition-all">
-                        <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-greenx/20 to-greenx/5 border border-greenx/20 flex items-center justify-center cf-float" style="animation-delay:0.5s">
-                            <span class="text-greenx font-black text-xl">2</span>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center gap-3 mb-2">
-                                <i data-lucide="package-plus" class="w-5 h-5 text-greenx"></i>
-                                <h3 class="text-lg font-bold">Cadastre seus produtos</h3>
-                            </div>
-                            <p class="text-zinc-400 text-sm leading-relaxed">
-                                No painel de vendedor, adicione produtos ou serviços com descrição detalhada, imagens, 
-                                preço e quantidade. Suportamos três modelos: <strong class="text-white">Produto</strong> (item com estoque), 
-                                <strong class="text-white">Dinâmico</strong> (múltiplas variantes com preços diferentes) e 
-                                <strong class="text-white">Serviço</strong> (prestação com prazo de entrega).
-                            </p>
-                            <div class="mt-4 flex flex-wrap gap-2">
-                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="package" class="w-3 h-3"></i> Produtos</span>
-                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="list-plus" class="w-3 h-3"></i> Dinâmicos</span>
-                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="briefcase" class="w-3 h-3"></i> Serviços</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex justify-center"><div class="w-px h-8 bg-gradient-to-b from-greenx/30 to-transparent"></div></div>
-
-                <!-- Step 3 -->
-                <div class="cf-fade-in cf-delay-4">
-                    <div class="flex flex-col md:flex-row items-start gap-5 bg-blackx2/80 border border-blackx3 rounded-2xl p-6 md:p-8 cf-card cf-glow hover:border-greenx/30 transition-all">
-                        <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-greenx/20 to-greenx/5 border border-greenx/20 flex items-center justify-center cf-float" style="animation-delay:1s">
-                            <span class="text-greenx font-black text-xl">3</span>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center gap-3 mb-2">
-                                <i data-lucide="bell-ring" class="w-5 h-5 text-greenx"></i>
-                                <h3 class="text-lg font-bold">Receba pedidos e notificações</h3>
-                            </div>
-                            <p class="text-zinc-400 text-sm leading-relaxed">
-                                Quando um comprador finaliza a compra, você recebe a notificação imediatamente no painel. 
-                                O valor do pedido fica retido em <strong class="text-greenx">escrow</strong> (custódia segura) até a 
-                                confirmação da entrega.
-                            </p>
-                            <div class="mt-4 flex flex-wrap gap-2">
-                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="bell" class="w-3 h-3"></i> Notificação instantânea</span>
-                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="shield" class="w-3 h-3"></i> Escrow automático</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex justify-center"><div class="w-px h-8 bg-gradient-to-b from-greenx/30 to-transparent"></div></div>
-
-                <!-- Step 4 -->
-                <div class="cf-fade-in cf-delay-5">
-                    <div class="flex flex-col md:flex-row items-start gap-5 bg-blackx2/80 border border-blackx3 rounded-2xl p-6 md:p-8 cf-card cf-glow hover:border-greenx/30 transition-all">
-                        <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-greenx/20 to-greenx/5 border border-greenx/20 flex items-center justify-center cf-float" style="animation-delay:1.5s">
-                            <span class="text-greenx font-black text-xl">4</span>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center gap-3 mb-2">
-                                <i data-lucide="send" class="w-5 h-5 text-greenx"></i>
-                                <h3 class="text-lg font-bold">Entregue o produto via chat</h3>
-                            </div>
-                            <p class="text-zinc-400 text-sm leading-relaxed">
-                                Use o chat integrado para se comunicar com o comprador e entregar o produto ou serviço. 
-                                Para itens digitais, envie as informações diretamente pelo chat. Para serviços, combine 
-                                os detalhes e marque como entregue quando finalizado.
-                            </p>
-                            <div class="mt-4 flex flex-wrap gap-2">
-                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="message-circle" class="w-3 h-3"></i> Chat integrado</span>
-                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="package-check" class="w-3 h-3"></i> Marcar como entregue</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex justify-center"><div class="w-px h-8 bg-gradient-to-b from-greenx/30 to-transparent"></div></div>
-
-                <!-- Step 5 -->
-                <div class="cf-fade-in cf-delay-6">
-                    <div class="flex flex-col md:flex-row items-start gap-5 bg-blackx2/80 border border-blackx3 rounded-2xl p-6 md:p-8 cf-card cf-glow hover:border-greenx/30 transition-all">
-                        <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-greenx/20 to-greenx/5 border border-greenx/20 flex items-center justify-center cf-float" style="animation-delay:2s">
-                            <span class="text-greenx font-black text-xl">5</span>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center gap-3 mb-2">
-                                <i data-lucide="wallet" class="w-5 h-5 text-greenx"></i>
-                                <h3 class="text-lg font-bold">Receba na sua carteira</h3>
-                            </div>
-                            <p class="text-zinc-400 text-sm leading-relaxed">
-                                Quando o comprador confirma a entrega, o valor é liberado automaticamente para sua 
-                                <strong class="text-greenx">carteira digital</strong> na plataforma. De lá, você pode solicitar 
-                                saque via PIX para sua conta bancária a qualquer momento.
-                            </p>
-                            <div class="mt-4 flex flex-wrap gap-2">
-                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="banknote" class="w-3 h-3"></i> Liberação automática</span>
-                                <span class="inline-flex items-center gap-1.5 text-xs bg-greenx/10 text-greenx px-3 py-1.5 rounded-lg"><i data-lucide="arrow-down-to-line" class="w-3 h-3"></i> Saque via PIX</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
 
     </section>
 

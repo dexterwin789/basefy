@@ -170,7 +170,7 @@ $topics = [
             ],
             [
                 'q' => 'Tenho uma proposta para parcerias, como posso entrar em contato?',
-                'a' => 'Deeemais! Caso queira entrar em contato referente a parcerias, patrocínios ou semelhante pedimos que encaminhe um email para <a href="mailto:contato@mercadoadmin.com.br" class="text-greenx hover:underline">contato@mercadoadmin.com.br</a> com sua proposta. Neste email nós NÃO realizamos nenhum tipo de suporte, caso esse seja seu caso utilize nossa <a href="/central_ajuda" class="text-greenx hover:underline">Central de Ajuda</a>.',
+                'a' => 'Deeemais! Caso queira entrar em contato referente a parcerias, patrocínios ou semelhante pedimos que encaminhe um email para <a href="mailto:contato@basefy.online" class="text-greenx hover:underline">contato@basefy.online</a> com sua proposta. Neste email nós NÃO realizamos nenhum tipo de suporte, caso esse seja seu caso utilize nossa <a href="/central_ajuda" class="text-greenx hover:underline">Central de Ajuda</a>.',
             ],
         ],
     ],
