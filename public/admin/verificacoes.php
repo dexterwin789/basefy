@@ -109,15 +109,16 @@ if (isset($_SESSION['verif_flash'])) {
     else $msgErr = (string)($flash['msg'] ?? '');
 }
 
-/* ═══ Filters & Query — one lead per user, only when dados AND documentos submitted ═══ */
+/* ═══ Filters & Query — one lead per user, only when dados AND email AND documentos submitted ═══ */
 $filtroStatus = (string)($_GET['status'] ?? 'pendente');
 $q = trim((string)($_GET['q'] ?? ''));
 $pagina = max(1, (int)($_GET['p'] ?? 1));
 $pp = in_array((int)($_GET['pp'] ?? 10), [5, 10, 20], true) ? (int)($_GET['pp'] ?? 10) : 10;
 $offset = ($pagina - 1) * $pp;
 
-// Base: users with both dados AND documentos rows
+// Base: users with dados AND email AND documentos rows (all 3 steps submitted)
 $baseFrom = "FROM user_verifications vd
+             JOIN user_verifications vemail ON vemail.user_id = vd.user_id AND vemail.tipo = 'email'
              JOIN user_verifications vdoc ON vdoc.user_id = vd.user_id AND vdoc.tipo = 'documentos'
              JOIN users u ON u.id = vd.user_id
              WHERE vd.tipo = 'dados'";
@@ -132,9 +133,9 @@ if ($q !== '') {
 
 // Status conditions for combined status
 $statusConditions = [
-    'pendente'   => " AND (vd.status = 'pendente' OR vdoc.status = 'pendente')",
-    'verificado' => " AND vd.status = 'verificado' AND vdoc.status = 'verificado'",
-    'rejeitado'  => " AND (vd.status = 'rejeitado' OR vdoc.status = 'rejeitado') AND vd.status != 'pendente' AND vdoc.status != 'pendente'",
+    'pendente'   => " AND (vd.status = 'pendente' OR vemail.status = 'pendente' OR vdoc.status = 'pendente')",
+    'verificado' => " AND vd.status = 'verificado' AND vemail.status = 'verificado' AND vdoc.status = 'verificado'",
+    'rejeitado'  => " AND (vd.status = 'rejeitado' OR vemail.status = 'rejeitado' OR vdoc.status = 'rejeitado') AND vd.status != 'pendente' AND vemail.status != 'pendente' AND vdoc.status != 'pendente'",
 ];
 
 // Get counts for tabs
@@ -161,10 +162,11 @@ $totalPaginas = max(1, (int)ceil($total / $pp));
 
 $listSql = "SELECT vd.user_id, u.nome, u.email, u.role,
                    vd.status AS dados_status, vd.dados AS dados_dados, vd.observacao AS dados_obs, vd.atualizado AS dados_atualizado,
+                   vemail.status AS email_status, vemail.observacao AS email_obs, vemail.atualizado AS email_atualizado,
                    vdoc.status AS docs_status, vdoc.dados AS docs_dados, vdoc.observacao AS docs_obs, vdoc.atualizado AS docs_atualizado,
-                   GREATEST(vd.atualizado, vdoc.atualizado) AS last_update
+                   GREATEST(vd.atualizado, vemail.atualizado, vdoc.atualizado) AS last_update
             " . $baseFrom . $searchWhere . $statusFilter . "
-            ORDER BY GREATEST(vd.atualizado, vdoc.atualizado) DESC
+            ORDER BY GREATEST(vd.atualizado, vemail.atualizado, vdoc.atualizado) DESC
             LIMIT ? OFFSET ?";
 $stL = $conn->prepare($listSql);
 $stL->execute(array_merge($searchParams, [$pp, $offset]));
@@ -318,7 +320,7 @@ include __DIR__ . '/../../views/partials/admin_layout_start.php';
 <!-- Details Modal -->
 <div id="verifModal" class="fixed inset-0 z-50 hidden">
   <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeVerifModal()"></div>
-  <div class="absolute inset-4 md:inset-y-8 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-2xl flex items-start justify-center overflow-y-auto">
+  <div class="absolute inset-4 md:inset-y-8 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-5xl flex items-start justify-center overflow-y-auto">
     <div class="relative w-full bg-blackx2 border border-blackx3 rounded-2xl shadow-2xl my-4" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between px-6 py-4 border-b border-blackx3">
         <h2 class="text-lg font-bold flex items-center gap-2"><i data-lucide="shield-check" class="w-5 h-5 text-purple-400"></i> Detalhes da Verificação</h2>
@@ -326,7 +328,7 @@ include __DIR__ . '/../../views/partials/admin_layout_start.php';
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <div id="verifModalBody" class="p-6 space-y-5 max-h-[70vh] overflow-y-auto"></div>
+      <div id="verifModalBody" class="p-6 space-y-5 overflow-y-auto"></div>
     </div>
   </div>
 </div>
@@ -338,12 +340,13 @@ var verifDetails = <?= json_encode(array_map(function($idx) use ($itens, $detail
     $uDet = $d['user'];
     $dadosPayload = $d['dados'];
     $dSt = mb_strtolower((string)$row['dados_status']);
+    $eSt = mb_strtolower((string)$row['email_status']);
     $docSt = mb_strtolower((string)$row['docs_status']);
 
-    // Combined status
+    // Combined status (all 3 must be verified)
     $combinedSt = 'pendente';
-    if ($dSt === 'verificado' && $docSt === 'verificado') $combinedSt = 'verificado';
-    elseif ($dSt === 'rejeitado' || $docSt === 'rejeitado') $combinedSt = 'rejeitado';
+    if ($dSt === 'verificado' && $eSt === 'verificado' && $docSt === 'verificado') $combinedSt = 'verificado';
+    elseif ($dSt === 'rejeitado' || $eSt === 'rejeitado' || $docSt === 'rejeitado') $combinedSt = 'rejeitado';
 
     $statusClass = match($combinedSt) {
         'verificado' => 'bg-greenx/20 border-greenx/40 text-greenx',
@@ -351,18 +354,15 @@ var verifDetails = <?= json_encode(array_map(function($idx) use ($itens, $detail
         default => 'bg-orange-500/20 border-orange-400/40 text-orange-300',
     };
 
-    $dStatusClass = match($dSt) {
+    $mkCls = fn($s) => match($s) {
         'verificado' => 'bg-greenx/20 border-greenx/40 text-greenx',
         'rejeitado'  => 'bg-red-600/20 border-red-500/40 text-red-300',
         'pendente'   => 'bg-orange-500/20 border-orange-400/40 text-orange-300',
         default      => 'bg-zinc-500/20 border-zinc-400/40 text-zinc-300',
     };
-    $docStatusClass = match($docSt) {
-        'verificado' => 'bg-greenx/20 border-greenx/40 text-greenx',
-        'rejeitado'  => 'bg-red-600/20 border-red-500/40 text-red-300',
-        'pendente'   => 'bg-orange-500/20 border-orange-400/40 text-orange-300',
-        default      => 'bg-zinc-500/20 border-zinc-400/40 text-zinc-300',
-    };
+    $dStatusClass = $mkCls($dSt);
+    $eStatusClass = $mkCls($eSt);
+    $docStatusClass = $mkCls($docSt);
 
     $docs = [];
     foreach (['identidade' => 'Identidade', 'selfie' => 'Selfie', 'comprovante_residencia' => 'Comprovante'] as $dk => $dl) {
@@ -389,10 +389,14 @@ var verifDetails = <?= json_encode(array_map(function($idx) use ($itens, $detail
         'dados_status' => ucfirst($dSt),
         'dados_raw' => $dSt,
         'dStatusClass' => $dStatusClass,
+        'email_status' => ucfirst($eSt),
+        'email_raw' => $eSt,
+        'eStatusClass' => $eStatusClass,
         'docs_status' => ucfirst($docSt),
         'docs_raw' => $docSt,
         'docStatusClass' => $docStatusClass,
         'dados_obs' => (string)($row['dados_obs'] ?? ''),
+        'email_obs' => (string)($row['email_obs'] ?? ''),
         'docs_obs' => (string)($row['docs_obs'] ?? ''),
         'atualizado' => date('d/m/Y H:i', strtotime((string)$row['last_update'])),
         'docs' => $docs,
@@ -413,14 +417,18 @@ function openVerifModal(idx) {
     html += '</div>';
 
     // Status cards
-    html += '<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-1">';
+    html += '<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-1">';
     html += '<div class="rounded-xl border border-blackx3 bg-blackx/60 px-4 py-3"><p class="text-[11px] text-zinc-500 mb-1">Status Geral</p><span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ' + d.combinedClass + '">' + d.combined_status + '</span></div>';
     html += '<div class="rounded-xl border border-blackx3 bg-blackx/60 px-4 py-3"><p class="text-[11px] text-zinc-500 mb-1">Dados</p><span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ' + d.dStatusClass + '">' + d.dados_status + '</span></div>';
+    html += '<div class="rounded-xl border border-blackx3 bg-blackx/60 px-4 py-3"><p class="text-[11px] text-zinc-500 mb-1">E-mail</p><span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ' + d.eStatusClass + '">' + d.email_status + '</span></div>';
     html += '<div class="rounded-xl border border-blackx3 bg-blackx/60 px-4 py-3"><p class="text-[11px] text-zinc-500 mb-1">Documentos</p><span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ' + d.docStatusClass + '">' + d.docs_status + '</span></div>';
     html += '</div>';
 
     if (d.dados_obs) {
         html += '<div class="rounded-xl border border-orange-500/20 bg-orange-500/[0.06] px-4 py-3 text-sm text-orange-300"><strong>Obs dados:</strong> ' + escHtml(d.dados_obs) + '</div>';
+    }
+    if (d.email_obs) {
+        html += '<div class="rounded-xl border border-orange-500/20 bg-orange-500/[0.06] px-4 py-3 text-sm text-orange-300"><strong>Obs e-mail:</strong> ' + escHtml(d.email_obs) + '</div>';
     }
     if (d.docs_obs) {
         html += '<div class="rounded-xl border border-orange-500/20 bg-orange-500/[0.06] px-4 py-3 text-sm text-orange-300"><strong>Obs docs:</strong> ' + escHtml(d.docs_obs) + '</div>';

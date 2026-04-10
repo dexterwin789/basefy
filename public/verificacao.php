@@ -465,10 +465,34 @@ include __DIR__ . '/../views/partials/user_layout_start.php';
               Dados verificados. Não é possível alterar.
             </div>
           <?php elseif ($vDados['status'] === 'pendente'): ?>
+            <?php
+              // Build dynamic message listing what's still missing
+              $pendingItems = [];
+              if ($vEmail['status'] !== 'verificado') $pendingItems[] = 'confirmar seu e-mail';
+              // Check missing documents
+              $missingDocs = [];
+              foreach ($docStatus as $dKey => $dInfo) {
+                  $dStat = strtolower((string)($dInfo['status'] ?? 'pendente'));
+                  $hasF = !empty($dInfo['arquivo']);
+                  if (!$hasF || $dStat === 'rejeitado') {
+                      $missingDocs[] = $docTypes[$dKey]['label'] ?? $dKey;
+                  }
+              }
+              if (!empty($missingDocs)) {
+                  $pendingItems[] = 'enviar documento(s) pendente(s): ' . implode(', ', $missingDocs);
+              }
+            ?>
+            <?php if (!empty($pendingItems)): ?>
+            <div class="rounded-xl border border-orange-500/20 bg-orange-500/[0.06] px-4 py-2.5 text-xs text-orange-300 flex items-start gap-2">
+              <i data-lucide="clock" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+              <span>Dados pessoais salvos! Para prosseguir com a análise, você ainda precisa: <?= htmlspecialchars(implode('; ', $pendingItems), ENT_QUOTES, 'UTF-8') ?>.</span>
+            </div>
+            <?php else: ?>
             <div class="rounded-xl border border-orange-500/20 bg-orange-500/[0.06] px-4 py-2.5 text-xs text-orange-300 flex items-center gap-2">
               <i data-lucide="clock" class="w-4 h-4 flex-shrink-0"></i>
-              Dados enviados e aguardando análise. Não é possível alterar até a verificação.
+              Dados enviados e aguardando análise do administrador. Não é possível alterar até a verificação.
             </div>
+            <?php endif; ?>
           <?php elseif ($vDados['status'] === 'rejeitado'): ?>
             <div class="rounded-xl border border-red-500/20 bg-red-500/[0.06] px-4 py-2.5 text-xs text-red-300 flex items-center gap-2">
               <i data-lucide="x-circle" class="w-4 h-4 flex-shrink-0"></i>
@@ -582,7 +606,20 @@ include __DIR__ . '/../views/partials/user_layout_start.php';
                 <i data-lucide="upload" class="w-4 h-4"></i> Salvar documentos
               </button>
             <?php else: ?>
-              <p class="text-xs text-orange-300">Documentos já enviados. Você poderá reenviar apenas se o admin recusar.</p>
+              <?php
+                // Build dynamic message listing what's still missing beyond documents
+                $docPendingItems = [];
+                if ($vDados['status'] !== 'verificado' && $vDados['status'] !== 'pendente') $docPendingItems[] = 'preencher seus dados pessoais';
+                if ($vEmail['status'] !== 'verificado') $docPendingItems[] = 'confirmar seu e-mail';
+              ?>
+              <?php if (!empty($docPendingItems)): ?>
+                <div class="rounded-xl border border-orange-500/20 bg-orange-500/[0.06] px-4 py-2.5 text-xs text-orange-300 flex items-start gap-2">
+                  <i data-lucide="clock" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+                  <span>Documentos enviados! Para prosseguir com a análise, você ainda precisa: <?= htmlspecialchars(implode('; ', $docPendingItems), ENT_QUOTES, 'UTF-8') ?>.</span>
+                </div>
+              <?php else: ?>
+                <p class="text-xs text-orange-300">Documentos já enviados. Aguarde a análise do administrador.</p>
+              <?php endif; ?>
             <?php endif; ?>
           </form>
         <?php endif; ?>
