@@ -318,17 +318,17 @@ include __DIR__ . '/../../views/partials/admin_layout_start.php';
 </div>
 
 <!-- Details Modal -->
-<div id="verifModal" class="fixed inset-0 z-50 hidden">
-  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeVerifModal()"></div>
-  <div class="absolute inset-4 md:inset-y-8 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-5xl flex items-start justify-center overflow-y-auto">
-    <div class="relative w-full bg-blackx2 border border-blackx3 rounded-2xl shadow-2xl my-4" onclick="event.stopPropagation()">
-      <div class="flex items-center justify-between px-6 py-4 border-b border-blackx3">
+<div id="verifModal" class="fixed inset-0 z-50 hidden overflow-y-auto" style="overscroll-behavior:contain">
+  <div class="fixed inset-0 bg-black/70 backdrop-blur-sm" onclick="closeVerifModal()"></div>
+  <div class="relative min-h-full flex items-start justify-center p-4 md:p-8">
+    <div class="relative w-full max-w-5xl bg-blackx2 border border-blackx3 rounded-2xl shadow-2xl" onclick="event.stopPropagation()">
+      <div class="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-blackx3 bg-blackx2 rounded-t-2xl">
         <h2 class="text-lg font-bold flex items-center gap-2"><i data-lucide="shield-check" class="w-5 h-5 text-purple-400"></i> Detalhes da Verificação</h2>
         <button onclick="closeVerifModal()" class="w-8 h-8 rounded-lg border border-blackx3 flex items-center justify-center text-zinc-400 hover:text-white hover:border-red-400 transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <div id="verifModalBody" class="p-6 space-y-5 overflow-y-auto"></div>
+      <div id="verifModalBody" class="p-4 md:p-6 space-y-5"></div>
     </div>
   </div>
 </div>
@@ -403,6 +403,11 @@ var verifDetails = <?= json_encode(array_map(function($idx) use ($itens, $detail
     ];
 }, array_keys($itens)), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>;
 
+function closeVerifModal() {
+    document.getElementById('verifModal').classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
 function openVerifModal(idx) {
     var d = verifDetails[idx];
     if (!d) return;
@@ -465,13 +470,10 @@ function openVerifModal(idx) {
     }
 
     document.getElementById('verifModalBody').innerHTML = html;
-    document.getElementById('verifModal').classList.remove('hidden');
+    var modal = document.getElementById('verifModal');
+    modal.classList.remove('hidden');
+    modal.scrollTop = 0;
     document.body.style.overflow = 'hidden';
-}
-
-function closeVerifModal() {
-    document.getElementById('verifModal').classList.add('hidden');
-    document.body.style.overflow = '';
 }
 
 function infoCard(label, value) {
