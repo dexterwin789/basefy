@@ -780,6 +780,7 @@ function sfCartSummary($conn): array
     $sql = "SELECT p.id, p.nome, p.descricao, p.preco, {$imageExpr} AS imagem,
                    p.slug, p.variantes,
                    COALESCE(p.tipo, 'produto') AS tipo,
+                   COALESCE(p.quantidade, 0) AS quantidade,
                    c.id AS categoria_id, c.nome AS categoria_nome, c.slug AS categoria_slug,
                    p." . $cols['vendor'] . " AS vendedor_id, u.nome AS vendedor_nome, u.slug AS vendedor_slug
             FROM products p
@@ -898,6 +899,35 @@ function sfCreateOrderFromCart($conn, int $userId, bool $useWallet): array
 
     if (!$items || $grossTotal <= 0) {
         return [false, 'Carrinho vazio.', []];
+    }
+
+    // Validação server-side de estoque (evita bypass do frontend)
+    foreach ($items as $ck) {
+        $tipoCk = (string)($ck['tipo'] ?? 'produto');
+        $qtyCk  = (int)($ck['qty'] ?? 1);
+        if ($tipoCk === 'servico') continue;
+
+        if ($tipoCk === 'dinamico') {
+            $varNomeCk = (string)($ck['variante_nome'] ?? '');
+            if ($varNomeCk === '') {
+                return [false, 'Selecione uma opção para o produto dinâmico "' . (string)($ck['nome'] ?? '') . '".', []];
+            }
+            $vars = is_string($ck['variantes'] ?? null) ? json_decode((string)$ck['variantes'], true) : ($ck['variantes'] ?? null);
+            $varQtd = 0;
+            if (is_array($vars)) {
+                foreach ($vars as $v) {
+                    if ((string)($v['nome'] ?? '') === $varNomeCk) { $varQtd = (int)($v['quantidade'] ?? 0); break; }
+                }
+            }
+            if ($varQtd < $qtyCk) {
+                return [false, 'A opção "' . $varNomeCk . '" de "' . (string)($ck['nome'] ?? '') . '" está esgotada.', []];
+            }
+        } else {
+            $qtdDisp = (int)($ck['quantidade'] ?? 0);
+            if ($qtdDisp < $qtyCk) {
+                return [false, 'O produto "' . (string)($ck['nome'] ?? '') . '" está esgotado.', []];
+            }
+        }
     }
 
     // Buyer service fee (former lead_fee, now charged to buyer)

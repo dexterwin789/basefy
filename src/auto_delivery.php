@@ -71,6 +71,14 @@ function autoDeliveryProcessOrder($conn, int $orderId): int
 
         $deliveryContent = null;
 
+        // Produtos dinâmicos EXIGEM variante selecionada — nunca cair no pool legado
+        // (pool legado não é escopado por variante e causaria entrega cruzada)
+        $tipoProd = (string)($item['tipo'] ?? 'produto');
+        if ($tipoProd === 'dinamico' && ($varianteNome === null || $varianteNome === '')) {
+            error_log("[AutoDelivery] Order #{$orderId}, Item #{$itemId}: produto dinâmico sem variante — entrega bloqueada");
+            continue;
+        }
+
         // Try new stock_items table first
         $consumed = stockConsumeItem($conn, $productId, $varianteNome, $itemId);
         if ($consumed) {
@@ -81,8 +89,12 @@ function autoDeliveryProcessOrder($conn, int $orderId): int
             $parts[] = $rawContent;
             if ($conclusion !== '') $parts[] = $conclusion;
             $deliveryContent = implode("\n\n", $parts);
+        } elseif ($tipoProd === 'dinamico') {
+            // Variante esgotada em produto dinâmico — NÃO cair no pool legado (não é variant-scoped)
+            error_log("[AutoDelivery] Order #{$orderId}, Item #{$itemId}: variante \"{$varianteNome}\" esgotada para produto #{$productId}");
+            continue;
         } else {
-            // Fallback: legacy JSON pool
+            // Fallback: legacy JSON pool (apenas para produtos simples sem variantes)
             $adItemsJson = (string)($item['auto_delivery_items'] ?? '');
             $adItems = $adItemsJson !== '' ? json_decode($adItemsJson, true) : [];
             if (is_array($adItems) && count($adItems) > 0) {

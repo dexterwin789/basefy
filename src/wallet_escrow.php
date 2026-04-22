@@ -138,8 +138,17 @@ function escrowInitializeOrderItems($conn, int|string $orderId): void
                 $varNome = !empty($sRow['variante_nome']) ? (string)$sRow['variante_nome'] : null;
 
                 if ($tipo === 'dinamico' && $varNome !== null) {
-                    // Decrement quantity inside the JSON variantes array
-                    $variantes = json_decode((string)($sRow['variantes'] ?? ''), true);
+                    // Re-fetch variantes fresh para evitar sobrescrita quando o mesmo produto
+                    // tem múltiplas variantes no mesmo pedido
+                    $stCur = $conn->prepare("SELECT variantes FROM products WHERE id = ? LIMIT 1");
+                    $variantes = null;
+                    if ($stCur) {
+                        $stCur->bind_param('i', $prodId);
+                        $stCur->execute();
+                        $curRow = $stCur->get_result()->fetch_assoc();
+                        $stCur->close();
+                        $variantes = json_decode((string)($curRow['variantes'] ?? ''), true);
+                    }
                     if (is_array($variantes)) {
                         $updated = false;
                         foreach ($variantes as &$v) {
