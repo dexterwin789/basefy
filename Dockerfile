@@ -1,5 +1,7 @@
 FROM php:8.2-cli
 
+LABEL basefy.hotfix="vendor-products-filters-2026-04-27"
+
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends libonig-dev libpq-dev libcurl4-openssl-dev \
 	&& docker-php-ext-install pdo pdo_pgsql mbstring curl \

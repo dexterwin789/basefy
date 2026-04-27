@@ -72,6 +72,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 @media (max-width: 480px) {
     .hero-title { font-size: 36px !important; }
     .hero-copy { font-size: 19px !important; }
+    .hero-title span.block, .hero-copy span.block { display: inline !important; }
 }
 </style>
 
@@ -85,18 +86,21 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
         <div class="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-blackx to-transparent"></div>
 
         <div class="relative w-full max-w-[1400px] mx-auto px-4 sm:px-6">
-            <div class="grid lg:grid-cols-[720px_1fr] gap-8 items-center">
-                <div class="max-w-[720px] hero-reveal relative z-10">
+            <div class="grid lg:grid-cols-[690px_1fr] gap-0 items-center">
+                <div class="max-w-[760px] hero-reveal relative z-10">
                     <div class="hero-badge inline-flex items-center rounded-full bg-purple-500/10 px-5 py-2.5 text-zinc-300 shadow-lg shadow-purple-500/10" style="font-family:Gotham,Montserrat,sans-serif;font-weight:300;font-size:22.99px;line-height:108%;letter-spacing:0;border:0.85px solid #BE5DFF;">
                         Marketplace nº 1 de ativos digitais
                     </div>
 
-                    <h1 class="hero-title mt-6 text-white" style="font-family:Gotham,Montserrat,sans-serif;font-weight:350;font-size:62.3px;line-height:110%;letter-spacing:0;max-width:720px;">
-                        Compre e venda <span class="text-purple-400">ativos digitais</span> com pagamento protegido
+                    <h1 class="hero-title mt-6 text-white" style="font-family:Gotham,Montserrat,sans-serif;font-weight:650;font-size:62.3px;line-height:110%;letter-spacing:0;max-width:760px;">
+                        <span class="block">Compre e venda <span style="color:#A521FE">ativos</span></span>
+                        <span class="block"><span style="color:#A521FE">digitais</span> com pagamento</span>
+                        <span class="block">protegido</span>
                     </h1>
 
-                    <p class="hero-copy mt-6 text-zinc-400 max-w-[660px]" style="font-family:Gotham,Montserrat,sans-serif;font-weight:325;font-size:32px;line-height:108%;letter-spacing:0;">
-                        Contas, gift cards e muito mais. Pix instantâneo mais liberação só após confirmação.
+                    <p class="hero-copy mt-6 text-zinc-400 max-w-[760px]" style="font-family:Gotham,Montserrat,sans-serif;font-weight:325;font-size:32px;line-height:108%;letter-spacing:0;">
+                        <span class="block">Contas, gift cards e muito mais. Pix instantâneo</span>
+                        <span class="block">mais liberação só após confirmação.</span>
                     </p>
 
                     <a href="<?= BASE_PATH ?>/categorias" class="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-fuchsia-500 px-6 py-3.5 text-base font-bold text-white shadow-xl shadow-purple-600/30 hover:shadow-purple-600/45 hover:scale-[1.02] active:scale-[0.98] transition-all">
@@ -104,8 +108,8 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                     </a>
                 </div>
 
-                <div class="relative min-h-[420px] lg:min-h-[650px] flex items-center justify-center lg:justify-end pointer-events-none">
-                    <img src="<?= BASE_PATH ?>/assets/img/logobanner.png" alt="" class="hero-logo-img w-[908px] h-[908px] max-w-none object-contain hero-reveal lg:-mr-[210px] lg:-mt-[28px]" style="animation-delay:.15s;filter:drop-shadow(-12.06px 9.87px 33.98px rgba(165,33,254,.20)) drop-shadow(-46.04px 41.66px 62.49px rgba(165,33,254,.17)) drop-shadow(-104.15px 93.18px 84.41px rgba(165,33,254,.10)) drop-shadow(-186.37px 165.54px 99.76px rgba(165,33,254,.03));">
+                <div class="relative min-h-[420px] lg:min-h-[680px] flex items-center justify-center lg:justify-start pointer-events-none">
+                    <img src="<?= BASE_PATH ?>/assets/img/logobanner.png" alt="" class="hero-logo-img w-[960px] h-[960px] max-w-none object-contain hero-reveal lg:-ml-[95px] lg:-mr-[120px] lg:-mt-[28px]" style="animation-delay:.15s;filter:drop-shadow(-12.06px 9.87px 33.98px rgba(165,33,254,.20)) drop-shadow(-46.04px 41.66px 62.49px rgba(165,33,254,.17)) drop-shadow(-104.15px 93.18px 84.41px rgba(165,33,254,.10)) drop-shadow(-186.37px 165.54px 99.76px rgba(165,33,254,.03));">
                 </div>
             </div>
         </div>

@@ -8,7 +8,7 @@ exigirVendedor();
 
 $db = new Database(); $conn = $db->connect();
 $uid = (int)($_SESSION['user_id'] ?? 0);
-$produtoFilters = ['q' => trim((string)($_GET['q'] ?? ''))];
+$produtoFilters = ['q' => isset($_GET['q']) ? trim((string)$_GET['q']) : ''];
 $itens = listarMeusProdutos($conn, $uid, $produtoFilters);
 
 header('Content-Type: text/html; charset=UTF-8');
