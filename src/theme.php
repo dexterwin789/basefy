@@ -162,11 +162,8 @@ function themeSettingSet($conn, string $key, string $value): void
 function themeGetActive($conn): array
 {
     $defs = themeDefinitions();
-    $activeTheme = themeSettingGet($conn, 'active_theme', 'basefy');
-    $colorMode   = themeSettingGet($conn, 'color_mode', 'dark');
-
-    if (!isset($defs[$activeTheme])) $activeTheme = 'basefy';
-    if (!in_array($colorMode, ['dark', 'light'], true)) $colorMode = 'dark';
+    $activeTheme = 'basefy';
+    $colorMode = 'dark';
 
     return [
         'active_theme' => $activeTheme,
@@ -244,6 +241,6 @@ function themeFullInfo($conn): array
     return [
         'themes'       => $result,
         'active_theme' => $active['active_theme'],
-        'color_mode'   => $active['color_mode'],
+        'color_mode'   => 'dark',
     ];
 }

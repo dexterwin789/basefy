@@ -140,13 +140,6 @@ $googleError = isset($_GET['google_error']) ? htmlspecialchars((string)$_GET['go
 
       <!-- Right panel — form -->
       <div class="auth-card bg-blackx2/80 border border-white/[0.06] p-8 md:p-10 flex flex-col justify-center relative">
-        <!-- Theme toggle (inside card, top-right) -->
-        <button onclick="toggleThemeMode()"
-                class="theme-toggle-btn absolute top-4 right-4 z-20"
-                title="Alternar tema">
-          <i data-lucide="sun" class="w-4 h-4 theme-icon-sun" style="display:<?= ($_themeMode ?? 'dark') === 'dark' ? 'block' : 'none' ?>"></i>
-          <i data-lucide="moon" class="w-4 h-4 theme-icon-moon" style="display:<?= ($_themeMode ?? 'dark') === 'light' ? 'block' : 'none' ?>"></i>
-        </button>
         <!-- Mobile logo -->
         <div class="flex md:hidden items-center mb-8">
           <img src="<?= BASE_PATH ?>/assets/img/logo22.png" alt="Basefy" class="h-9 w-auto object-contain">

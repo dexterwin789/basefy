@@ -61,28 +61,41 @@ include __DIR__ . '/../views/partials/header.php';
 include __DIR__ . '/../views/partials/storefront_nav.php';
 ?>
 
+<style>
+@media (max-width: 1023px) {
+    .hero-section { min-height: auto; }
+    .hero-badge { font-size: 16px !important; }
+    .hero-title { font-size: 44px !important; line-height: 112% !important; }
+    .hero-copy { font-size: 22px !important; line-height: 118% !important; }
+    .hero-logo-img { width: min(100vw, 560px) !important; height: min(100vw, 560px) !important; }
+}
+@media (max-width: 480px) {
+    .hero-title { font-size: 36px !important; }
+    .hero-copy { font-size: 19px !important; }
+}
+</style>
+
 <div class="min-h-screen bg-blackx">
 
     <!-- =========== HERO — BASEFY PREMIUM =========== -->
-    <section class="hero-section relative overflow-hidden min-h-[88vh] pt-32 sm:pt-36 pb-24 flex items-center">
+    <section class="hero-section relative overflow-hidden min-h-[780px] pt-32 sm:pt-36 pb-24 flex items-center">
         <div class="absolute inset-0 bg-[#07000f]"></div>
         <div class="absolute inset-0 opacity-[0.08]" style="background-image:linear-gradient(rgba(168,85,247,.25) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.25) 1px,transparent 1px);background-size:64px 64px"></div>
-        <div class="absolute inset-y-0 left-1/2 w-px bg-purple-500/10"></div>
         <div class="absolute top-[28%] right-[16%] w-[420px] h-[420px] bg-purple-600/20 blur-[120px] pointer-events-none"></div>
         <div class="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-blackx to-transparent"></div>
 
-        <div class="relative w-full max-w-[1320px] mx-auto px-4 sm:px-6">
-            <div class="grid lg:grid-cols-[0.88fr_1.12fr] gap-10 lg:gap-6 items-center">
-                <div class="max-w-[590px] hero-reveal">
-                    <div class="inline-flex items-center rounded-full border border-purple-400/70 bg-purple-500/10 px-5 py-2 text-sm text-zinc-300 shadow-lg shadow-purple-500/10">
+        <div class="relative w-full max-w-[1400px] mx-auto px-4 sm:px-6">
+            <div class="grid lg:grid-cols-[720px_1fr] gap-8 items-center">
+                <div class="max-w-[720px] hero-reveal relative z-10">
+                    <div class="hero-badge inline-flex items-center rounded-full bg-purple-500/10 px-5 py-2.5 text-zinc-300 shadow-lg shadow-purple-500/10" style="font-family:Gotham,Montserrat,sans-serif;font-weight:300;font-size:22.99px;line-height:108%;letter-spacing:0;border:0.85px solid #BE5DFF;">
                         Marketplace nº 1 de ativos digitais
                     </div>
 
-                    <h1 class="mt-6 text-[2.6rem] sm:text-5xl lg:text-[4.25rem] leading-[1.08] font-black tracking-tight text-white">
+                    <h1 class="hero-title mt-6 text-white" style="font-family:Gotham,Montserrat,sans-serif;font-weight:350;font-size:62.3px;line-height:110%;letter-spacing:0;max-width:720px;">
                         Compre e venda <span class="text-purple-400">ativos digitais</span> com pagamento protegido
                     </h1>
 
-                    <p class="mt-6 text-lg sm:text-xl leading-relaxed text-zinc-400 max-w-[520px]">
+                    <p class="hero-copy mt-6 text-zinc-400 max-w-[660px]" style="font-family:Gotham,Montserrat,sans-serif;font-weight:325;font-size:32px;line-height:108%;letter-spacing:0;">
                         Contas, gift cards e muito mais. Pix instantâneo mais liberação só após confirmação.
                     </p>
 
@@ -91,8 +104,8 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                     </a>
                 </div>
 
-                <div class="relative min-h-[360px] sm:min-h-[460px] lg:min-h-[600px] flex items-center justify-center lg:justify-end pointer-events-none">
-                    <img src="<?= BASE_PATH ?>/assets/img/logobanner.png" alt="" class="w-[78vw] max-w-[780px] lg:w-[760px] object-contain drop-shadow-[0_0_70px_rgba(168,85,247,.38)] hero-reveal" style="animation-delay:.15s">
+                <div class="relative min-h-[420px] lg:min-h-[650px] flex items-center justify-center lg:justify-end pointer-events-none">
+                    <img src="<?= BASE_PATH ?>/assets/img/logobanner.png" alt="" class="hero-logo-img w-[908px] h-[908px] max-w-none object-contain hero-reveal lg:-mr-[210px] lg:-mt-[28px]" style="animation-delay:.15s;filter:drop-shadow(-12.06px 9.87px 33.98px rgba(165,33,254,.20)) drop-shadow(-46.04px 41.66px 62.49px rgba(165,33,254,.17)) drop-shadow(-104.15px 93.18px 84.41px rgba(165,33,254,.10)) drop-shadow(-186.37px 165.54px 99.76px rgba(165,33,254,.03));">
                 </div>
             </div>
         </div>

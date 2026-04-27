@@ -163,7 +163,7 @@ $adEnabled = (bool)($produto['auto_delivery_enabled'] ?? false);
     .ql-snow .ql-picker-label:hover,.ql-snow .ql-picker-item:hover{color:var(--t-accent)}
     .ql-snow .ql-active .ql-stroke{stroke:var(--t-accent)}.ql-snow .ql-active .ql-fill{fill:var(--t-accent)}.ql-snow .ql-active{color:var(--t-accent)}
     .ql-snow a{color:var(--t-accent)}
-    /* Light mode Quill overrides */
+    /* Quill editor overrides */
     .light-mode .ql-toolbar.ql-snow{background:#f4f4f5;border-color:#d4d4d8!important}
     .light-mode .ql-container.ql-snow{background:#fff;border-color:#d4d4d8!important;color:#18181b}
     .light-mode .ql-editor.ql-blank::before{color:#a1a1aa}

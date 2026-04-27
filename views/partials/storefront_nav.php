@@ -183,13 +183,6 @@ $_isPendingVendor = false;
                 </div>
                 <?php endif; ?>
 
-                <!-- Theme toggle (dark/light) -->
-                <button onclick="toggleThemeMode()" class="theme-toggle-btn hidden sm:flex nav-icon-btn group relative overflow-hidden" title="Alternar modo claro/escuro">
-                    <i data-lucide="sun" class="w-4 h-4 theme-icon-sun flex-shrink-0 transition-transform duration-200 group-hover:scale-110" style="display:<?= ($_themeMode ?? 'dark') === 'dark' ? 'block' : 'none' ?>"></i>
-                    <i data-lucide="moon" class="w-4 h-4 theme-icon-moon flex-shrink-0 transition-transform duration-200 group-hover:scale-110" style="display:<?= ($_themeMode ?? 'dark') === 'light' ? 'block' : 'none' ?>"></i>
-                    <span class="nav-btn-label max-w-0 overflow-hidden whitespace-nowrap text-xs font-medium opacity-0 transition-all duration-300 group-hover:max-w-[80px] group-hover:opacity-100 group-hover:ml-1.5">Tema</span>
-                </button>
-
                 <!-- Favorites -->
                 <?php if ($isLoggedIn): ?>
                 <a href="<?= BASE_PATH ?>/favoritos"

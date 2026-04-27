@@ -50,6 +50,9 @@ function listarMeusProdutos($c, int $uid, $filters = []): array
     if (is_string($filters)) {
         $filters = ['q' => $filters];
     }
+    if (!is_array($filters)) {
+        $filters = [];
+    }
 
     $q = trim((string)($filters['q'] ?? ''));
     $categoriaId = (int)($filters['categoria_id'] ?? 0);

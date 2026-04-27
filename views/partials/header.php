@@ -34,9 +34,9 @@ if ($_themeConn !== null) {
 } else {
     $_activeTheme = ['colors' => ['blackx'=>'#0E0324','blackx2'=>'#160636','blackx3'=>'#221048','greenx'=>'#8800E4','greenx2'=>'#7200C0','greenxd'=>'#6200AA'], 'color_mode' => 'dark'];
 }
-$_activeThemeKey = (string)($_activeTheme['active_theme'] ?? 'green');
+$_activeThemeKey = 'basefy';
 $_themeColors = $_activeTheme['colors'];
-$_themeMode   = $_activeTheme['color_mode'];
+$_themeMode   = 'dark';
 
 if ($_themeConn !== null) {
     try {
@@ -49,7 +49,7 @@ if ($_themeConn !== null) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="<?= htmlspecialchars($_activeThemeKey, ENT_QUOTES, 'UTF-8') ?>"<?= $_themeMode === 'light' ? ' class="light-mode"' : '' ?>>
+<html lang="pt-BR" data-theme="<?= htmlspecialchars($_activeThemeKey, ENT_QUOTES, 'UTF-8') ?>">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -121,71 +121,4 @@ if ($_themeConn !== null) {
   </style>
 </head>
 <body class="min-h-screen bg-blackx text-white font-sans antialiased">
-<script>
-/* Real-time theme toggle — no page reload */
-function toggleThemeMode(){
-  var isLight = document.documentElement.classList.contains('light-mode');
-  var newMode = isLight ? 'dark' : 'light';
-  fetch('<?= BASE_PATH ?>/api/theme_toggle.php',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({mode:newMode})
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    if(!data.ok) return;
-    // Toggle light-mode class
-    if(newMode==='light'){
-      document.documentElement.classList.add('light-mode');
-    } else {
-      document.documentElement.classList.remove('light-mode');
-    }
-    // Apply CSS custom properties
-    var c = data.active.colors;
-    var root = document.documentElement.style;
-    Object.keys(c).forEach(function(k){
-      root.setProperty('--t-'+k.replace(/_/g,'-'), c[k]);
-    });
-    root.setProperty('--t-mode', newMode);
-    // Update Tailwind colors
-    if(data.tailwind && window.tailwind){
-      tailwind.config.theme.extend.colors.blackx  = data.tailwind.blackx;
-      tailwind.config.theme.extend.colors.blackx2 = data.tailwind.blackx2;
-      tailwind.config.theme.extend.colors.blackx3 = data.tailwind.blackx3;
-      tailwind.config.theme.extend.colors.greenx  = data.tailwind.greenx;
-      tailwind.config.theme.extend.colors.greenx2 = data.tailwind.greenx2;
-      tailwind.config.theme.extend.colors.greenxd = data.tailwind.greenxd;
-    }
-    // Toggle icons (sun/moon)
-    document.querySelectorAll('.theme-icon-sun').forEach(function(el){ el.style.display = newMode==='light'?'none':'block'; });
-    document.querySelectorAll('.theme-icon-moon').forEach(function(el){ el.style.display = newMode==='light'?'block':'none'; });
-  })
-  .catch(function(e){ console.error('Theme toggle failed',e); });
-}
-/* Switch active theme (green/blue) — real-time */
-function switchTheme(themeName){
-  fetch('<?= BASE_PATH ?>/api/theme_toggle.php',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({theme:themeName})
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    if(!data.ok) return;
-    var c = data.active.colors;
-    var root = document.documentElement.style;
-    Object.keys(c).forEach(function(k){
-      root.setProperty('--t-'+k.replace(/_/g,'-'), c[k]);
-    });
-    if(data.tailwind && window.tailwind){
-      tailwind.config.theme.extend.colors.blackx  = data.tailwind.blackx;
-      tailwind.config.theme.extend.colors.blackx2 = data.tailwind.blackx2;
-      tailwind.config.theme.extend.colors.blackx3 = data.tailwind.blackx3;
-      tailwind.config.theme.extend.colors.greenx  = data.tailwind.greenx;
-      tailwind.config.theme.extend.colors.greenx2 = data.tailwind.greenx2;
-      tailwind.config.theme.extend.colors.greenxd = data.tailwind.greenxd;
-    }
-  })
-  .catch(function(e){ console.error('Theme switch failed',e); });
-}
-</script>
+<script>document.documentElement.classList.remove('light-mode');</script>

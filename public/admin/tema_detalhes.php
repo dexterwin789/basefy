@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../src/theme.php';
 exigirAdmin();
 
 $conn = (new Database())->connect();
-$themeKey = (string)($_GET['t'] ?? 'green');
+$themeKey = 'basefy';
 $defs = themeDefinitions();
 if (!isset($defs[$themeKey])) {
     header('Location: ' . BASE_PATH . '/admin/temas');
@@ -48,7 +48,7 @@ $colorLabels = [
 
   <p class="text-sm text-zinc-400"><?= htmlspecialchars($theme['description']) ?></p>
 
-  <?php foreach (['dark' => 'Modo Escuro', 'light' => 'Modo Claro'] as $mode => $modeLabel): ?>
+  <?php foreach (['dark' => 'Tema Escuro'] as $mode => $modeLabel): ?>
   <div class="bg-blackx2 border border-blackx3 rounded-2xl p-6">
     <h2 class="text-base font-bold mb-4 flex items-center gap-2">
       <i data-lucide="<?= $mode === 'dark' ? 'moon' : 'sun' ?>" class="w-4 h-4 text-greenx"></i>

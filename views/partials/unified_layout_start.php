@@ -244,7 +244,6 @@ if ($uid > 0) {
             </div>
           </div>
         </div>
-        <button onclick="toggleThemeMode()" class="theme-toggle-btn" title="Alternar modo"><i data-lucide="sun" class="w-4 h-4 theme-icon-sun" style="display:<?= ($_themeMode ?? 'dark') === 'dark' ? 'block' : 'none' ?>"></i><i data-lucide="moon" class="w-4 h-4 theme-icon-moon" style="display:<?= ($_themeMode ?? 'dark') === 'light' ? 'block' : 'none' ?>"></i></button>
         <a href="<?= BASE_PATH ?>/minha_conta" class="text-sm border border-blackx3 rounded-xl px-2 md:px-3 py-1.5 bg-blackx2 inline-flex items-center gap-2 hover:border-greenx transition"><i data-lucide="user-circle-2" class="w-4 h-4"></i><span class="hidden lg:inline">Minha conta</span></a>
         <a href="<?= BASE_PATH ?>/logout" class="text-sm border border-blackx3 rounded-xl px-2 md:px-3 py-1.5 bg-blackx2 inline-flex items-center gap-2 hover:border-red-500 transition"><i data-lucide="log-out" class="w-4 h-4"></i><span class="hidden lg:inline">Sair</span></a>
       </header>

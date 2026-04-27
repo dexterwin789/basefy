@@ -161,8 +161,8 @@ include __DIR__ . '/../../views/partials/admin_layout_start.php';
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
     <script>
-    Chart.defaults.color=document.documentElement.classList.contains('light-mode')?'#374151':'#a1a1aa';
-    Chart.defaults.borderColor=document.documentElement.classList.contains('light-mode')?'rgba(209,213,219,0.45)':'rgba(63,63,70,0.45)';
+    Chart.defaults.color='#a1a1aa';
+    Chart.defaults.borderColor='rgba(63,63,70,0.45)';
     new Chart(document.getElementById('chartVendas7d'),{type:'line',data:{labels:<?= json_encode($chartLabels7) ?>,datasets:[{label:'Vendas',data:<?= json_encode($chartData7) ?>,borderColor:'#8800E4',backgroundColor:'rgba(var(--t-accent-rgb),0.06)',fill:true,tension:.4,pointBackgroundColor:'#8800E4',pointRadius:3,borderWidth:2}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{precision:0,font:{size:10}}}}}});
     new Chart(document.getElementById('chartModeracao'),{type:'doughnut',data:{labels:['Aprovadas','Em análise','Rejeitadas'],datasets:[{data:[<?= $aprovadas ?>,<?= $analise ?>,<?= $rejeitadas ?>],backgroundColor:['#8800E4','#F59E0B','#EF4444'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{legend:{position:'bottom',labels:{padding:10,usePointStyle:true,font:{size:10}}}}}});
     new Chart(document.getElementById('chartUsers7d'),{type:'bar',data:{labels:<?= json_encode($chartLabels7) ?>,datasets:[{label:'Novos usuários',data:<?= json_encode($chartDataUsers) ?>,backgroundColor:'rgba(99,102,241,0.65)',borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{precision:0,font:{size:10}}}}}});
