@@ -62,6 +62,13 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 ?>
 
 <style>
+@media (min-width: 1024px) {
+    .hero-section { min-height: 100vh; padding-top: 88px !important; padding-bottom: 32px !important; }
+    .hero-grid { grid-template-columns: 760px 1fr; }
+    .hero-title { font-size: 60px !important; font-weight: 600 !important; }
+    .hero-logo-img.w-\[960px\] { width: 1300px !important; height: 1300px !important; }
+    .lg\:-ml-\[95px\] { margin-left: -420px !important; }
+}
 @media (max-width: 1023px) {
     .hero-section { min-height: auto; }
     .hero-badge { font-size: 16px !important; }
@@ -79,20 +86,20 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 <div class="min-h-screen bg-blackx">
 
     <!-- =========== HERO — BASEFY PREMIUM =========== -->
-    <section class="hero-section relative overflow-hidden min-h-[780px] pt-32 sm:pt-36 pb-24 flex items-center">
+    <section class="hero-section relative overflow-hidden min-h-screen pt-24 sm:pt-24 pb-10 flex items-center">
         <div class="absolute inset-0 bg-[#07000f]"></div>
         <div class="absolute inset-0 opacity-[0.08]" style="background-image:linear-gradient(rgba(168,85,247,.25) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.25) 1px,transparent 1px);background-size:64px 64px"></div>
         <div class="absolute top-[28%] right-[16%] w-[420px] h-[420px] bg-purple-600/20 blur-[120px] pointer-events-none"></div>
         <div class="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-blackx to-transparent"></div>
 
-        <div class="relative w-full max-w-[1400px] mx-auto px-4 sm:px-6">
-            <div class="grid lg:grid-cols-[690px_1fr] gap-0 items-center">
+        <div class="relative w-full max-w-[1440px] mx-auto px-4 sm:px-6">
+            <div class="hero-grid grid lg:grid-cols-[760px_1fr] gap-0 items-center">
                 <div class="max-w-[760px] hero-reveal relative z-10">
                     <div class="hero-badge inline-flex items-center rounded-full bg-purple-500/10 px-5 py-2.5 text-zinc-300 shadow-lg shadow-purple-500/10" style="font-family:Gotham,Montserrat,sans-serif;font-weight:300;font-size:22.99px;line-height:108%;letter-spacing:0;border:0.85px solid #BE5DFF;">
                         Marketplace nº 1 de ativos digitais
                     </div>
 
-                    <h1 class="hero-title mt-6 text-white" style="font-family:Gotham,Montserrat,sans-serif;font-weight:650;font-size:62.3px;line-height:110%;letter-spacing:0;max-width:760px;">
+                    <h1 class="hero-title mt-6 text-white" style="font-family:Gotham,Montserrat,sans-serif;font-weight:600;font-size:60px;line-height:110%;letter-spacing:0;max-width:760px;">
                         <span class="block">Compre e venda <span style="color:#A521FE">ativos</span></span>
                         <span class="block"><span style="color:#A521FE">digitais</span> com pagamento</span>
                         <span class="block">protegido</span>

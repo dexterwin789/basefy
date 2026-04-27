@@ -20,7 +20,7 @@ if (!function_exists('sfPainelUrl')) {
 }
 $_isPendingVendor = false;
 ?>
-<header class="storefront-header fixed left-1/2 top-5 z-50 w-[calc(100%-2rem)] max-w-[1320px] -translate-x-1/2 rounded-[30px] border border-white/[0.14] bg-[#080012]/72 backdrop-blur-2xl shadow-2xl shadow-black/25">
+<header class="storefront-header fixed left-1/2 top-5 z-50 w-[calc(100%-2rem)] max-w-[1440px] -translate-x-1/2 rounded-[30px] border border-white/[0.14] bg-[#080012]/72 backdrop-blur-2xl shadow-2xl shadow-black/25">
     <div class="px-5 sm:px-7">
         <!-- Desktop nav -->
         <div class="flex items-center justify-between h-16">

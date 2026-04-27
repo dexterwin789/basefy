@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../src/auth.php';
 require_once __DIR__ . '/../../src/db.php';
 require_once __DIR__ . '/../../src/vendor_portal.php';
+require_once __DIR__ . '/../../src/media.php';
 exigirVendedor();
 
 $db = new Database(); $conn = $db->connect();
@@ -109,6 +110,10 @@ function vpThumbUrl(string $raw): string
     // URL externa
     if (preg_match('~^https?://~i', $raw)) {
         return $raw;
+    }
+
+    if (str_starts_with($raw, 'media:')) {
+      return mediaResolveUrl($raw, 'https://placehold.co/80x80/111827/9ca3af?text=Sem+Img');
     }
 
     // já é URL completa do projeto
