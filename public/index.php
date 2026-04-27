@@ -63,23 +63,34 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 
 <style>
 @media (min-width: 1024px) {
-    .hero-section { min-height: 100vh; padding-top: 88px !important; padding-bottom: 32px !important; }
+    .hero-section {
+        min-height: 100vh;
+        padding-top: 100px !important;
+        padding-bottom: 0px !important;
+        margin-bottom: -200px;
+        margin-top: -150px;
+    }
     .hero-grid { grid-template-columns: 760px 1fr; }
     .hero-title { font-size: 60px !important; font-weight: 600 !important; }
     .hero-logo-img.w-\[960px\] { width: 1300px !important; height: 1300px !important; }
     .lg\:-ml-\[95px\] { margin-left: -420px !important; }
 }
 @media (max-width: 1023px) {
-    .hero-section { min-height: auto; }
+    .hero-section { min-height: auto; padding-top: 108px !important; padding-bottom: 0 !important; margin-bottom: -36px; display: block; }
+    .hero-grid { display: flex; flex-direction: column; gap: 0; }
     .hero-badge { font-size: 16px !important; }
     .hero-title { font-size: 44px !important; line-height: 112% !important; }
     .hero-copy { font-size: 22px !important; line-height: 118% !important; }
-    .hero-logo-img { width: min(100vw, 560px) !important; height: min(100vw, 560px) !important; }
+    .hero-logo-wrap { min-height: 0 !important; height: clamp(280px, 52vw, 430px); margin-top: -28px; overflow: hidden; justify-content: center !important; }
+    .hero-logo-img { width: clamp(440px, 118vw, 620px) !important; height: clamp(440px, 118vw, 620px) !important; transform: translateX(12%); }
 }
 @media (max-width: 480px) {
-    .hero-title { font-size: 36px !important; }
-    .hero-copy { font-size: 19px !important; }
-    .hero-title span.block, .hero-copy span.block { display: inline !important; }
+    .hero-section { padding-top: 96px !important; margin-bottom: -24px; }
+    .hero-badge { font-size: 14px !important; padding: 8px 14px !important; }
+    .hero-title { font-size: 32px !important; line-height: 108% !important; }
+    .hero-copy { font-size: 17px !important; line-height: 116% !important; }
+    .hero-logo-wrap { height: 250px; margin-top: -18px; }
+    .hero-logo-img { width: 430px !important; height: 430px !important; transform: translateX(11%); }
 }
 </style>
 
@@ -115,7 +126,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                     </a>
                 </div>
 
-                <div class="relative min-h-[420px] lg:min-h-[680px] flex items-center justify-center lg:justify-start pointer-events-none">
+                <div class="hero-logo-wrap relative min-h-[420px] lg:min-h-[680px] flex items-center justify-center lg:justify-start pointer-events-none">
                     <img src="<?= BASE_PATH ?>/assets/img/logobanner.png" alt="" class="hero-logo-img w-[960px] h-[960px] max-w-none object-contain hero-reveal lg:-ml-[95px] lg:-mr-[120px] lg:-mt-[28px]" style="animation-delay:.15s;filter:drop-shadow(-12.06px 9.87px 33.98px rgba(165,33,254,.20)) drop-shadow(-46.04px 41.66px 62.49px rgba(165,33,254,.17)) drop-shadow(-104.15px 93.18px 84.41px rgba(165,33,254,.10)) drop-shadow(-186.37px 165.54px 99.76px rgba(165,33,254,.03));">
                 </div>
             </div>
