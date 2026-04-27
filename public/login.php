@@ -160,11 +160,8 @@ $googleAuthUrl = $googleConfigured ? googleAuthUrl($conn, $redirectUrl, 'login')
       <div class="auth-left-panel hidden md:flex flex-col justify-between p-10 relative overflow-hidden" style="background:linear-gradient(135deg,rgba(var(--t-accent-rgb),.12),rgba(var(--t-accent-rgb),.03))">
         <div class="absolute inset-0 border-r border-white/[0.06]"></div>
         <div class="relative z-10">
-          <a href="<?= BASE_PATH ?>/" class="inline-flex items-center gap-3 group mb-10">
-            <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-greenx to-greenxd flex items-center justify-center shadow-lg shadow-greenx/20">
-              <i data-lucide="store" class="w-5 h-5 text-white"></i>
-            </div>
-            <span class="font-bold text-white text-lg tracking-tight">Base<span class="text-greenx">fy</span></span>
+          <a href="<?= BASE_PATH ?>/" class="inline-flex items-center group mb-10" aria-label="Basefy">
+            <img src="<?= BASE_PATH ?>/assets/img/logo22.png" alt="Basefy" class="h-10 w-auto object-contain">
           </a>
           <h2 class="text-2xl font-bold text-white leading-tight mb-3">Bem-vindo de volta!</h2>
           <p class="text-zinc-400 text-sm leading-relaxed mb-8">Acesse sua conta para gerenciar vendas, acompanhar pedidos e muito mais.</p>
@@ -200,11 +197,8 @@ $googleAuthUrl = $googleConfigured ? googleAuthUrl($conn, $redirectUrl, 'login')
           <i data-lucide="moon" class="w-4 h-4 theme-icon-moon" style="display:<?= ($_themeMode ?? 'dark') === 'light' ? 'block' : 'none' ?>"></i>
         </button>
         <!-- Mobile logo -->
-        <div class="flex md:hidden items-center gap-3 mb-8">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-greenx to-greenxd flex items-center justify-center shadow-lg shadow-greenx/20">
-            <i data-lucide="store" class="w-5 h-5 text-white"></i>
-          </div>
-          <span class="font-bold text-white text-lg tracking-tight">Base<span class="text-greenx">fy</span></span>
+        <div class="flex md:hidden items-center mb-8">
+          <img src="<?= BASE_PATH ?>/assets/img/logo22.png" alt="Basefy" class="h-9 w-auto object-contain">
         </div>
 
         <div class="mb-6">

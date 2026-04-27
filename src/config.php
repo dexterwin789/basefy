@@ -58,7 +58,7 @@ if (!defined('APP_NAME')) {
 	define('APP_NAME', (string)envValue('APP_NAME', 'Basefy'));
 }
 if (!defined('APP_URL')) {
-	define('APP_URL', (string)envValue('APP_URL', 'http://localhost/mercado_admin/public'));
+	define('APP_URL', (string)envValue('APP_URL', 'http://localhost'));
 }
 
 if (!defined('BASE_PATH')) {

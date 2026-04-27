@@ -6,12 +6,12 @@ require_once __DIR__ . '/../../src/db.php';
 
 iniciarSessao();
 if (!usuarioLogado()) {
-    header('Location: /mercado_admin/public/login.php');
+  header('Location: ' . BASE_PATH . '/login');
     exit;
 }
 
 if (roleAtual() !== 'vendedor') {
-    header('Location: /mercado_admin/public/dashboard.php');
+  header('Location: ' . BASE_PATH . '/dashboard');
     exit;
 }
 
@@ -21,7 +21,7 @@ $userNome = (string)($_SESSION['user']['nome'] ?? $_SESSION['nome'] ?? 'Vendedor
 $userEmail = (string)($_SESSION['user']['email'] ?? '');
 
 if ($userId <= 0) {
-    header('Location: /mercado_admin/public/login.php');
+  header('Location: ' . BASE_PATH . '/login');
     exit;
 }
 
@@ -172,7 +172,7 @@ include __DIR__ . '/../../views/partials/header.php';
         <div class="mt-5 rounded-2xl border border-greenx/50 bg-greenx/10 p-5">
           <h2 class="font-semibold text-greenx">Conta aprovada</h2>
           <p class="text-sm text-zinc-300 mt-2">Seu acesso de vendedor foi aprovado. O dashboard está liberado.</p>
-          <a href="/mercado_admin/public/vendedor/dashboard.php" class="inline-flex mt-4 rounded-xl bg-greenx hover:bg-greenx2 text-white font-semibold px-4 py-2">Ir para o dashboard</a>
+          <a href="<?= BASE_PATH ?>/vendedor/dashboard" class="inline-flex mt-4 rounded-xl bg-greenx hover:bg-greenx2 text-white font-semibold px-4 py-2">Ir para o dashboard</a>
         </div>
 
       <?php elseif ($currentStatus === 'pendente'): ?>
@@ -223,7 +223,7 @@ include __DIR__ . '/../../views/partials/header.php';
 
           <div class="md:col-span-2 flex items-center gap-2">
             <button class="rounded-xl bg-greenx hover:bg-greenx2 text-white font-semibold px-4 py-2">Enviar para análise</button>
-            <a href="/mercado_admin/public/logout.php" class="rounded-xl border border-blackx3 px-4 py-2 text-sm hover:border-red-500">Sair</a>
+            <a href="<?= BASE_PATH ?>/logout" class="rounded-xl border border-blackx3 px-4 py-2 text-sm hover:border-red-500">Sair</a>
           </div>
         </form>
       <?php endif; ?>

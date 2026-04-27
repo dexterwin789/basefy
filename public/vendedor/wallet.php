@@ -174,7 +174,7 @@ include __DIR__ . '/../../views/partials/footer.php';
       if (!txId) return;
 
       try {
-        const res = await fetch('/mercado_admin/public/api/wallet_topup_status.php?tx_id=' + encodeURIComponent(txId), { cache: 'no-store' });
+        const res = await fetch('<?= BASE_PATH ?>/api/wallet_topup_status.php?tx_id=' + encodeURIComponent(txId), { cache: 'no-store' });
         const data = await res.json();
         if (!data || !data.ok) return;
 

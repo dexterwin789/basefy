@@ -7,12 +7,7 @@ $_ftLoggedIn = !empty($_SESSION['user_id']) && (int)$_SESSION['user_id'] > 0;
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8">
             <!-- Brand / Sobre -->
             <div class="col-span-2 sm:col-span-2 lg:col-span-1 space-y-4">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-greenx to-greenxd flex items-center justify-center">
-                        <i data-lucide="store" class="w-4 h-4 text-white"></i>
-                    </div>
-                    <span class="font-bold text-white">Base<span class="text-greenx">fy</span></span>
-                </div>
+                <img src="<?= BASE_PATH ?>/assets/img/logo22.png" alt="Basefy" class="h-8 w-auto object-contain">
                 <p class="text-sm text-zinc-500 leading-relaxed">
                     Marketplace digital com pagamento via PIX, carteira integrada e moderação segura.
                 </p>

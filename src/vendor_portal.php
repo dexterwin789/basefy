@@ -40,12 +40,16 @@ function listarCategoriasProdutoAtivasVendor($c): array {
     return $q ? $q->fetch_all(MYSQLI_ASSOC) : [];
 }
 
-function listarMeusProdutos($c, int $uid, array $filters = []): array
+function listarMeusProdutos($c, int $uid, $filters = []): array
 {
     if ($uid <= 0) return [];
 
     $col = vpColunaVendedorProdutos($c);
     if (!$col) return [];
+
+    if (is_string($filters)) {
+        $filters = ['q' => $filters];
+    }
 
     $q = trim((string)($filters['q'] ?? ''));
     $categoriaId = (int)($filters['categoria_id'] ?? 0);

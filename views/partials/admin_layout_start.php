@@ -78,7 +78,7 @@ $menuGroups = [
 
     <aside id="adminSidebar" class="fixed md:static z-40 top-0 right-0 h-screen w-72 md:w-64 bg-blackx2 border-l md:border-l-0 md:border-r border-blackx3 transform translate-x-full md:translate-x-0 transition-transform duration-300 ease-out md:min-h-screen md:sticky md:top-0">
       <div class="h-16 px-4 flex items-center justify-between border-b border-blackx3">
-        <span class="text-lg font-bold">Painel Admin</span>
+        <img src="<?= BASE_PATH ?>/assets/img/logo22.png" alt="Basefy" class="h-8 w-auto object-contain">
         <button id="btnAdminCloseSidebar" class="md:hidden w-8 h-8 rounded-lg border border-blackx3 flex items-center justify-center text-zinc-400 hover:text-white transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>

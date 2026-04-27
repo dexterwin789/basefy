@@ -20,16 +20,13 @@ if (!function_exists('sfPainelUrl')) {
 }
 $_isPendingVendor = false;
 ?>
-<header class="border-b border-white/[0.06] bg-blackx/80 backdrop-blur-xl sticky top-0 z-50">
-    <div class="max-w-[1600px] mx-auto px-4 sm:px-6">
+<header class="storefront-header fixed left-1/2 top-5 z-50 w-[calc(100%-2rem)] max-w-[1320px] -translate-x-1/2 rounded-[30px] border border-white/[0.14] bg-[#080012]/72 backdrop-blur-2xl shadow-2xl shadow-black/25">
+    <div class="px-5 sm:px-7">
         <!-- Desktop nav -->
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
-            <a href="<?= BASE_PATH ?>/" class="flex items-center gap-3 group">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-greenx to-greenxd flex items-center justify-center shadow-lg shadow-greenx/20 group-hover:shadow-greenx/40 transition-shadow">
-                    <i data-lucide="store" class="w-[18px] h-[18px] text-white"></i>
-                </div>
-                <span class="font-bold text-white text-[15px] tracking-tight">Base<span class="text-greenx">fy</span></span>
+            <a href="<?= BASE_PATH ?>/" class="flex items-center gap-3 group shrink-0" aria-label="Basefy">
+                <img src="<?= BASE_PATH ?>/assets/img/logo22.png" alt="Basefy" class="h-8 w-auto object-contain">
             </a>
 
             <!-- Center nav links (desktop) -->
@@ -44,7 +41,7 @@ $_isPendingVendor = false;
                 </a>
                 <a href="<?= BASE_PATH ?>/como_funciona"
                    class="px-3.5 py-2 rounded-xl text-sm font-medium transition-all <?= $currentPage === 'como_funciona' ? 'bg-white/[0.08] text-white' : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]' ?>">
-                    Como Funciona
+                    Como funciona
                 </a>
                 <?php
                     // Show blog link if enabled for role
@@ -257,18 +254,16 @@ $_isPendingVendor = false;
         </div>
     </div>
 </header>
+<?php if ($currentPage !== 'home'): ?>
+<div class="h-24 shrink-0" aria-hidden="true"></div>
+<?php endif; ?>
 
 <!-- Off-canvas mobile menu (slides from right) -->
 <div id="sfMobileOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden transition-opacity duration-300 md:hidden" style="opacity:0"></div>
 <div id="sfMobileDrawer" class="fixed top-0 right-0 h-full w-[300px] max-w-[85vw] bg-blackx2 border-l border-white/[0.06] z-[61] transform translate-x-full transition-transform duration-300 ease-out md:hidden flex flex-col shadow-2xl shadow-black/40">
     <!-- Drawer header -->
     <div class="h-16 px-5 flex items-center justify-between border-b border-white/[0.06] shrink-0">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-greenx to-greenxd flex items-center justify-center">
-                <i data-lucide="store" class="w-4 h-4 text-white"></i>
-            </div>
-            <span class="font-bold text-white text-sm">Base<span class="text-greenx">fy</span></span>
-        </div>
+        <img src="<?= BASE_PATH ?>/assets/img/logo22.png" alt="Basefy" class="h-8 w-auto object-contain">
         <button id="sfMobileMenuClose" class="w-9 h-9 rounded-xl border border-white/[0.08] flex items-center justify-center text-zinc-400 hover:text-white hover:border-white/[0.15] transition-all">
             <i data-lucide="x" class="w-4 h-4"></i>
         </button>

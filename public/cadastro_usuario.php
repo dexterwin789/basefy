@@ -66,11 +66,8 @@ include __DIR__ . '/../views/partials/header.php';
         <i data-lucide="moon" class="w-4 h-4 theme-icon-moon" style="display:<?= ($_themeMode ?? 'dark') === 'light' ? 'block' : 'none' ?>"></i>
       </button>
       <!-- Logo -->
-      <div class="flex items-center gap-3 mb-8">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-greenx to-greenxd flex items-center justify-center shadow-lg shadow-greenx/20">
-          <i data-lucide="store" class="w-5 h-5 text-white"></i>
-        </div>
-        <span class="font-bold text-white text-lg tracking-tight">Base<span class="text-greenx">fy</span></span>
+      <div class="flex items-center mb-8">
+        <img src="<?= BASE_PATH ?>/assets/img/logo22.png" alt="Basefy" class="h-10 w-auto object-contain">
       </div>
 
       <div class="mb-6">

@@ -126,7 +126,7 @@ async function abrirDetalhes(orderId) {
   dlg.showModal();
 
   try {
-    const r = await fetch('/mercado_admin/public/vendedor/api_venda_detalhe.php?order_id=' + encodeURIComponent(orderId));
+    const r = await fetch('<?= BASE_PATH ?>/vendedor/api_venda_detalhe?order_id=' + encodeURIComponent(orderId));
     const j = await r.json();
 
     if (!j.ok) {

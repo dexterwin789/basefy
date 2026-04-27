@@ -13,10 +13,10 @@ $itens = listarMeusProdutos($conn, $uid, ['q' => (string)($_GET['q'] ?? '')]);
 header('Content-Type: text/html; charset=UTF-8');
 $pageTitle = 'Meus Produtos';
 $activeMenu = 'produtos';
-$topActions = [['label' => 'Adicionar', 'href' => 'produtos_form.php']];
+$topActions = [['label' => 'Adicionar', 'href' => BASE_PATH . '/vendedor/produtos_form']];
 $subnavItems = [
-  ['label' => 'Listar', 'href' => 'produtos.php', 'active' => true],
-  ['label' => 'Adicionar', 'href' => 'produtos_form.php', 'active' => false],
+  ['label' => 'Listar', 'href' => BASE_PATH . '/vendedor/produtos', 'active' => true],
+  ['label' => 'Adicionar', 'href' => BASE_PATH . '/vendedor/produtos_form', 'active' => false],
 ];
 
 include __DIR__.'/../../views/partials/header.php';
@@ -24,15 +24,21 @@ include __DIR__.'/../../views/partials/vendor_layout_start.php';
 ?>
 <div class="max-w-7xl mx-auto">
   <div class="bg-blackx2 border border-blackx3 rounded-2xl p-5">
-    <form method="get" class="mb-4">
-      <input
-        type="text"
-        name="q"
-        value="<?= htmlspecialchars((string)($_GET['q'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
-        placeholder="Buscar produto"
-        class="w-full md:w-80 bg-blackx border border-blackx3 rounded-xl px-4 py-2 outline-none focus:border-greenx"
-      >
-    </form>
+    <div class="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <form method="get" class="w-full md:w-auto">
+        <input
+          type="text"
+          name="q"
+          value="<?= htmlspecialchars((string)($_GET['q'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+          placeholder="Buscar produto"
+          class="w-full md:w-80 bg-blackx border border-blackx3 rounded-xl px-4 py-2 outline-none focus:border-greenx"
+        >
+      </form>
+      <a href="<?= BASE_PATH ?>/vendedor/produtos_form" class="inline-flex items-center justify-center gap-2 rounded-xl bg-greenx hover:bg-greenx2 text-white font-semibold px-4 py-2 transition">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Adicionar produto
+      </a>
+    </div>
 
     <div class="overflow-x-auto">
       <table class="w-full text-sm">
@@ -70,7 +76,7 @@ include __DIR__.'/../../views/partials/vendor_layout_start.php';
                 </span>
               </td>
               <td class="py-3">
-                <a href="/mercado_admin/public/vendedor/produtos_form.php?id=<?= (int)$p['id'] ?>" class="text-greenx hover:underline">
+                <a href="<?= BASE_PATH ?>/vendedor/produtos_form?id=<?= (int)$p['id'] ?>" class="text-greenx hover:underline">
                   Editar
                 </a>
               </td>
@@ -105,29 +111,25 @@ function vpThumbUrl(string $raw): string
     }
 
     // já é URL completa do projeto
-    if (str_starts_with($raw, '/mercado_admin/')) {
-        return $raw;
-    }
-
     // padrão salvo no banco: /uploads/produtos/arquivo.png
     if (str_starts_with($raw, '/uploads/')) {
-        return '/mercado_admin/public' . $raw;
+      return BASE_PATH . $raw;
     }
 
     // sem barra inicial: uploads/produtos/arquivo.png
     if (str_starts_with($raw, 'uploads/')) {
-        return '/mercado_admin/public/' . $raw;
+      return BASE_PATH . '/' . $raw;
     }
 
     // public/uploads/...
     if (str_starts_with($raw, 'public/')) {
-        return '/mercado_admin/' . $raw;
+      return BASE_PATH . '/' . substr($raw, 7);
     }
 
     // só nome de arquivo
     if (!str_contains($raw, '/')) {
-        return '/mercado_admin/public/uploads/produtos/' . $raw;
+      return BASE_PATH . '/uploads/produtos/' . $raw;
     }
 
-    return '/mercado_admin/public/' . ltrim($raw, '/');
+    return BASE_PATH . '/' . ltrim($raw, '/');
 }

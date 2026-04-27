@@ -63,85 +63,37 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 
 <div class="min-h-screen bg-blackx">
 
-    <!-- =========== HERO — CINEMATIC FULL-SCREEN =========== -->
-    <section class="hero-section relative overflow-hidden min-h-[100vh] flex items-center">
-        <!-- Animated mesh gradient background -->
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_130%_90%_at_50%_-20%,rgba(var(--t-accent-rgb),0.22),transparent_65%)]"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_110%_110%,rgba(var(--t-accent-rgb),0.10),transparent_65%)]"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_-10%_60%,rgba(var(--t-accent-rgb),0.06),transparent_60%)]"></div>
-        <!-- Animated orbs -->
-        <div class="absolute top-[10%] left-[15%] w-[500px] h-[500px] bg-greenx/[0.07] rounded-full blur-[160px] pointer-events-none hero-orb-1"></div>
-        <div class="absolute bottom-[5%] right-[10%] w-[600px] h-[600px] bg-greenxd/[0.06] rounded-full blur-[180px] pointer-events-none hero-orb-2"></div>
-        <div class="absolute top-[50%] left-[60%] w-[300px] h-[300px] bg-greenx/[0.04] rounded-full blur-[120px] pointer-events-none hero-orb-3"></div>
-        <!-- Subtle dot pattern -->
-        <div class="absolute inset-0 opacity-[0.025]" style="background-image: radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px); background-size: 30px 30px;"></div>
-        <!-- Bottom fade -->
-        <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-blackx to-transparent"></div>
+    <!-- =========== HERO — BASEFY PREMIUM =========== -->
+    <section class="hero-section relative overflow-hidden min-h-[88vh] pt-32 sm:pt-36 pb-24 flex items-center">
+        <div class="absolute inset-0 bg-[#07000f]"></div>
+        <div class="absolute inset-0 opacity-[0.08]" style="background-image:linear-gradient(rgba(168,85,247,.25) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.25) 1px,transparent 1px);background-size:64px 64px"></div>
+        <div class="absolute inset-y-0 left-1/2 w-px bg-purple-500/10"></div>
+        <div class="absolute top-[28%] right-[16%] w-[420px] h-[420px] bg-purple-600/20 blur-[120px] pointer-events-none"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-blackx to-transparent"></div>
 
-        <div class="relative w-full max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 lg:py-24">
-            <div class="text-center max-w-5xl mx-auto">
-                <!-- Animated badge -->
-                <div class="inline-flex items-center gap-1.5 sm:gap-2.5 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full bg-greenx/10 border border-greenx/25 text-greenx text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest mb-8 sm:mb-10 hero-reveal whitespace-nowrap" style="animation-delay:0.1s">
-                    <span class="relative flex h-2 w-2 shrink-0"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-greenx opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-greenx"></span></span>
-                    Marketplace #1 de produtos digitais
+        <div class="relative w-full max-w-[1320px] mx-auto px-4 sm:px-6">
+            <div class="grid lg:grid-cols-[0.88fr_1.12fr] gap-10 lg:gap-6 items-center">
+                <div class="max-w-[590px] hero-reveal">
+                    <div class="inline-flex items-center rounded-full border border-purple-400/70 bg-purple-500/10 px-5 py-2 text-sm text-zinc-300 shadow-lg shadow-purple-500/10">
+                        Marketplace nº 1 de ativos digitais
+                    </div>
+
+                    <h1 class="mt-6 text-[2.6rem] sm:text-5xl lg:text-[4.25rem] leading-[1.08] font-black tracking-tight text-white">
+                        Compre e venda <span class="text-purple-400">ativos digitais</span> com pagamento protegido
+                    </h1>
+
+                    <p class="mt-6 text-lg sm:text-xl leading-relaxed text-zinc-400 max-w-[520px]">
+                        Contas, gift cards e muito mais. Pix instantâneo mais liberação só após confirmação.
+                    </p>
+
+                    <a href="<?= BASE_PATH ?>/categorias" class="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-fuchsia-500 px-6 py-3.5 text-base font-bold text-white shadow-xl shadow-purple-600/30 hover:shadow-purple-600/45 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                        Buscar produtos <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </a>
                 </div>
 
-                <!-- Headline -->
-                <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.95] hero-reveal" style="animation-delay:0.2s">
-                    <span class="block">Compre e venda</span>
-                    <span class="block mt-2 sm:mt-3">
-                        <span class="hero-accent-text">produtos digitais</span>
-                    </span>
-                    <span class="block mt-2 sm:mt-3 text-zinc-400 text-[0.55em] font-bold tracking-tight">com segurança total</span>
-                </h1>
-
-                <p class="mt-8 text-zinc-400 text-lg sm:text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto font-light hero-reveal" style="animation-delay:0.4s">
-                    Contas, gift cards, itens digitais e muito mais.
-                    <span class="text-zinc-200 font-medium">PIX instantâneo</span> + proteção Escrow.
-                </p>
-
-                <!-- Search bar -->
-                <form method="get" action="<?= BASE_PATH ?>/categorias" class="mt-10 sm:mt-12 max-w-2xl mx-auto hero-reveal" style="animation-delay:0.5s">
-                    <div class="group flex gap-2 sm:gap-3 p-2.5 rounded-2xl bg-white/[0.06] border border-white/[0.10] backdrop-blur-md hover:border-greenx/30 hover:bg-white/[0.08] transition-all duration-300 shadow-2xl shadow-black/20">
-                        <div class="relative flex-1">
-                            <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 pointer-events-none"></i>
-                            <input type="text" name="q" value="<?= htmlspecialchars($q, ENT_QUOTES, 'UTF-8') ?>"
-                                   placeholder="Buscar contas, gift cards, itens..."
-                                   class="w-full pl-12 pr-4 py-4 sm:py-4.5 rounded-xl bg-transparent text-sm sm:text-base placeholder:text-zinc-500 focus:outline-none transition-all">
-                        </div>
-                        <button class="rounded-xl bg-gradient-to-r from-greenx to-greenxd hover:from-greenx2 hover:to-greenxd text-white font-bold px-7 sm:px-10 py-4 text-sm sm:text-base shadow-lg shadow-greenx/25 hover:shadow-greenx/40 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap">
-                            Buscar
-                        </button>
-                    </div>
-                </form>
-
-                <!-- Stats row -->
-                <div class="mt-10 sm:mt-16 mb-16 sm:mb-0 grid grid-cols-4 gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-14 hero-reveal" style="animation-delay:0.65s">
-                    <div class="text-center">
-                        <div class="text-xl sm:text-3xl font-black text-greenx tabular-nums" data-counter="500">0+</div>
-                        <div class="text-[9px] sm:text-xs text-zinc-500 mt-1 uppercase tracking-wider font-medium">Produtos</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-xl sm:text-3xl font-black text-greenx tabular-nums" data-counter="200">0+</div>
-                        <div class="text-[9px] sm:text-xs text-zinc-500 mt-1 uppercase tracking-wider font-medium">Vendedores</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-xl sm:text-3xl font-black text-greenx tabular-nums" data-counter="1000">0+</div>
-                        <div class="text-[9px] sm:text-xs text-zinc-500 mt-1 uppercase tracking-wider font-medium">Vendas</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-xl sm:text-3xl font-black text-greenx">100%</div>
-                        <div class="text-[9px] sm:text-xs text-zinc-500 mt-1 uppercase tracking-wider font-medium">Seguro</div>
-                    </div>
+                <div class="relative min-h-[360px] sm:min-h-[460px] lg:min-h-[600px] flex items-center justify-center lg:justify-end pointer-events-none">
+                    <img src="<?= BASE_PATH ?>/assets/img/logobanner.png" alt="" class="w-[78vw] max-w-[780px] lg:w-[760px] object-contain drop-shadow-[0_0_70px_rgba(168,85,247,.38)] hero-reveal" style="animation-delay:.15s">
                 </div>
-            </div>
-        </div>
-
-        <!-- Scroll indicator -->
-        <div class="absolute bottom-8 left-0 right-0 flex flex-col items-center gap-2 hero-reveal" style="animation-delay:0.8s">
-            <span class="text-[10px] text-zinc-600 dark:text-zinc-400 uppercase tracking-widest font-medium home-explorar-text">Explorar</span>
-            <div class="w-5 h-8 rounded-full border border-white/[0.12] flex justify-center pt-1.5">
-                <div class="w-1 h-2 bg-greenx/60 rounded-full scroll-dot"></div>
             </div>
         </div>
     </section>
@@ -151,13 +103,13 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
         <div class="trust-marquee flex items-center gap-10 sm:gap-16 whitespace-nowrap">
             <?php for ($ti = 0; $ti < 4; $ti++): ?>
             <div class="flex items-center gap-10 sm:gap-16 shrink-0 trust-marquee-track">
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><i data-lucide="shield-check" class="w-4 h-4 text-greenx"></i><span>Escrow seguro</span></div>
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><i data-lucide="zap" class="w-4 h-4 text-greenx"></i><span>PIX instantâneo</span></div>
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><i data-lucide="badge-check" class="w-4 h-4 text-greenx"></i><span>Vendedores verificados</span></div>
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><i data-lucide="headphones" class="w-4 h-4 text-greenx"></i><span>Suporte 24h</span></div>
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><i data-lucide="lock" class="w-4 h-4 text-greenx"></i><span>Dados criptografados</span></div>
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><i data-lucide="refresh-cw" class="w-4 h-4 text-greenx"></i><span>Reembolso garantido</span></div>
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><i data-lucide="clock" class="w-4 h-4 text-greenx"></i><span>Entrega imediata</span></div>
+                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>Dados criptografados</span></div>
+                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>Reembolso garantido</span></div>
+                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>Vendedores verificados</span></div>
+                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>Entrega imediata</span></div>
+                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>Escrow seguro</span></div>
+                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>PIX instantâneo</span></div>
+                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>Suporte 24h</span></div>
             </div>
             <?php endfor; ?>
         </div>

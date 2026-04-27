@@ -69,8 +69,12 @@ function chatResolveMediaUrl(?string $raw, string $placeholder = ''): ?string
     if (str_starts_with($raw, 'media:')) {
         return BASE_PATH . '/api/media?id=' . substr($raw, 6);
     }
-    // Already absolute
-    if (str_starts_with($raw, '/mercado_admin/')) return $raw;
+    if (str_starts_with($raw, '/mercado_admin/public/')) {
+        return BASE_PATH . substr($raw, strlen('/mercado_admin/public'));
+    }
+    if (str_starts_with($raw, '/mercado_admin/')) {
+        return BASE_PATH . '/' . ltrim(substr($raw, strlen('/mercado_admin')), '/');
+    }
     // Prefix with BASE_PATH (matches chat.php resolution)
     return BASE_PATH . '/' . ltrim($raw, '/');
 }
