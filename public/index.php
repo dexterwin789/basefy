@@ -85,11 +85,11 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     .hero-logo-img { width: clamp(440px, 118vw, 620px) !important; height: clamp(440px, 118vw, 620px) !important; transform: translateX(12%); }
 }
 @media (max-width: 480px) {
-    .hero-section { padding-top: 96px !important; margin-bottom: -24px; }
+    .hero-section { padding-top: 140px !important; margin-bottom: -50px; }
     .hero-badge { font-size: 14px !important; padding: 8px 14px !important; }
-    .hero-title { font-size: 32px !important; line-height: 108% !important; }
+    .hero-title { font-size: 28px !important; line-height: 108% !important; }
     .hero-copy { font-size: 17px !important; line-height: 116% !important; }
-    .hero-logo-wrap { height: 250px; margin-top: -18px; }
+    .hero-logo-wrap { height: 500px; margin-top: -385px; margin-left: 158px; }
     .hero-logo-img { width: 430px !important; height: 430px !important; transform: translateX(11%); }
 }
 </style>
