@@ -87,9 +87,9 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 @media (max-width: 480px) {
     .hero-section { padding-top: 140px !important; margin-bottom: -50px; }
     .hero-badge { font-size: 14px !important; padding: 8px 14px !important; }
-    .hero-title { font-size: 28px !important; line-height: 108% !important; }
-    .hero-copy { font-size: 17px !important; line-height: 116% !important; }
-    .hero-logo-wrap { height: 500px; margin-top: -385px; margin-left: 158px; }
+    .hero-title { font-size: 27px !important; line-height: 108% !important; }
+    .hero-copy { font-size: 14px !important; line-height: 116% !important; }
+    .hero-logo-wrap { height: 500px; margin-top: -385px; margin-left: 158px; opacity: 0.5; }
     .hero-logo-img { width: 430px !important; height: 430px !important; transform: translateX(11%); }
 }
 </style>
