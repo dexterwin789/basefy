@@ -59,7 +59,7 @@ include __DIR__ . '/../../views/partials/header.php';
 include __DIR__ . '/../../views/partials/vendor_layout_start.php';
 ?>
 
-<div class="max-w-7xl mx-auto">
+<div>
   <div class="bg-blackx2 border border-blackx3 rounded-2xl p-5">
     <form method="get" class="mb-4">
       <input

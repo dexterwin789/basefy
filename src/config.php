@@ -116,3 +116,7 @@ if (!function_exists('fmtDate')) {
 		return $ts !== false ? date($fmt, $ts) : $dt;
 	}
 }
+
+// Register DB-backed session handler so sessions survive Railway restarts
+require_once __DIR__ . '/session.php';
+registerDbSessionHandler();

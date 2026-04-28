@@ -171,7 +171,7 @@ $adEnabled = (bool)($produto['auto_delivery_enabled'] ?? false);
     .light-mode .ql-snow .ql-picker-options{background:#fff;border-color:#d4d4d8}
 </style>
 
-<div class="max-w-4xl mx-auto" x-data="produtoForm()">
+<div x-data="produtoForm()">
     <div class="mb-4 rounded-2xl border border-blackx3 bg-blackx2 p-5 md:p-6">
         <div class="flex items-start justify-between gap-4">
             <div>

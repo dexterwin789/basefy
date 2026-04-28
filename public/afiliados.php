@@ -76,7 +76,7 @@ $statusBadge = function(string $s): string {
 $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
 ?>
 
-<div class="max-w-5xl mx-auto space-y-6">
+<div class="space-y-6">
 
   <?php if ($msg): ?>
     <div class="rounded-xl bg-greenx/10 border border-greenx/30 p-4 text-sm text-greenx flex items-center gap-2 animate-fade-in">
