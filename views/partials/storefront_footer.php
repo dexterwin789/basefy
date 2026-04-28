@@ -3,7 +3,7 @@ declare(strict_types=1);
 $_ftLoggedIn = !empty($_SESSION['user_id']) && (int)$_SESSION['user_id'] > 0;
 ?>
 <footer class="border-t border-white/[0.06] bg-blackx mt-16">
-    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-12">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-12">
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8">
             <!-- Brand / Sobre -->
             <div class="col-span-2 sm:col-span-2 lg:col-span-1 space-y-4">

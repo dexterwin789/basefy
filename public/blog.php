@@ -87,7 +87,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     <!-- Hero header — matches categorias.php style -->
     <div class="relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-b from-greenx/[0.04] via-transparent to-transparent pointer-events-none"></div>
-        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 pt-10 pb-6 relative z-10">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 pt-10 pb-6 relative z-10">
             <div class="text-center mb-8 animate-fade-in">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-greenx/10 border border-greenx/20 text-greenx text-xs font-semibold mb-4">
                     <i data-lucide="newspaper" class="w-3.5 h-3.5"></i> Blog
@@ -140,7 +140,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
         </div>
     </div>
 
-    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 pb-12">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 pb-12">
 
         <!-- Active filters -->
         <?php if ($search !== '' || $catFilter !== ''): ?>

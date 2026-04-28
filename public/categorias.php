@@ -71,7 +71,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 <div class="min-h-screen bg-blackx">
     <!-- Page header -->
     <div class="border-b border-white/[0.04] bg-white/[0.01]">
-        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-6">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-6">
             <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
                 <div class="animate-fade-in-up">
                     <div class="flex items-center gap-2 text-sm text-zinc-500 mb-2">
@@ -118,7 +118,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     </div>
 
     <?php if ($feedback !== ''): ?>
-    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 mt-4 animate-scale-in">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 mt-4 animate-scale-in">
         <div class="flex items-center gap-3 rounded-2xl border border-greenx/30 bg-greenx/[0.06] px-5 py-3.5">
             <div class="w-8 h-8 rounded-full bg-greenx/20 flex items-center justify-center flex-shrink-0"><i data-lucide="check" class="w-4 h-4 text-greenx"></i></div>
             <p class="text-sm text-greenx"><?= htmlspecialchars($feedback, ENT_QUOTES, 'UTF-8') ?></p>
@@ -126,7 +126,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     </div>
     <?php endif; ?>
 
-    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-6">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-6">
         <?php if ($showCategoryGrid): ?>
         <!-- ── CATEGORY GRID (GGMax style) ── -->
         <?php if (!$categorias): ?>

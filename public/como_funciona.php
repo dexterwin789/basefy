@@ -63,7 +63,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,rgba(var(--t-accent-rgb),0.12),transparent)]"></div>
         <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-greenx/[0.04] rounded-full blur-[140px] pointer-events-none"></div>
 
-        <div class="relative max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-20 lg:py-24 text-center cf-fade-in">
+        <div class="relative max-w-[1440px] mx-auto px-4 sm:px-6 py-16 sm:py-20 lg:py-24 text-center cf-fade-in">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-greenx/10 border border-greenx/20 text-greenx text-xs font-semibold mb-6">
                 <i data-lucide="info" class="w-3.5 h-3.5"></i> Guia da Plataforma
             </div>
@@ -78,7 +78,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     </section>
 
     <!-- =========== TABS: Comprador / Vendedor =========== -->
-    <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-20">
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 pb-20">
 
         <!-- ═══ PROCESSO UNIFICADO ═══ -->
             <div class="grid gap-8 md:gap-6">
@@ -222,7 +222,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     <!-- =========== ESCROW EXPLAINED =========== -->
     <section class="relative overflow-hidden border-t border-white/[0.04]">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_120%,rgba(var(--t-accent-rgb),0.06),transparent)]"></div>
-        <div class="relative max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+        <div class="relative max-w-[1440px] mx-auto px-4 sm:px-6 py-16 sm:py-20">
             <div class="text-center mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-greenx/10 border border-greenx/20 text-greenx text-xs font-semibold mb-4">
                     <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Segurança Garantida
@@ -279,7 +279,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     </section>
 
     <!-- =========== FAQ =========== -->
-    <section class="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 py-16 sm:py-20">
         <div class="text-center mb-10">
             <h2 class="text-2xl sm:text-3xl font-black tracking-tight">Perguntas <span class="text-greenx">frequentes</span></h2>
         </div>
@@ -313,7 +313,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     <!-- =========== CTA =========== -->
     <section class="relative overflow-hidden border-t border-white/[0.04]">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,rgba(var(--t-accent-rgb),0.08),transparent)]"></div>
-        <div class="relative max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-20 text-center">
+        <div class="relative max-w-[1440px] mx-auto px-4 sm:px-6 py-16 sm:py-20 text-center">
             <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-4">
                 Pronto para <span class="text-greenx">começar</span>?
             </h2>
