@@ -31,14 +31,18 @@ final class DbSessionHandler implements SessionHandlerInterface
     public function open(string $path, string $name): bool
     {
         try {
-            $this->getPdo()->exec("
+            $pdo = $this->getPdo();
+            // Execute separately — PostgreSQL PDO does not support multi-statement exec()
+            $pdo->exec("
                 CREATE TABLE IF NOT EXISTS sessions (
                     id            VARCHAR(128) NOT NULL PRIMARY KEY,
                     data          TEXT         NOT NULL DEFAULT '',
                     last_activity INTEGER      NOT NULL DEFAULT 0
-                );
+                )
+            ");
+            $pdo->exec("
                 CREATE INDEX IF NOT EXISTS idx_sessions_last_activity
-                    ON sessions(last_activity);
+                    ON sessions(last_activity)
             ");
             return true;
         } catch (\Throwable $e) {
@@ -56,7 +60,7 @@ final class DbSessionHandler implements SessionHandlerInterface
     {
         try {
             $stmt = $this->getPdo()->prepare(
-                'SELECT data FROM sessions WHERE id = $1 LIMIT 1'
+                'SELECT data FROM sessions WHERE id = ? LIMIT 1'
             );
             $stmt->execute([$id]);
             $row = $stmt->fetch();
@@ -69,10 +73,14 @@ final class DbSessionHandler implements SessionHandlerInterface
 
     public function write(string $id, string $data): bool
     {
+        // Guard against empty session ID (can happen if open() failed)
+        if ($id === '') {
+            return false;
+        }
         try {
             $stmt = $this->getPdo()->prepare('
                 INSERT INTO sessions (id, data, last_activity)
-                VALUES ($1, $2, $3)
+                VALUES (?, ?, ?)
                 ON CONFLICT (id) DO UPDATE
                     SET data          = EXCLUDED.data,
                         last_activity = EXCLUDED.last_activity
@@ -89,7 +97,7 @@ final class DbSessionHandler implements SessionHandlerInterface
     {
         try {
             $stmt = $this->getPdo()->prepare(
-                'DELETE FROM sessions WHERE id = $1'
+                'DELETE FROM sessions WHERE id = ?'
             );
             $stmt->execute([$id]);
             return true;
@@ -104,7 +112,7 @@ final class DbSessionHandler implements SessionHandlerInterface
         try {
             $cutoff = time() - $max_lifetime;
             $stmt   = $this->getPdo()->prepare(
-                'DELETE FROM sessions WHERE last_activity < $1'
+                'DELETE FROM sessions WHERE last_activity < ?'
             );
             $stmt->execute([$cutoff]);
             return $stmt->rowCount();
