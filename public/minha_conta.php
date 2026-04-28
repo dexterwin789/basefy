@@ -259,30 +259,41 @@ include __DIR__ . '/../views/partials/user_layout_start.php';
 
   <!-- ── Verification Progress Card ── -->
   <?php if ($_verif_pct < 100): ?>
-  <div class="relative overflow-hidden rounded-2xl border border-orange-500/30 bg-gradient-to-br from-orange-500/[0.06] to-orange-600/[0.02] p-5">
-    <div class="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-orange-500/[0.05] blur-2xl"></div>
+  <div class="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-blackx2 p-5">
+    <div class="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-greenx/[0.07] blur-[60px] pointer-events-none"></div>
     <div class="flex items-start gap-4 relative">
-      <div class="w-11 h-11 rounded-xl bg-orange-500/15 border border-orange-500/25 flex items-center justify-center flex-shrink-0">
-        <i data-lucide="shield-alert" class="w-5 h-5 text-orange-400"></i>
+      <div class="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center flex-shrink-0 mt-0.5">
+        <i data-lucide="shield" class="w-4.5 h-4.5 text-zinc-400"></i>
       </div>
       <div class="flex-1 min-w-0">
-        <h3 class="font-semibold text-orange-300 text-sm">Verificação da conta — <?= $_verif_pct ?>%</h3>
-        <p class="text-xs text-orange-200/60 mt-0.5 mb-3">Complete seu perfil para habilitar saques e recursos premium.</p>
-        <div class="w-full bg-white/[0.06] rounded-full h-2 mb-3">
-          <div class="bg-gradient-to-r from-orange-400 to-orange-500 h-2 rounded-full transition-all duration-700" style="width:<?= $_verif_pct ?>%"></div>
+        <div class="flex items-center justify-between mb-0.5">
+          <h3 class="font-semibold text-white text-sm">Verificação da conta</h3>
+          <span class="text-xs font-bold text-zinc-400"><?= $_verif_pct ?>%</span>
+        </div>
+        <p class="text-xs text-zinc-500 mb-3">Complete seu perfil para habilitar saques e recursos premium.</p>
+        <div class="w-full bg-white/[0.05] rounded-full h-1.5 mb-4 overflow-hidden">
+          <div class="h-1.5 rounded-full transition-all duration-700"
+               style="width:<?= $_verif_pct ?>%; background: linear-gradient(90deg, var(--t-accent, #8800E4), var(--t-accent-hover, #7200C0))"></div>
         </div>
         <div class="flex flex-wrap gap-2">
           <?php foreach ($_verif_fields as $_vk => $_vf): ?>
-          <span class="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] <?= $_vf['filled'] ? 'bg-greenx/10 border border-greenx/25 text-greenx' : 'bg-white/[0.04] border border-white/[0.06] text-zinc-500' ?>">
-            <i data-lucide="<?= $_vf['filled'] ? 'check' : $_vf['icon'] ?>" class="w-3 h-3"></i>
+          <span class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium
+            <?= $_vf['filled']
+              ? 'bg-white/[0.06] border border-white/[0.10] text-zinc-300'
+              : 'bg-white/[0.02] border border-white/[0.05] text-zinc-600' ?>">
+            <?php if ($_vf['filled']): ?>
+            <i data-lucide="check" class="w-3 h-3 text-greenx"></i>
+            <?php else: ?>
+            <i data-lucide="<?= $_vf['icon'] ?>" class="w-3 h-3"></i>
+            <?php endif; ?>
             <?= $_vf['label'] ?>
           </span>
           <?php endforeach; ?>
         </div>
         <?php if (!$_emailVerificado && trim((string)($user['email'] ?? '')) !== ''): ?>
-        <form method="post" class="mt-3">
+        <form method="post" class="mt-4">
           <input type="hidden" name="action" value="enviar_verificacao_email">
-          <button type="submit" class="inline-flex items-center gap-1.5 rounded-lg bg-greenx/10 border border-greenx/25 px-3 py-1.5 text-xs font-semibold text-greenx hover:bg-greenx/20 transition-all">
+          <button type="submit" class="inline-flex items-center gap-1.5 rounded-lg bg-white/[0.06] border border-white/[0.10] px-3 py-1.5 text-xs font-semibold text-zinc-300 hover:bg-white/[0.10] hover:text-white transition-all">
             <i data-lucide="mail" class="w-3.5 h-3.5"></i>
             Enviar e-mail de verificação
           </button>
@@ -292,13 +303,13 @@ include __DIR__ . '/../views/partials/user_layout_start.php';
     </div>
   </div>
   <?php else: ?>
-  <div class="rounded-2xl border border-greenx/30 bg-greenx/[0.06] p-4 flex items-center gap-3">
-    <div class="w-9 h-9 rounded-xl bg-greenx/15 border border-greenx/25 flex items-center justify-center">
-      <i data-lucide="shield-check" class="w-5 h-5 text-greenx"></i>
+  <div class="rounded-2xl border border-white/[0.08] bg-blackx2 p-4 flex items-center gap-3">
+    <div class="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
+      <i data-lucide="shield-check" class="w-4.5 h-4.5 text-greenx"></i>
     </div>
     <div>
-      <p class="text-sm font-semibold text-greenx">Conta verificada</p>
-      <p class="text-xs text-greenx/60">Todas as funcionalidades estão habilitadas.</p>
+      <p class="text-sm font-semibold text-white">Conta verificada</p>
+      <p class="text-xs text-zinc-500">Todas as funcionalidades estão habilitadas.</p>
     </div>
   </div>
   <?php endif; ?>
