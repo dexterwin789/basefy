@@ -243,7 +243,7 @@ $adEnabled = (bool)($produto['auto_delivery_enabled'] ?? false);
             <h3 class="text-sm font-semibold text-zinc-300 mb-4 flex items-center gap-2"><i data-lucide="file-text" class="w-4 h-4 text-greenx"></i> Informações básicas</h3>
             <div class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                    <div :class="tipo === 'dinamico' ? 'md:col-span-2' : ''">
                         <label class="block text-sm mb-1.5 text-zinc-400 font-medium">Categoria</label>
                         <select name="categoria_id" required class="w-full rounded-xl bg-blackx border border-blackx3 px-3.5 py-2.5 focus:border-greenx outline-none transition-colors">
                             <option value="">Selecione a categoria</option>
@@ -257,15 +257,17 @@ $adEnabled = (bool)($produto['auto_delivery_enabled'] ?? false);
                         <input id="preco_display" type="text" inputmode="numeric" value="<?= htmlspecialchars($precoInicial) ?>" class="w-full rounded-xl bg-blackx border border-blackx3 px-3.5 py-2.5 focus:border-greenx outline-none transition-colors" placeholder="0,00">
                     </div>
                 </div>
-                <div>
-                    <label class="block text-sm mb-1.5 text-zinc-400 font-medium">Nome</label>
-                    <input name="nome" maxlength="120" required value="<?= htmlspecialchars((string)($produto['nome'] ?? '')) ?>" class="w-full rounded-xl bg-blackx border border-blackx3 px-3.5 py-2.5 focus:border-greenx outline-none transition-colors" placeholder="Nome do produto ou serviço">
-                </div>
-                <div>
-                    <label class="block text-sm mb-1.5 text-zinc-400 font-medium">Slug <span class="text-zinc-600 font-normal">(Opcional — gerado automaticamente se vazio)</span></label>
-                    <input name="slug" maxlength="191" value="<?= htmlspecialchars((string)($produto['slug'] ?? '')) ?>" class="w-full rounded-xl bg-blackx border border-blackx3 px-3.5 py-2.5 focus:border-greenx outline-none transition-colors" placeholder="ex: meu-produto-personalizado">
-                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm mb-1.5 text-zinc-400 font-medium">Nome</label>
+                        <input name="nome" maxlength="120" required value="<?= htmlspecialchars((string)($produto['nome'] ?? '')) ?>" class="w-full rounded-xl bg-blackx border border-blackx3 px-3.5 py-2.5 focus:border-greenx outline-none transition-colors" placeholder="Nome do produto ou serviço">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1.5 text-zinc-400 font-medium">Slug <span class="text-zinc-600 font-normal">(Opcional — gerado automaticamente se vazio)</span></label>
+                        <input name="slug" maxlength="191" value="<?= htmlspecialchars((string)($produto['slug'] ?? '')) ?>" class="w-full rounded-xl bg-blackx border border-blackx3 px-3.5 py-2.5 focus:border-greenx outline-none transition-colors" placeholder="ex: meu-produto-personalizado">
+                    </div>
+                </div>
+                <div>
                     <!-- Quantidade: usa template x-if para evitar duplicidade de name -->
                     <template x-if="tipo === 'produto'">
                     <div>
