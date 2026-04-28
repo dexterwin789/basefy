@@ -118,7 +118,73 @@ if ($_themeConn !== null) {
     ::-webkit-scrollbar-track { background: var(--t-bg-body); }
     ::-webkit-scrollbar-thumb { background: var(--t-bg-border); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--t-scrollbar-hover); }
+    /* ── PAGE PRELOADER ── */
+    #page-preloader {
+      position: fixed; inset: 0; z-index: 999999;
+      background: var(--t-bg-body, #0E0324);
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.45s cubic-bezier(0.4,0,0.2,1), visibility 0.45s;
+    }
+    #page-preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    #page-preloader .preloader-logo {
+      width: 48px; height: 48px;
+      animation: preloaderPulse 1s ease-in-out infinite alternate;
+    }
+    @keyframes preloaderPulse {
+      from { opacity: 0.4; transform: scale(0.92); filter: drop-shadow(0 0 0px var(--t-accent, #8800E4)); }
+      to   { opacity: 1;   transform: scale(1);    filter: drop-shadow(0 0 18px var(--t-accent, #8800E4)); }
+    }
+    /* page-exit fade overlay */
+    #page-exit-overlay {
+      position: fixed; inset: 0; z-index: 999998;
+      background: var(--t-bg-body, #0E0324);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    #page-exit-overlay.fading { opacity: 1; pointer-events: all; }
   </style>
 </head>
 <body class="min-h-screen bg-blackx text-white font-sans antialiased">
 <script>document.documentElement.classList.remove('light-mode');</script>
+
+<!-- Page preloader -->
+<div id="page-preloader">
+  <img src="<?= BASE_PATH ?>/assets/img/logo22.png" alt="" class="preloader-logo">
+</div>
+<div id="page-exit-overlay"></div>
+
+<script>
+(function() {
+  // Fade in on load
+  window.addEventListener('load', function() {
+    var el = document.getElementById('page-preloader');
+    if (el) {
+      setTimeout(function() { el.classList.add('hidden'); }, 80);
+    }
+  });
+
+  // Fade out on navigation
+  document.addEventListener('click', function(e) {
+    var a = e.target.closest('a');
+    if (!a) return;
+    var href = a.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('javascript') || href.startsWith('mailto') || a.target === '_blank') return;
+    if (a.hasAttribute('data-no-transition')) return;
+
+    e.preventDefault();
+    var overlay = document.getElementById('page-exit-overlay');
+    if (overlay) {
+      overlay.classList.add('fading');
+      setTimeout(function() { window.location.href = href; }, 280);
+    } else {
+      window.location.href = href;
+    }
+  });
+
+  // Handle form submits (optional — keeps the feel consistent on POST)
+  document.addEventListener('submit', function() {
+    var overlay = document.getElementById('page-exit-overlay');
+    if (overlay) overlay.classList.add('fading');
+  });
+})();
+</script>
