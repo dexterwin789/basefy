@@ -125,7 +125,7 @@ if ($uid > 0) {
 
       <nav class="p-3 space-y-4 overflow-y-auto" style="max-height:calc(100vh - 10rem)">
         <div class="mb-2">
-          <a href="<?= BASE_PATH ?>/" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border border-transparent hover:bg-greenx/10 hover:border-greenx/30 text-zinc-300 hover:text-greenx transition">
+          <a href="<?= BASE_PATH ?>/" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white transition">
             <i data-lucide="arrow-left" class="w-4 h-4"></i><span>Voltar à Loja</span>
           </a>
         </div>
@@ -134,8 +134,8 @@ if ($uid > 0) {
         <div>
           <p class="px-2 pb-2 text-[11px] uppercase tracking-wider text-zinc-500 font-semibold">Compras</p>
           <div class="space-y-1">
-            <a href="<?= BASE_PATH ?>/dashboard" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'dashboard' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>"><i data-lucide="layout-dashboard" class="w-4 h-4"></i><span>Dashboard</span></a>
-            <a href="<?= BASE_PATH ?>/meus_pedidos" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'pedidos' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>"><i data-lucide="package-check" class="w-4 h-4"></i><span>Meus pedidos</span></a>
+            <a href="<?= BASE_PATH ?>/dashboard" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'dashboard' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>"><i data-lucide="layout-dashboard" class="w-4 h-4"></i><span>Dashboard</span></a>
+            <a href="<?= BASE_PATH ?>/meus_pedidos" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'pedidos' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>"><i data-lucide="package-check" class="w-4 h-4"></i><span>Meus pedidos</span></a>
           </div>
         </div>
 
@@ -143,10 +143,10 @@ if ($uid > 0) {
         <div>
           <p class="px-2 pb-2 text-[11px] uppercase tracking-wider text-zinc-500 font-semibold">Vendas</p>
           <div class="space-y-1">
-            <a href="<?= BASE_PATH ?>/vendedor/produtos" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'produtos' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>"><i data-lucide="package" class="w-4 h-4"></i><span>Meus produtos</span></a>
-            <a href="<?= BASE_PATH ?>/vendedor/vendas_aprovadas" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'aprovadas' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>"><i data-lucide="badge-check" class="w-4 h-4"></i><span>Vendas aprovadas</span></a>
-            <a href="<?= BASE_PATH ?>/vendedor/vendas_analise" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'analise' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>"><i data-lucide="hourglass" class="w-4 h-4"></i><span>Vendas em análise</span></a>
-            <a href="<?= BASE_PATH ?>/vendedor/perguntas" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'perguntas' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>">
+            <a href="<?= BASE_PATH ?>/vendedor/produtos" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'produtos' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>"><i data-lucide="package" class="w-4 h-4"></i><span>Meus produtos</span></a>
+            <a href="<?= BASE_PATH ?>/vendedor/vendas_aprovadas" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'aprovadas' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>"><i data-lucide="badge-check" class="w-4 h-4"></i><span>Vendas aprovadas</span></a>
+            <a href="<?= BASE_PATH ?>/vendedor/vendas_analise" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'analise' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>"><i data-lucide="hourglass" class="w-4 h-4"></i><span>Vendas em análise</span></a>
+            <a href="<?= BASE_PATH ?>/vendedor/perguntas" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'perguntas' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>">
               <i data-lucide="help-circle" class="w-4 h-4"></i><span>Perguntas</span>
               <?php
               if (($uid ?? 0) > 0) {
@@ -165,10 +165,10 @@ if ($uid > 0) {
         <div>
           <p class="px-2 pb-2 text-[11px] uppercase tracking-wider text-zinc-500 font-semibold">Financeiro</p>
           <div class="space-y-1">
-            <a href="<?= BASE_PATH ?>/wallet" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'wallet' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>"><i data-lucide="wallet-cards" class="w-4 h-4"></i><span>Carteira</span></a>
-            <a href="<?= BASE_PATH ?>/saques" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'saques' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>"><i data-lucide="arrow-down-up" class="w-4 h-4"></i><span>Saques</span></a>
-            <a href="<?= BASE_PATH ?>/depositos" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'depositos' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>"><i data-lucide="banknote" class="w-4 h-4"></i><span>Depósitos</span></a>
-            <a href="<?= BASE_PATH ?>/afiliados" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'afiliados' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>"><i data-lucide="share-2" class="w-4 h-4"></i><span>Afiliados</span></a>
+            <a href="<?= BASE_PATH ?>/wallet" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'wallet' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>"><i data-lucide="wallet-cards" class="w-4 h-4"></i><span>Carteira</span></a>
+            <a href="<?= BASE_PATH ?>/saques" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'saques' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>"><i data-lucide="arrow-down-up" class="w-4 h-4"></i><span>Saques</span></a>
+            <a href="<?= BASE_PATH ?>/depositos" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'depositos' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>"><i data-lucide="banknote" class="w-4 h-4"></i><span>Depósitos</span></a>
+            <a href="<?= BASE_PATH ?>/afiliados" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'afiliados' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>"><i data-lucide="share-2" class="w-4 h-4"></i><span>Afiliados</span></a>
           </div>
         </div>
 
@@ -176,7 +176,7 @@ if ($uid > 0) {
         <div>
           <p class="px-2 pb-2 text-[11px] uppercase tracking-wider text-zinc-500 font-semibold">Comunicação</p>
           <div class="space-y-1">
-            <a href="<?= BASE_PATH ?>/chat" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'chat' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>">
+            <a href="<?= BASE_PATH ?>/chat" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'chat' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>">
               <i data-lucide="message-circle" class="w-4 h-4"></i><span>Chat</span>
               <?php
               if (($uid ?? 0) > 0) {
@@ -188,8 +188,8 @@ if ($uid > 0) {
               <span class="ml-auto min-w-[20px] h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center"><?= $chatUnread2 ?></span>
               <?php endif; } ?>
             </a>
-            <a href="<?= BASE_PATH ?>/denuncias" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'denuncias' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>"><i data-lucide="flag" class="w-4 h-4"></i><span>Denúncias</span></a>
-            <a href="<?= BASE_PATH ?>/tickets_dashboard" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'tickets' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>"><i data-lucide="ticket" class="w-4 h-4"></i><span>Tickets</span></a>
+            <a href="<?= BASE_PATH ?>/denuncias" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'denuncias' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>"><i data-lucide="flag" class="w-4 h-4"></i><span>Denúncias</span></a>
+            <a href="<?= BASE_PATH ?>/tickets_dashboard" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'tickets' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>"><i data-lucide="ticket" class="w-4 h-4"></i><span>Tickets</span></a>
           </div>
         </div>
 
@@ -197,8 +197,8 @@ if ($uid > 0) {
         <div>
           <p class="px-2 pb-2 text-[11px] uppercase tracking-wider text-zinc-500 font-semibold">Conta</p>
           <div class="space-y-1">
-            <a href="<?= BASE_PATH ?>/minha_conta" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'minha_conta' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>"><i data-lucide="user-cog" class="w-4 h-4"></i><span>Minha Conta</span></a>
-            <a href="<?= BASE_PATH ?>/verificacao" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= ($activeMenu ?? '') === 'verificacao' ? 'bg-greenx/15 border-greenx text-greenx' : 'border-transparent hover:bg-blackx hover:border-blackx3 text-zinc-200' ?>"><i data-lucide="shield-check" class="w-4 h-4"></i><span>Verificação</span></a>
+            <a href="<?= BASE_PATH ?>/minha_conta" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= $activeMenu === 'minha_conta' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>"><i data-lucide="user-cog" class="w-4 h-4"></i><span>Minha Conta</span></a>
+            <a href="<?= BASE_PATH ?>/verificacao" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border transition <?= ($activeMenu ?? '') === 'verificacao' ? 'bg-greenx/10 border-greenx/50 text-greenx' : 'border-transparent text-zinc-400 hover:bg-white/[0.05] hover:border-white/[0.08] hover:text-white' ?>"><i data-lucide="shield-check" class="w-4 h-4"></i><span>Verificação</span></a>
           </div>
         </div>
       </nav>

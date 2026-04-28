@@ -121,25 +121,25 @@ if ($_themeConn !== null) {
     /* ── PAGE PRELOADER ── */
     #page-preloader {
       position: fixed; inset: 0; z-index: 999999;
-      background: var(--t-bg-body, #0E0324);
+      background: rgba(0,0,0,0.88);
       display: flex; align-items: center; justify-content: center;
-      transition: opacity 0.45s cubic-bezier(0.4,0,0.2,1), visibility 0.45s;
+      transition: opacity 0.35s ease, visibility 0.35s;
     }
     #page-preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    #page-preloader .preloader-logo {
-      width: 48px; height: 48px;
-      animation: preloaderPulse 1s ease-in-out infinite alternate;
+    .preloader-spinner {
+      width: 36px; height: 36px;
+      border: 2.5px solid rgba(255,255,255,0.08);
+      border-top-color: var(--t-accent, #8800E4);
+      border-radius: 50%;
+      animation: spinnerRotate 0.7s linear infinite;
     }
-    @keyframes preloaderPulse {
-      from { opacity: 0.4; transform: scale(0.92); filter: drop-shadow(0 0 0px var(--t-accent, #8800E4)); }
-      to   { opacity: 1;   transform: scale(1);    filter: drop-shadow(0 0 18px var(--t-accent, #8800E4)); }
-    }
+    @keyframes spinnerRotate { to { transform: rotate(360deg); } }
     /* page-exit fade overlay */
     #page-exit-overlay {
       position: fixed; inset: 0; z-index: 999998;
-      background: var(--t-bg-body, #0E0324);
+      background: rgba(0,0,0,0.88);
       opacity: 0; pointer-events: none;
-      transition: opacity 0.3s cubic-bezier(0.4,0,0.2,1);
+      transition: opacity 0.28s ease;
     }
     #page-exit-overlay.fading { opacity: 1; pointer-events: all; }
   </style>
@@ -149,7 +149,7 @@ if ($_themeConn !== null) {
 
 <!-- Page preloader -->
 <div id="page-preloader">
-  <img src="<?= BASE_PATH ?>/assets/img/logo22.png" alt="" class="preloader-logo">
+  <div class="preloader-spinner"></div>
 </div>
 <div id="page-exit-overlay"></div>
 
