@@ -84,7 +84,7 @@ include __DIR__ . '/../views/partials/header.php';
 include __DIR__ . '/../views/partials/user_layout_start.php';
 ?>
 
-<div class="max-w-7xl mx-auto space-y-4">
+<div class="space-y-4">
   <div class="bg-blackx2 border border-blackx3 rounded-2xl p-6">
     <div class="flex items-center gap-4">
       <img src="<?= htmlspecialchars($foto, ENT_QUOTES, 'UTF-8') ?>" class="w-16 h-16 rounded-full object-cover border border-blackx3" alt="avatar">
