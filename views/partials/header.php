@@ -114,6 +114,7 @@ if ($_themeConn !== null) {
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     input[type="number"] { -moz-appearance: textfield; }
+    input:focus, textarea:focus, select:focus { outline: none !important; box-shadow: none !important; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--t-bg-body); }
     ::-webkit-scrollbar-thumb { background: var(--t-bg-border); border-radius: 3px; }
