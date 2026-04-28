@@ -151,7 +151,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     </section>
 
     <?php if ($feedback !== ''): ?>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-8 mb-6 relative z-10 animate-scale-in">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 mt-8 mb-6 relative z-10 animate-scale-in">
         <div class="flex items-center gap-3 rounded-2xl border border-greenx/30 bg-greenx/[0.06] backdrop-blur-sm px-5 py-3.5">
             <div class="w-8 h-8 rounded-full bg-greenx/20 flex items-center justify-center flex-shrink-0">
                 <i data-lucide="check" class="w-4 h-4 text-greenx"></i>
@@ -163,7 +163,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 
     <!-- =========== CATEGORIAS — Premium cards =========== -->
     <?php if ($categorias): ?>
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 py-14 sm:py-20">
         <div class="flex items-center justify-between mb-8 sm:mb-10">
             <div>
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-greenx/10 border border-greenx/20 text-greenx text-[11px] font-bold uppercase tracking-wider mb-3">
@@ -209,7 +209,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     <?php endif; ?>
 
     <!-- =========== PRODUTOS EM DESTAQUE =========== -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 py-10 sm:py-14">
         <div class="flex items-center justify-between mb-8 sm:mb-10">
             <div>
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-greenx/10 border border-greenx/20 text-greenx text-[11px] font-bold uppercase tracking-wider mb-3">
@@ -297,7 +297,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     <?php if ($q === ''): ?>
     <section class="relative overflow-hidden">
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_50%,rgba(var(--t-accent-rgb),0.05),transparent)]"></div>
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div class="relative max-w-[1440px] mx-auto px-4 sm:px-6 py-16 sm:py-24">
             <div class="text-center mb-12 sm:mb-16">
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-greenx/10 border border-greenx/20 text-greenx text-[11px] font-bold uppercase tracking-wider mb-4">
                     <i data-lucide="info" class="w-3 h-3"></i>
@@ -352,7 +352,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 
     <!-- =========== MAIS POPULARES =========== -->
     <?php if ($populares && $q === ''): ?>
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 py-10 sm:py-14">
         <div class="flex items-center justify-between mb-8 sm:mb-10">
             <div>
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-greenx/10 border border-greenx/20 text-greenx text-[11px] font-bold uppercase tracking-wider mb-3">
@@ -417,7 +417,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 
     <!-- =========== BLOG POSTS =========== -->
     <?php if ($blogPosts && $q === ''): ?>
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 py-10 sm:py-14">
         <div class="flex items-center justify-between mb-8 sm:mb-10">
             <div>
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-greenx/10 border border-greenx/20 text-greenx text-[11px] font-bold uppercase tracking-wider mb-3">
@@ -462,7 +462,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 
     <!-- =========== AFFILIATE PROGRAM CTA =========== -->
     <?php if ($affRulesHome['program_enabled'] && $q === ''): ?>
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div class="relative overflow-hidden rounded-3xl border border-greenx/20">
             <div class="absolute inset-0 bg-gradient-to-br from-greenx/[0.10] via-blackx2 to-greenxd/[0.10]"></div>
             <div class="absolute -top-20 -right-20 w-80 h-80 bg-greenx/[0.12] rounded-full blur-[120px] pointer-events-none"></div>
@@ -545,7 +545,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 
     <!-- =========== FINAL CTA =========== -->
     <?php if (!$isLoggedIn && $q === ''): ?>
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
         <div class="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-blackx2">
             <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-greenx/[0.10] rounded-full blur-[140px] pointer-events-none"></div>
             <div class="absolute bottom-0 left-0 w-80 h-80 bg-greenxd/[0.06] rounded-full blur-[120px] pointer-events-none"></div>
