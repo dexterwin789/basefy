@@ -90,8 +90,9 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 ?>
 
 <div class="min-h-screen bg-blackx">
+<div class="max-w-[1440px] mx-auto px-4 sm:px-6">
     <!-- Breadcrumb -->
-    <div class="px-4 sm:px-6 pt-6">
+    <div class="pt-6">
         <nav class="flex items-center gap-2 text-sm text-zinc-500 animate-fade-in">
             <a href="/" class="hover:text-greenx transition-colors">Início</a>
             <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
@@ -133,7 +134,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     </div>
     <?php else: ?>
 
-    <section class="px-4 sm:px-6 pt-8 pb-16 animate-fade-in-up">
+    <section class="pt-8 pb-16 animate-fade-in-up">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-black mb-2">Criar novo Ticket</h1>
             <p class="text-zinc-400 text-sm">
@@ -216,6 +217,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
         </form>
     </section>
     <?php endif; ?>
+</div>
 </div>
 
 <?php
