@@ -117,23 +117,27 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     object-fit: contain;
     margin: 0 !important;  /* override the lg:-ml-[95px] etc. tailwind utilities */
     transform: translateZ(0);
+    /* drop-shadow filter removed per design — keeps the natural glow of the PNG */
 }
 
-/* Desktop layout: text + logo side-by-side */
+/* Desktop layout: text + logo side-by-side (Figma proportions) */
 @media (min-width: 1024px) {
     .hero-grid {
-        /* text col fluid 38–48% of viewport, logo col gets the rest */
-        grid-template-columns: minmax(420px, 0.85fr) 1fr;
-        gap: clamp(20px, 2.5vw, 60px);
+        /* Text col ~38% of the row (Figma reference), logo col gets the rest */
+        grid-template-columns: minmax(380px, 0.7fr) 1.3fr;
+        gap: clamp(20px, 2vw, 48px);
     }
     .hero-logo-wrap {
         justify-content: flex-start;
-        max-height: clamp(540px, 78vh, 980px);
+        /* Logo intentionally taller than the text card so it overflows top/bottom (Figma) */
+        max-height: clamp(680px, 100vh, 1180px);
+        margin-top: clamp(-80px, -6vh, -32px);
+        margin-bottom: clamp(-80px, -6vh, -32px);
     }
     .hero-logo-img {
-        max-width: clamp(620px, 58vw, 1180px) !important;
-        max-height: clamp(540px, 78vh, 1180px) !important;
-        margin-left: clamp(-180px, -8vw, -40px) !important;
+        max-width: clamp(720px, 64vw, 1260px) !important;
+        max-height: clamp(680px, 100vh, 1260px) !important;
+        margin-left: clamp(-160px, -7vw, -32px) !important;
     }
 }
 
@@ -219,18 +223,18 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                 </div>
 
                 <div class="hero-logo-wrap">
-                    <img src="<?= BASE_PATH ?>/assets/img/logobanner.png" alt="" class="hero-logo-img hero-reveal" style="animation-delay:.18s;filter:drop-shadow(-12px 10px 34px rgba(165,33,254,.20)) drop-shadow(-46px 42px 62px rgba(165,33,254,.17)) drop-shadow(-104px 93px 84px rgba(165,33,254,.10));">
+                    <img src="<?= BASE_PATH ?>/assets/img/logobanner.png" alt="" class="hero-logo-img hero-reveal" style="animation-delay:.18s;">
                 </div>
             </div>
         </div>
     </section>
 
     <!-- =========== TRUST MARQUEE =========== -->
-    <section class="trust-marquee-section relative overflow-hidden border-y border-white/[0.05] py-5">
+    <section class="trust-marquee-section relative overflow-hidden border-y border-white/[0.05]">
         <!-- Edge gradient masks -->
         <div class="trust-mask-l pointer-events-none absolute inset-y-0 left-0 z-10 w-24 sm:w-40"></div>
         <div class="trust-mask-r pointer-events-none absolute inset-y-0 right-0 z-10 w-24 sm:w-40"></div>
-        <div class="trust-marquee flex items-center gap-12 sm:gap-20 whitespace-nowrap">
+        <div class="trust-marquee flex items-center gap-12 sm:gap-20 whitespace-nowrap" style="padding:10px 0;">
             <?php
             $trustItems = [
                 ['icon' => 'shield-check',   'label' => 'Dados criptografados',   'tone' => 'emerald'],
