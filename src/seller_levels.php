@@ -38,6 +38,101 @@ function sellerLevelsEnsure($conn): void
             escrowSettingSet($conn, $key, $default);
         }
     }
+
+    sellerFeeOverrideEnsureColumns($conn);
+}
+
+function sellerFeeOverrideEnsureColumns($conn): void
+{
+    static $checked = false;
+    if ($checked) return;
+    $checked = true;
+
+    try {
+        $st = $conn->prepare("SELECT column_name FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = 'users' AND column_name IN ('seller_fee_override_enabled', 'seller_fee_percent')");
+        if (!$st) return;
+        $st->execute();
+        $rows = $st->get_result()->fetch_all(MYSQLI_ASSOC) ?: [];
+        $found = [];
+        foreach ($rows as $row) {
+            $name = (string)($row['column_name'] ?? '');
+            if ($name !== '') $found[$name] = true;
+        }
+
+        if (!isset($found['seller_fee_override_enabled'])) {
+            $conn->query('ALTER TABLE users ADD COLUMN seller_fee_override_enabled BOOLEAN NOT NULL DEFAULT FALSE');
+        }
+        if (!isset($found['seller_fee_percent'])) {
+            $conn->query('ALTER TABLE users ADD COLUMN seller_fee_percent NUMERIC(5,2) DEFAULT NULL');
+        }
+    } catch (\Throwable $e) {
+        error_log('[SellerLevels] Falha ao garantir colunas de taxa personalizada: ' . $e->getMessage());
+    }
+}
+
+function sellerBool(mixed $value): bool
+{
+    if (is_bool($value)) return $value;
+    $v = strtolower(trim((string)$value));
+    return in_array($v, ['1', 'true', 't', 'yes', 'y', 'sim'], true);
+}
+
+function sellerFeeOverrideGet($conn, int $vendorId): array
+{
+    sellerFeeOverrideEnsureColumns($conn);
+
+    $st = $conn->prepare('SELECT seller_fee_override_enabled, seller_fee_percent FROM users WHERE id = ? LIMIT 1');
+    if (!$st) {
+        return ['enabled' => false, 'percent' => null];
+    }
+    $st->bind_param('i', $vendorId);
+    $st->execute();
+    $row = $st->get_result()->fetch_assoc() ?: [];
+
+    $percent = $row['seller_fee_percent'] ?? null;
+    $enabled = sellerBool($row['seller_fee_override_enabled'] ?? false) && $percent !== null && $percent !== '';
+
+    return [
+        'enabled' => $enabled,
+        'percent' => $percent !== null && $percent !== '' ? max(0.0, min(100.0, (float)$percent)) : null,
+    ];
+}
+
+function sellerFeeOverrideSave($conn, int $vendorId, bool $enabled, ?float $percent): array
+{
+    sellerFeeOverrideEnsureColumns($conn);
+
+    if ($vendorId <= 0) {
+        return [false, 'Selecione um vendedor válido.'];
+    }
+
+    $st = $conn->prepare("SELECT id FROM users WHERE id = ? AND (role IN ('vendedor','vendor','seller','vendendor') OR is_vendedor = TRUE) LIMIT 1");
+    if (!$st) {
+        return [false, 'Não foi possível validar o vendedor.'];
+    }
+    $st->bind_param('i', $vendorId);
+    $st->execute();
+    if (!$st->get_result()->fetch_assoc()) {
+        return [false, 'Vendedor não encontrado.'];
+    }
+
+    if ($enabled) {
+        if ($percent === null) {
+            return [false, 'Informe a taxa personalizada.'];
+        }
+        $percent = max(0.0, min(100.0, $percent));
+        $enabledInt = 1;
+        $stUp = $conn->prepare('UPDATE users SET seller_fee_override_enabled = ?, seller_fee_percent = ? WHERE id = ?');
+        $stUp->bind_param('idi', $enabledInt, $percent, $vendorId);
+    } else {
+        $enabledInt = 0;
+        $percentNull = null;
+        $stUp = $conn->prepare('UPDATE users SET seller_fee_override_enabled = ?, seller_fee_percent = ? WHERE id = ?');
+        $stUp->bind_param('idi', $enabledInt, $percentNull, $vendorId);
+    }
+    $stUp->execute();
+
+    return [true, $enabled ? 'Taxa personalizada salva para o vendedor.' : 'Vendedor voltou a herdar as taxas globais.'];
 }
 
 /**
@@ -84,6 +179,21 @@ function sellerLevelCalc($conn, int $vendorId): array
 {
     $cfg = sellerLevelsConfig($conn);
 
+    $override = sellerFeeOverrideGet($conn, $vendorId);
+    if ($override['enabled']) {
+        $feePct = (float)$override['percent'];
+        return [
+            'level'             => 0,
+            'label'             => 'Personalizada',
+            'fee_percent'       => $feePct,
+            'lead_fee_percent'  => 0.0,
+            'total_fee_percent' => $feePct,
+            'revenue'           => sellerTotalRevenue($conn, $vendorId),
+            'next_threshold'    => null,
+            'is_custom'         => true,
+        ];
+    }
+
     if (!$cfg['enabled']) {
         // Levels disabled — use Nível 1 rate, lead fee moved to buyer
         return [
@@ -94,6 +204,7 @@ function sellerLevelCalc($conn, int $vendorId): array
             'total_fee_percent' => $cfg['nivel1_percent'],
             'revenue'           => 0.0,
             'next_threshold'    => null,
+            'is_custom'         => false,
         ];
     }
 
@@ -129,6 +240,7 @@ function sellerLevelCalc($conn, int $vendorId): array
         'total_fee_percent' => $totalFee,
         'revenue'           => $revenue,
         'next_threshold'    => $nextThr,
+        'is_custom'         => false,
     ];
 }
 

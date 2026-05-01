@@ -35,6 +35,8 @@ CREATE TABLE users (
     ativo TINYINT(1) NOT NULL DEFAULT 1,
     is_vendedor TINYINT(1) NOT NULL DEFAULT 0,
     status_vendedor VARCHAR(20) NOT NULL DEFAULT 'nao_solicitado',
+    seller_fee_override_enabled TINYINT(1) NOT NULL DEFAULT 0,
+    seller_fee_percent DECIMAL(5,2) NULL,
     wallet_saldo DECIMAL(12,2) NOT NULL DEFAULT 0.00,
     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

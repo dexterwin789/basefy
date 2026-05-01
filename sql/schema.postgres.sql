@@ -31,6 +31,8 @@ CREATE TABLE users (
     ativo BOOLEAN NOT NULL DEFAULT TRUE,
     is_vendedor BOOLEAN NOT NULL DEFAULT FALSE,
     status_vendedor VARCHAR(20) NOT NULL DEFAULT 'nao_solicitado',
+    seller_fee_override_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    seller_fee_percent NUMERIC(5,2),
     wallet_saldo NUMERIC(12,2) NOT NULL DEFAULT 0.00,
     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP

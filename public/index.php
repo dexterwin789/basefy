@@ -109,18 +109,15 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     overflow: visible;
 }
 .hero-logo-img {
-    width: 100% !important;
-    height: 100% !important;
+    width: 170% !important;
+    height: 170% !important;
     max-width: clamp(380px, 60vw, 1100px) !important;
     max-height: clamp(380px, 70vh, 1100px) !important;
     object-fit: contain;
     margin: 0 !important;  /* override the lg:-ml-[95px] etc. tailwind utilities */
     transform: translateZ(0);
     /* Glow aplicado via CSS no logo12.png (PNG sem filtro embarcado) */
-    filter:
-        drop-shadow(0 0 28px rgba(165, 33, 254, 0.55))
-        drop-shadow(0 0 60px rgba(217, 70, 239, 0.32))
-        drop-shadow(-22px 18px 38px rgba(165, 33, 254, 0.30));
+    filter: drop-shadow(0 0 28px rgba(165, 33, 254, 0.55)) drop-shadow(0 0 60px rgba(217, 70, 239, 0.32)) drop-shadow(-22px 18px 38px rgba(165, 33, 254, 0.30));
 }
 
 /* Desktop layout: text + logo side-by-side (Figma proportions) */
@@ -159,7 +156,14 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     .hero-title { font-size: 27px !important; line-height: 108% !important; }
     .hero-copy { font-size: 14px !important; line-height: 116% !important; }
     .hero-logo-wrap { height: 500px; margin-top: -385px; margin-left: 158px; opacity: 0.5; }
-    .hero-logo-img { width: 430px !important; height: 430px !important; transform: translateX(11%); }
+    .hero-logo-img { width: 430px !important; height: 430px !important; margin-top: -170px !important; margin-left: 50px !important; transform: translateX(11%); }
+    .hero-actions { flex-wrap: nowrap !important; gap: 8px !important; }
+    .hero-actions a { min-width: 0; padding: 10px 12px !important; font-size: 11px !important; white-space: nowrap; }
+    .hero-actions i { width: 14px !important; height: 14px !important; }
+    .hero-trust-strip { flex-wrap: nowrap !important; overflow: hidden; }
+    .hero-trust-strip.text-\[12px\] { font-size: 10px !important; }
+    .hero-trust-strip.gap-x-5 { column-gap: 14px !important; }
+    .hero-trust-strip span { white-space: nowrap; }
 }
 </style>
 
@@ -201,7 +205,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                         Contas, gift cards e muito mais. Pix instantâneo mais liberação só após confirmação.
                     </p>
 
-                    <div class="mt-7 flex flex-wrap items-center gap-3">
+                    <div class="hero-actions mt-7 flex flex-wrap items-center gap-3">
                         <a href="<?= BASE_PATH ?>/categorias" class="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-fuchsia-500 px-6 py-3.5 text-sm sm:text-base font-bold text-white shadow-xl shadow-purple-600/30 hover:shadow-purple-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all">
                             Buscar produtos
                             <i data-lucide="arrow-right" class="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-0.5"></i>
@@ -213,7 +217,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                     </div>
 
                     <!-- Inline trust strip (visible above the fold) -->
-                    <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] text-zinc-400">
+                    <div class="hero-trust-strip mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] text-zinc-400">
                         <span class="inline-flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i> Escrow ativo</span>
                         <span class="inline-flex items-center gap-1.5"><i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> PIX instantâneo</span>
                         <span class="inline-flex items-center gap-1.5"><i data-lucide="badge-check" class="w-3.5 h-3.5 text-violet-400"></i> Vendedores verificados</span>

@@ -17,47 +17,70 @@ $msg = '';
 $err = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $enabled       = isset($_POST['taxas_enabled']) ? '1' : '0';
-    $n1Pct         = max(0.0, min(100.0, (float)($_POST['nivel1_percent'] ?? 14.99)));
-    $n2Pct         = max(0.0, min(100.0, (float)($_POST['nivel2_percent'] ?? 12.99)));
-    $n2Thr         = max(0.0, (float)($_POST['nivel2_threshold'] ?? 20000));
-    $n3Pct         = max(0.0, min(100.0, (float)($_POST['nivel3_percent'] ?? 9.99)));
-    $n3Thr         = max(0.0, (float)($_POST['nivel3_threshold'] ?? 40000));
-    $leadPct       = max(0.0, min(100.0, (float)($_POST['lead_fee_percent'] ?? 4.99)));
+    $formType = (string)($_POST['form_type'] ?? 'global_taxas');
 
-    // Escrow / auto-release settings
-    $days          = max(1, min(60, (int)($_POST['auto_release_days'] ?? 7)));
-    $autoEnabled   = isset($_POST['auto_release_enabled']) ? '1' : '0';
-    $adminId       = max(0, (int)($_POST['platform_admin_user_id'] ?? 0));
+    if ($formType === 'seller_override') {
+        $vendorId = max(0, (int)($_POST['seller_id'] ?? 0));
+        $customEnabled = isset($_POST['seller_fee_override_enabled']);
+        $customRaw = trim((string)($_POST['seller_fee_percent'] ?? ''));
+        $customPct = $customRaw !== '' ? (float)str_replace(',', '.', $customRaw) : null;
 
-    if ($n3Thr <= $n2Thr) {
-        $err = 'O limite do Nível 3 deve ser maior que o do Nível 2.';
+        [$ok, $feedback] = sellerFeeOverrideSave($conn, $vendorId, $customEnabled, $customPct);
+        if ($ok) $msg = $feedback; else $err = $feedback;
     } else {
-        escrowSettingSet($conn, 'taxas.enabled',          $enabled);
-        escrowSettingSet($conn, 'taxas.nivel1_percent',   number_format($n1Pct, 2, '.', ''));
-        escrowSettingSet($conn, 'taxas.nivel2_percent',   number_format($n2Pct, 2, '.', ''));
-        escrowSettingSet($conn, 'taxas.nivel2_threshold', number_format($n2Thr, 2, '.', ''));
-        escrowSettingSet($conn, 'taxas.nivel3_percent',   number_format($n3Pct, 2, '.', ''));
-        escrowSettingSet($conn, 'taxas.nivel3_threshold', number_format($n3Thr, 2, '.', ''));
-        escrowSettingSet($conn, 'taxas.lead_fee_percent', number_format($leadPct, 2, '.', ''));
+        $enabled       = isset($_POST['taxas_enabled']) ? '1' : '0';
+        $n1Pct         = max(0.0, min(100.0, (float)($_POST['nivel1_percent'] ?? 14.99)));
+        $n2Pct         = max(0.0, min(100.0, (float)($_POST['nivel2_percent'] ?? 12.99)));
+        $n2Thr         = max(0.0, (float)($_POST['nivel2_threshold'] ?? 20000));
+        $n3Pct         = max(0.0, min(100.0, (float)($_POST['nivel3_percent'] ?? 9.99)));
+        $n3Thr         = max(0.0, (float)($_POST['nivel3_threshold'] ?? 40000));
+        $leadPct       = max(0.0, min(100.0, (float)($_POST['lead_fee_percent'] ?? 4.99)));
 
-        // Save escrow settings
-        escrowSettingSet($conn, 'wallet.auto_release_days', (string)$days);
-        escrowSettingSet($conn, 'wallet.auto_release_enabled', $autoEnabled);
-        escrowSettingSet($conn, 'wallet.platform_admin_user_id', (string)$adminId);
+        // Escrow / auto-release settings
+        $days          = max(1, min(60, (int)($_POST['auto_release_days'] ?? 7)));
+        $autoEnabled   = isset($_POST['auto_release_enabled']) ? '1' : '0';
+        $adminId       = max(0, (int)($_POST['platform_admin_user_id'] ?? 0));
 
-        $msg = 'Configurações atualizadas com sucesso.';
+        if ($n3Thr <= $n2Thr) {
+            $err = 'O limite do Nível 3 deve ser maior que o do Nível 2.';
+        } else {
+            escrowSettingSet($conn, 'taxas.enabled',          $enabled);
+            escrowSettingSet($conn, 'taxas.nivel1_percent',   number_format($n1Pct, 2, '.', ''));
+            escrowSettingSet($conn, 'taxas.nivel2_percent',   number_format($n2Pct, 2, '.', ''));
+            escrowSettingSet($conn, 'taxas.nivel2_threshold', number_format($n2Thr, 2, '.', ''));
+            escrowSettingSet($conn, 'taxas.nivel3_percent',   number_format($n3Pct, 2, '.', ''));
+            escrowSettingSet($conn, 'taxas.nivel3_threshold', number_format($n3Thr, 2, '.', ''));
+            escrowSettingSet($conn, 'taxas.lead_fee_percent', number_format($leadPct, 2, '.', ''));
+
+            // Save escrow settings
+            escrowSettingSet($conn, 'wallet.auto_release_days', (string)$days);
+            escrowSettingSet($conn, 'wallet.auto_release_enabled', $autoEnabled);
+            escrowSettingSet($conn, 'wallet.platform_admin_user_id', (string)$adminId);
+
+            $msg = 'Configurações atualizadas com sucesso.';
+        }
     }
 }
 
 $cfg = sellerLevelsConfig($conn);
 $rules = escrowRules($conn);
+sellerFeeOverrideEnsureColumns($conn);
 
 // Admin list for receiver selector
 $admins = [];
 $q = $conn->query("SELECT id, nome, email FROM users WHERE role IN ('admin','administrador') ORDER BY id ASC");
 if ($q) {
     $admins = $q->fetch_all(MYSQLI_ASSOC);
+}
+
+$overrideSellers = [];
+$qSellers = $conn->query("SELECT id, nome, email, seller_fee_override_enabled, seller_fee_percent
+             FROM users
+             WHERE role IN ('vendedor','vendor','seller','vendendor') OR is_vendedor = TRUE
+             ORDER BY nome ASC, id ASC
+             LIMIT 500");
+if ($qSellers) {
+  $overrideSellers = $qSellers->fetch_all(MYSQLI_ASSOC) ?: [];
 }
 
 // Top sellers — any user who has sales (not limited to "vendedor" role)
@@ -312,6 +335,74 @@ include __DIR__ . '/../../views/partials/admin_layout_start.php';
 
   <!-- ═══ RIGHT COLUMN: Top Vendedores ═══ -->
   <div class="space-y-6">
+
+  <div class="bg-blackx2 border border-blackx3 rounded-2xl p-5 space-y-4">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <h2 class="text-lg font-bold flex items-center gap-2">
+          <i data-lucide="user-cog" class="w-5 h-5 text-fuchsia-400"></i> Taxa personalizada por vendedor
+        </h2>
+        <p class="text-xs text-zinc-500 mt-1">Sem personalização, o vendedor herda automaticamente as taxas globais e os níveis configurados à esquerda.</p>
+      </div>
+    </div>
+
+    <form method="post" class="rounded-xl border border-blackx3 bg-blackx/50 p-4 space-y-4">
+      <input type="hidden" name="form_type" value="seller_override">
+      <div>
+        <label class="block text-xs text-zinc-400 mb-1">Vendedor</label>
+        <select id="sellerOverrideSelect" name="seller_id" required
+                class="w-full rounded-xl bg-blackx border border-blackx3 px-4 py-2.5 text-sm outline-none focus:border-fuchsia-400 transition">
+          <option value="">Selecione um vendedor</option>
+          <?php foreach ($overrideSellers as $seller):
+            $customEnabled = sellerBool($seller['seller_fee_override_enabled'] ?? false) && ($seller['seller_fee_percent'] ?? null) !== null;
+            $customPct = $seller['seller_fee_percent'] ?? '';
+          ?>
+            <option value="<?= (int)$seller['id'] ?>"
+                    data-enabled="<?= $customEnabled ? '1' : '0' ?>"
+                    data-percent="<?= htmlspecialchars($customPct !== '' && $customPct !== null ? number_format((float)$customPct, 2, '.', '') : '') ?>">
+              #<?= (int)$seller['id'] ?> - <?= htmlspecialchars((string)$seller['nome']) ?> (<?= htmlspecialchars((string)$seller['email']) ?>)<?= $customEnabled ? ' · personalizada: ' . number_format((float)$customPct, 2, ',', '.') . '%' : '' ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+
+      <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
+        <input id="sellerOverrideEnabled" type="checkbox" name="seller_fee_override_enabled" value="1"
+               class="w-4 h-4 rounded border-blackx3 accent-fuchsia-500">
+        <span class="text-zinc-300">Usar taxa personalizada para este vendedor</span>
+      </label>
+
+      <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 items-end">
+        <div>
+          <label class="block text-xs text-zinc-400 mb-1">Taxa personalizada (%)</label>
+          <input id="sellerOverridePercent" type="number" step="0.01" min="0" max="100" name="seller_fee_percent" placeholder="Ex.: 8.50"
+                 class="w-full rounded-xl bg-blackx border border-blackx3 px-4 py-2.5 text-sm outline-none focus:border-fuchsia-400 transition">
+        </div>
+        <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-semibold px-5 py-2.5 text-sm transition">
+          <i data-lucide="save" class="w-4 h-4"></i> Salvar taxa
+        </button>
+      </div>
+      <p class="text-[11px] text-zinc-500 leading-relaxed">Para voltar ao padrão global, selecione o vendedor, desmarque a opção personalizada e salve.</p>
+    </form>
+
+    <script>
+    (function(){
+      var select = document.getElementById('sellerOverrideSelect');
+      var enabled = document.getElementById('sellerOverrideEnabled');
+      var percent = document.getElementById('sellerOverridePercent');
+      if (!select || !enabled || !percent) return;
+      function syncFromSelected(){
+        var opt = select.options[select.selectedIndex];
+        if (!opt) return;
+        enabled.checked = opt.getAttribute('data-enabled') === '1';
+        percent.value = opt.getAttribute('data-percent') || '';
+      }
+      select.addEventListener('change', syncFromSelected);
+      enabled.addEventListener('change', function(){ if (!enabled.checked) percent.value = ''; });
+    })();
+    </script>
+  </div>
+
   <div class="bg-blackx2 border border-blackx3 rounded-2xl p-5 space-y-4">
     <h2 class="text-lg font-bold flex items-center gap-2">
       <i data-lucide="trophy" class="w-5 h-5 text-yellow-400"></i> Top Vendedores — Nível Atual
@@ -356,6 +447,7 @@ include __DIR__ . '/../../views/partials/admin_layout_start.php';
           <?php foreach ($topSellers as $s):
             $sInfo = sellerLevelCalc($conn, (int)$s['vendedor_id']);
             $levelColor = match($sInfo['level']) {
+                0 => 'bg-fuchsia-500/20 border-fuchsia-400/40 text-fuchsia-300',
                 3 => 'bg-greenx/20 border-greenx/40 text-greenx',
                 2 => 'bg-greenx/20 border-greenx/40 text-purple-300',
                 default => 'bg-orange-500/20 border-orange-400/40 text-orange-300',
