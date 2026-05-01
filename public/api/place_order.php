@@ -24,20 +24,20 @@ try {
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
-        echo json_encode(['ok' => false, 'error' => 'POST only']);
+        echo json_encode(['ok' => false, 'msg' => 'POST only', 'error' => 'POST only']);
         exit;
     }
 
     if (!usuarioLogado()) {
         http_response_code(401);
-        echo json_encode(['ok' => false, 'error' => 'Não autenticado']);
+        echo json_encode(['ok' => false, 'msg' => 'Não autenticado', 'error' => 'Não autenticado']);
         exit;
     }
 
     $userId = (int)($_SESSION['user_id'] ?? 0);
     if ($userId <= 0) {
         http_response_code(401);
-        echo json_encode(['ok' => false, 'error' => 'User ID inválido']);
+        echo json_encode(['ok' => false, 'msg' => 'User ID inválido', 'error' => 'User ID inválido']);
         exit;
     }
 
@@ -51,7 +51,7 @@ try {
     _checkoutLog('ORDER_RESULT', ['ok' => $ok, 'msg' => $msg, 'result' => $result]);
 
     if (!$ok) {
-        echo json_encode(['ok' => false, 'error' => $msg]);
+        echo json_encode(['ok' => false, 'msg' => $msg, 'error' => $msg]);
         exit;
     }
 
@@ -59,7 +59,7 @@ try {
     $pixTotal = (float)($result['pix_total'] ?? 0);
 
     if ($orderId <= 0) {
-        echo json_encode(['ok' => false, 'error' => 'Pedido criado sem ID.']);
+        echo json_encode(['ok' => false, 'msg' => 'Pedido criado sem ID.', 'error' => 'Pedido criado sem ID.']);
         exit;
     }
 
@@ -146,9 +146,11 @@ try {
 
     if (!$okApi) {
         _checkoutLog('BLACKCAT_FAIL', ['resp' => $resp]);
+        $errMsg = 'Erro BlackCat: ' . (string)($resp['message'] ?? 'Desconhecido');
         echo json_encode([
             'ok' => false,
-            'error' => 'Erro BlackCat: ' . (string)($resp['message'] ?? 'Desconhecido'),
+            'msg' => $errMsg,
+            'error' => $errMsg,
             'orderId' => $orderId,
             'debug' => ['respKeys' => array_keys($resp ?? [])],
         ]);
@@ -196,6 +198,7 @@ try {
     if ($qrImage === '') {
         echo json_encode([
             'ok' => false,
+            'msg' => 'PIX gerado mas sem QR Code.',
             'error' => 'PIX gerado mas sem QR Code.',
             'orderId' => $orderId,
             'debug' => [
@@ -222,9 +225,11 @@ try {
 } catch (Throwable $e) {
     _checkoutLog('FATAL', ['msg' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine(), 'trace' => $e->getTraceAsString()]);
     http_response_code(500);
+    $errFatal = 'Erro interno: ' . $e->getMessage();
     echo json_encode([
         'ok' => false,
-        'error' => 'Erro interno: ' . $e->getMessage(),
+        'msg' => $errFatal,
+        'error' => $errFatal,
         'debug' => ['file' => basename($e->getFile()), 'line' => $e->getLine()],
     ]);
 }

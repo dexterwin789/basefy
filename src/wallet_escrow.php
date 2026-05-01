@@ -69,6 +69,8 @@ function escrowResolveAdminReceiver($conn)
     if ($row && isset($row['id'])) {
         return intval($row['id']);
     }
+    // Nenhum admin disponivel — fee da plataforma nao sera creditada.
+    error_log('[Escrow] WARN: nenhum admin ativo encontrado em escrowResolveAdminReceiver — platform fees ficarao sem destinatario');
     return 0;
 }
 

@@ -117,7 +117,11 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     object-fit: contain;
     margin: 0 !important;  /* override the lg:-ml-[95px] etc. tailwind utilities */
     transform: translateZ(0);
-    /* drop-shadow filter removed per design — keeps the natural glow of the PNG */
+    /* Glow aplicado via CSS no logo12.png (PNG sem filtro embarcado) */
+    filter:
+        drop-shadow(0 0 28px rgba(165, 33, 254, 0.55))
+        drop-shadow(0 0 60px rgba(217, 70, 239, 0.32))
+        drop-shadow(-22px 18px 38px rgba(165, 33, 254, 0.30));
 }
 
 /* Desktop layout: text + logo side-by-side (Figma proportions) */
@@ -129,14 +133,14 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     }
     .hero-logo-wrap {
         justify-content: flex-start;
-        /* Logo intentionally taller than the text card so it overflows top/bottom (Figma) */
-        max-height: clamp(680px, 100vh, 1180px);
-        margin-top: clamp(-80px, -6vh, -32px);
-        margin-bottom: clamp(-80px, -6vh, -32px);
+        /* Logo intentionally taller than the text card (~150px overflow top+bottom, Figma) */
+        max-height: clamp(760px, 110vh, 1280px);
+        margin-top: clamp(-160px, -12vh, -90px);
+        margin-bottom: clamp(-160px, -12vh, -90px);
     }
     .hero-logo-img {
-        max-width: clamp(720px, 64vw, 1260px) !important;
-        max-height: clamp(680px, 100vh, 1260px) !important;
+        max-width: clamp(760px, 66vw, 1320px) !important;
+        max-height: clamp(760px, 110vh, 1320px) !important;
         margin-left: clamp(-160px, -7vw, -32px) !important;
     }
 }
@@ -199,7 +203,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                         <span class="block">protegido</span>
                     </h1>
 
-                    <p class="hero-copy mt-5 text-zinc-400 max-w-[640px]" style="font-family:Gotham,Montserrat,sans-serif;font-weight:325;letter-spacing:0;">
+                    <p class="hero-copy mt-5 text-zinc-400" style="font-family:Gotham,Montserrat,sans-serif;font-weight:325;letter-spacing:0;max-width:30ch;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
                         Contas, gift cards e muito mais. Pix instantâneo, com liberação só após a confirmação.
                     </p>
 
@@ -223,7 +227,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                 </div>
 
                 <div class="hero-logo-wrap">
-                    <img src="<?= BASE_PATH ?>/assets/img/logobanner.png" alt="" class="hero-logo-img hero-reveal" style="animation-delay:.18s;">
+                    <img src="<?= BASE_PATH ?>/assets/img/logo12.png" alt="" class="hero-logo-img hero-reveal" style="animation-delay:.18s;">
                 </div>
             </div>
         </div>
