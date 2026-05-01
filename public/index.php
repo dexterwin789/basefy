@@ -67,9 +67,8 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
    No more breakpoint cliffs, no more !important wars.
    ============================================================ */
 .hero-section {
-    /* Vertical rhythm scales with viewport — no fixed min-height that explodes 768px screens */
-    padding-top: clamp(96px, 11vh, 140px);
-    padding-bottom: clamp(20px, 4vh, 60px);
+    padding-top: clamp(96px, 13vh, 150px);
+    padding-bottom: clamp(20px, 10vh, 120px);
     min-height: clamp(620px, 96svh, 920px);
     display: flex;
     align-items: center;
@@ -127,9 +126,8 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 /* Desktop layout: text + logo side-by-side (Figma proportions) */
 @media (min-width: 1024px) {
     .hero-grid {
-        /* Text col ~38% of the row (Figma reference), logo col gets the rest */
-        grid-template-columns: minmax(380px, 0.7fr) 1.3fr;
-        gap: clamp(20px, 2vw, 48px);
+        grid-template-columns: minmax(380px, 1.3fr) 1fr;
+        gap: 0px;
     }
     .hero-logo-wrap {
         justify-content: flex-start;
@@ -147,25 +145,21 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 
 /* Mobile-specific tweaks */
 @media (max-width: 1023px) {
-    .hero-grid { grid-template-columns: 1fr; }
-    .hero-logo-wrap {
-        max-height: clamp(260px, 48vw, 420px);
-        margin-top: -16px;
-    }
-    .hero-logo-img {
-        max-width: clamp(380px, 110vw, 620px) !important;
-        max-height: clamp(380px, 110vw, 620px) !important;
-        transform: translateX(8%);
-    }
+    .hero-section { min-height: auto; padding-top: 108px !important; padding-bottom: 0 !important; margin-bottom: -36px; display: block; }
+    .hero-grid { display: flex; flex-direction: column; gap: 0; }
+    .hero-badge { font-size: 16px !important; }
+    .hero-title { font-size: 44px !important; line-height: 112% !important; }
+    .hero-copy { font-size: 22px !important; line-height: 118% !important; }
+    .hero-logo-wrap { min-height: 0 !important; height: clamp(280px, 52vw, 430px); margin-top: -28px; overflow: hidden; justify-content: center !important; }
+    .hero-logo-img { width: clamp(440px, 118vw, 620px) !important; height: clamp(440px, 118vw, 620px) !important; transform: translateX(12%); }
 }
 @media (max-width: 480px) {
-    .hero-section { padding-top: clamp(120px, 18vh, 160px); }
-    .hero-logo-wrap {
-        max-height: 280px;
-        margin-top: -8px;
-        opacity: 0.55;
-    }
-    .hero-logo-img { transform: translateX(6%) scale(0.95); }
+    .hero-section { padding-top: 140px !important; margin-bottom: -50px; }
+    .hero-badge { font-size: 14px !important; padding: 8px 14px !important; }
+    .hero-title { font-size: 27px !important; line-height: 108% !important; }
+    .hero-copy { font-size: 14px !important; line-height: 116% !important; }
+    .hero-logo-wrap { height: 500px; margin-top: -385px; margin-left: 158px; opacity: 0.5; }
+    .hero-logo-img { width: 430px !important; height: 430px !important; transform: translateX(11%); }
 }
 </style>
 
@@ -203,8 +197,8 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                         <span class="block">protegido</span>
                     </h1>
 
-                    <p class="hero-copy mt-5 text-zinc-400" style="font-family:Gotham,Montserrat,sans-serif;font-weight:325;letter-spacing:0;max-width:30ch;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                        Contas, gift cards e muito mais. Pix instantâneo, com liberação só após a confirmação.
+                    <p class="hero-copy mt-5 text-zinc-400" style="font-family:Gotham,Montserrat,sans-serif;font-weight:325;letter-spacing:0;max-width: 39ch;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                        Contas, gift cards e muito mais. Pix instantâneo mais liberação só após confirmação.
                     </p>
 
                     <div class="mt-7 flex flex-wrap items-center gap-3">
