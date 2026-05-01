@@ -131,11 +131,29 @@ include __DIR__ . '/../../views/partials/vendor_layout_start.php';
       <input type="hidden" name="action" value="verify_delivery_code">
       <input type="hidden" name="order_id" value="<?= $orderId ?>">
 
-      <div class="flex justify-center gap-2" x-data="{codes:['','','','','',''], focus(i){$nextTick(()=>$refs['c'+i]?.focus())}}">
+      <div class="flex justify-center gap-2"
+           x-data="{
+             codes:['','','','','',''],
+             focus(i){ $nextTick(()=>$refs['c'+i]?.focus()) },
+             handlePaste(e){
+               const raw = (e.clipboardData?.getData('text') || '').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
+               if(!raw){ return }
+               e.preventDefault();
+               for(let j=0;j<6;j++){
+                 this.codes[j] = raw[j] || '';
+                 const ref = $refs['c'+j];
+                 if(ref){ ref.value = raw[j] || ''; }
+               }
+               this.focus(Math.min(raw.length,5));
+             }
+           }">
         <?php for ($i = 0; $i < 6; $i++): ?>
         <input type="text" maxlength="1" x-ref="c<?= $i ?>"
-               @input.prevent="codes[<?= $i ?>]=$event.target.value.toUpperCase();if(codes[<?= $i ?>])focus(<?= $i + 1 ?>)"
+               x-model="codes[<?= $i ?>]"
+               @input.prevent="codes[<?= $i ?>]=$event.target.value.toUpperCase().slice(0,1);$event.target.value=codes[<?= $i ?>];if(codes[<?= $i ?>])focus(<?= $i + 1 ?>)"
                @keydown.backspace="if(!codes[<?= $i ?>]){focus(<?= $i - 1 ?>)}"
+               @paste="handlePaste($event)"
+               autocomplete="off" spellcheck="false" inputmode="text"
                class="w-12 h-14 text-center text-xl font-mono font-bold bg-blackx border-2 border-blackx3 rounded-xl focus:border-greenx focus:ring-1 focus:ring-greenx/30 text-greenx transition-all"
                name="code_digit_<?= $i ?>">
         <?php endfor; ?>

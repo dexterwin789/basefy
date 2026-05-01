@@ -203,7 +203,7 @@ if ($orderIsPaidForChat && !empty($items)):
   <p class="text-xs text-zinc-400 mb-3">As instruções, conteúdo entregue e código de entrega foram enviados automaticamente no chat. Acesse para verificar e conversar com o vendedor.</p>
   <div class="flex flex-wrap gap-2">
     <?php foreach ($chatConvIds as $vId => $chatInfo): ?>
-    <button onclick="if(window.openUserChat)window.openUserChat(<?= (int)$chatInfo['conv_id'] ?>);else if(window.openVendorChat)window.openVendorChat(<?= (int)$chatInfo['conv_id'] ?>);"
+    <button onclick="(function(id){if(window.openUserChat){window.openUserChat(id);}else if(window.openVendorChat){window.openVendorChat(id);}else{(window.__openChatQueue=window.__openChatQueue||[]).push(id);setTimeout(function(){if(window.openUserChat)window.openUserChat(id);else if(window.openVendorChat)window.openVendorChat(id);},600);}})(<?= (int)$chatInfo['conv_id'] ?>); return false;"
        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-greenx to-greenxd text-white font-bold px-5 py-2.5 text-sm shadow-lg shadow-greenx/20 hover:shadow-greenx/30 transition-all hover:scale-[1.02] cursor-pointer border-none">
       <i data-lucide="message-circle" class="w-4 h-4"></i>
       Abrir chat — <?= htmlspecialchars($chatInfo['vendor_name'], ENT_QUOTES, 'UTF-8') ?>

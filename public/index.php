@@ -75,6 +75,32 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     .hero-logo-img.w-\[960px\] { width: 1300px !important; height: 1300px !important; }
     .lg\:-ml-\[95px\] { margin-left: -420px !important; }
 }
+/* 1280–1535 — MacBooks 13"/14", notebooks 1366×768, tablets landscape */
+@media (min-width: 1280px) and (max-width: 1535px) {
+    .hero-section {
+        min-height: 92vh;
+        padding-top: 88px !important;
+        margin-bottom: -140px;
+        margin-top: -120px;
+    }
+    .hero-grid { grid-template-columns: 600px 1fr !important; gap: 0; }
+    .hero-title { font-size: 48px !important; line-height: 108% !important; }
+    .hero-copy  { font-size: 19px !important; }
+    .hero-badge { font-size: 13px !important; padding: 7px 14px !important; }
+    .hero-logo-img.w-\[960px\] { width: 920px !important; height: 920px !important; }
+    .lg\:-ml-\[95px\] { margin-left: -240px !important; }
+    .lg\:-mr-\[120px\] { margin-right: -60px !important; }
+    .hero-logo-wrap { min-height: 540px !important; }
+}
+/* 1024–1279 — small laptops, iPad Pro landscape */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .hero-grid { grid-template-columns: 540px 1fr !important; }
+    .hero-title { font-size: 42px !important; line-height: 110% !important; }
+    .hero-copy  { font-size: 17px !important; }
+    .hero-logo-img.w-\[960px\] { width: 780px !important; height: 780px !important; }
+    .lg\:-ml-\[95px\] { margin-left: -180px !important; }
+    .hero-logo-wrap { min-height: 480px !important; }
+}
 @media (max-width: 1023px) {
     .hero-section { min-height: auto; padding-top: 108px !important; padding-bottom: 0 !important; margin-bottom: -36px; display: block; }
     .hero-grid { display: flex; flex-direction: column; gap: 0; }
@@ -134,17 +160,33 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     </section>
 
     <!-- =========== TRUST MARQUEE =========== -->
-    <section class="relative overflow-hidden border-y border-white/[0.04] bg-white/[0.01] py-4">
-        <div class="trust-marquee flex items-center gap-10 sm:gap-16 whitespace-nowrap">
-            <?php for ($ti = 0; $ti < 4; $ti++): ?>
-            <div class="flex items-center gap-10 sm:gap-16 shrink-0 trust-marquee-track">
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>Dados criptografados</span></div>
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>Reembolso garantido</span></div>
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>Vendedores verificados</span></div>
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>Entrega imediata</span></div>
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>Escrow seguro</span></div>
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>PIX instantâneo</span></div>
-                <div class="flex items-center gap-2.5 marquee-item text-xs sm:text-sm"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_14px_rgba(168,85,247,.9)]"></span><span>Suporte 24h</span></div>
+    <section class="trust-marquee-section relative overflow-hidden border-y border-white/[0.05] py-5">
+        <!-- Edge gradient masks -->
+        <div class="trust-mask-l pointer-events-none absolute inset-y-0 left-0 z-10 w-24 sm:w-40"></div>
+        <div class="trust-mask-r pointer-events-none absolute inset-y-0 right-0 z-10 w-24 sm:w-40"></div>
+        <div class="trust-marquee flex items-center gap-12 sm:gap-20 whitespace-nowrap">
+            <?php
+            $trustItems = [
+                ['icon' => 'shield-check',   'label' => 'Dados criptografados',   'tone' => 'emerald'],
+                ['icon' => 'undo-2',         'label' => 'Reembolso garantido',    'tone' => 'sky'],
+                ['icon' => 'badge-check',    'label' => 'Vendedores verificados', 'tone' => 'violet'],
+                ['icon' => 'zap',            'label' => 'Entrega imediata',       'tone' => 'amber'],
+                ['icon' => 'lock',           'label' => 'Escrow seguro',          'tone' => 'emerald'],
+                ['icon' => 'wallet',         'label' => 'PIX instantâneo',        'tone' => 'fuchsia'],
+                ['icon' => 'headset',        'label' => 'Suporte 24h',            'tone' => 'rose'],
+                ['icon' => 'sparkles',       'label' => 'Ofertas em tempo real',  'tone' => 'sky'],
+            ];
+            ?>
+            <?php for ($ti = 0; $ti < 3; $ti++): ?>
+            <div class="flex items-center gap-12 sm:gap-20 shrink-0 trust-marquee-track" aria-hidden="<?= $ti > 0 ? 'true' : 'false' ?>">
+                <?php foreach ($trustItems as $tItem): ?>
+                <div class="marquee-item tone-<?= $tItem['tone'] ?> flex items-center gap-2.5 text-[13px] sm:text-sm font-medium">
+                    <span class="marquee-icon-wrap">
+                        <i data-lucide="<?= $tItem['icon'] ?>" class="w-4 h-4"></i>
+                    </span>
+                    <span><?= htmlspecialchars($tItem['label'], ENT_QUOTES, 'UTF-8') ?></span>
+                </div>
+                <?php endforeach; ?>
             </div>
             <?php endfor; ?>
         </div>
@@ -615,18 +657,55 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     50% { transform: translateY(8px); opacity: 0.3; }
 }
 
-/* Trust marquee — seamless infinite loop */
+/* Trust marquee — premium seamless loop with edge masks, pause on hover, varied icons */
+.trust-marquee-section {
+    background:
+        radial-gradient(1200px 60px at 50% 50%, rgba(168,85,247,.05), transparent 70%),
+        linear-gradient(to right, rgba(255,255,255,.012), rgba(255,255,255,.025), rgba(255,255,255,.012));
+}
 .trust-marquee { overflow: hidden; }
 .trust-marquee-track {
-    animation: marqueeScroll 30s linear infinite;
+    animation: marqueeScroll 38s linear infinite;
+    will-change: transform;
 }
+.trust-marquee:hover .trust-marquee-track { animation-play-state: paused; }
 @keyframes marqueeScroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
+    0%   { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-100%, 0, 0); }
 }
-/* Marquee item text color — visible in both themes */
-.marquee-item { color: #71717a; }
-html.light-mode .marquee-item { color: #6b7280; }
+
+/* Edge fade masks */
+.trust-mask-l { background: linear-gradient(to right, var(--blackx, #050008) 0%, rgba(5,0,8,.85) 40%, transparent 100%); }
+.trust-mask-r { background: linear-gradient(to left,  var(--blackx, #050008) 0%, rgba(5,0,8,.85) 40%, transparent 100%); }
+html.light-mode .trust-mask-l { background: linear-gradient(to right, #fafafa 0%, rgba(250,250,250,.85) 40%, transparent 100%); }
+html.light-mode .trust-mask-r { background: linear-gradient(to left,  #fafafa 0%, rgba(250,250,250,.85) 40%, transparent 100%); }
+
+/* Marquee item: subtle pill, varied tones, neon glow on icon */
+.marquee-item {
+    color: rgba(228, 228, 231, .82);
+    transition: color .25s ease;
+}
+html.light-mode .marquee-item { color: #4b5563; }
+.marquee-icon-wrap {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 9px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.06);
+    transition: background .25s ease, border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+}
+.marquee-item:hover .marquee-icon-wrap { transform: translateY(-1px); }
+.marquee-item:hover { color: #fff; }
+.tone-emerald .marquee-icon-wrap { color: #10b981; box-shadow: 0 0 0 1px rgba(16,185,129,.18) inset, 0 0 18px rgba(16,185,129,.22); }
+.tone-violet  .marquee-icon-wrap { color: #a855f7; box-shadow: 0 0 0 1px rgba(168,85,247,.20) inset, 0 0 18px rgba(168,85,247,.22); }
+.tone-fuchsia .marquee-icon-wrap { color: #d946ef; box-shadow: 0 0 0 1px rgba(217,70,239,.20) inset, 0 0 18px rgba(217,70,239,.22); }
+.tone-sky     .marquee-icon-wrap { color: #38bdf8; box-shadow: 0 0 0 1px rgba(56,189,248,.20) inset, 0 0 18px rgba(56,189,248,.22); }
+.tone-amber   .marquee-icon-wrap { color: #f59e0b; box-shadow: 0 0 0 1px rgba(245,158,11,.20) inset, 0 0 18px rgba(245,158,11,.22); }
+.tone-rose    .marquee-icon-wrap { color: #fb7185; box-shadow: 0 0 0 1px rgba(251,113,133,.20) inset, 0 0 18px rgba(251,113,133,.22); }
+
+@media (prefers-reduced-motion: reduce) {
+    .trust-marquee-track { animation: none; }
+}
 
 /* Explorar text — visible in dark mode */
 .home-explorar-text { color: #a1a1aa; }

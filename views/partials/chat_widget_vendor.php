@@ -1012,11 +1012,15 @@ if ($chatWidgetUserId <= 0) return;
         }).catch(() => showThread(convId, 'Comprador', '', '', ''));
     };
 
-    // ── Auto-open from URL param ──
-    const urlParams = new URLSearchParams(window.location.search);
-    const openChatParam = urlParams.get('open_chat');
-    if (openChatParam) {
-        setTimeout(() => window.openVendorChat(parseInt(openChatParam)), 800);
-    }
+    // ── Auto-open from URL param + drain queued requests ──
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const openChatParam = urlParams.get('open_chat');
+        if (openChatParam) requestAnimationFrame(() => window.openVendorChat(parseInt(openChatParam)));
+        if (Array.isArray(window.__openChatQueue)) {
+            window.__openChatQueue.forEach(id => window.openVendorChat(parseInt(id)));
+            window.__openChatQueue = [];
+        }
+    } catch(_) {}
 })();
 </script>

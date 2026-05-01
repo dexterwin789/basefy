@@ -77,20 +77,17 @@ $_isPendingVendor = false;
                 ?>
                 <!-- Search toggle (desktop) -->
                 <button onclick="document.getElementById('sf-search-bar').classList.toggle('hidden')"
-                        class="hidden md:flex nav-icon-btn group relative h-9 rounded-xl border border-white/[0.08] items-center justify-center text-zinc-400 hover:text-white hover:border-white/[0.15] transition-all overflow-hidden px-2.5"
-                        style="min-width:36px">
-                    <i data-lucide="search" class="w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110"></i>
-                    <span class="nav-btn-label max-w-0 overflow-hidden whitespace-nowrap text-xs font-medium opacity-0 transition-all duration-300 group-hover:max-w-[80px] group-hover:opacity-100 group-hover:ml-1.5">Buscar</span>
+                        class="hidden md:flex nav-icon-btn relative h-9 w-9 rounded-xl border border-white/[0.08] items-center justify-center text-zinc-400 hover:text-white hover:border-white/[0.15] transition-colors"
+                        title="Buscar" aria-label="Buscar">
+                    <i data-lucide="search" class="w-4 h-4"></i>
                 </button>
 
                 <?php if ($isLoggedIn && !$_isPendingVendor): ?>
                 <!-- Wallet -->
                 <a href="<?= BASE_PATH ?>/wallet"
-                   class="hidden md:flex nav-icon-btn group relative h-9 rounded-xl border items-center justify-center transition-all px-2.5 <?= $_navWalletBalance > 0 ? 'border-greenx/30 bg-greenx/[0.06] text-greenx' : 'border-white/[0.08] text-zinc-400 hover:text-white hover:border-white/[0.15]' ?>"
-                   style="min-width:36px"
-                   title="Carteira">
-                    <i data-lucide="wallet" class="w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110"></i>
-                    <span class="nav-btn-label max-w-0 overflow-hidden whitespace-nowrap text-xs font-semibold opacity-0 transition-all duration-300 group-hover:max-w-[120px] group-hover:opacity-100 group-hover:ml-1.5">R$&nbsp;<?= number_format($_navWalletBalance, 2, ',', '.') ?></span>
+                   class="hidden md:flex nav-icon-btn relative h-9 w-9 rounded-xl border items-center justify-center transition-colors <?= $_navWalletBalance > 0 ? 'border-greenx/30 bg-greenx/[0.06] text-greenx' : 'border-white/[0.08] text-zinc-400 hover:text-white hover:border-white/[0.15]' ?>"
+                   title="Carteira&nbsp;·&nbsp;R$ <?= number_format($_navWalletBalance, 2, ',', '.') ?>" aria-label="Carteira">
+                    <i data-lucide="wallet" class="w-4 h-4"></i>
                     <?php if ($_navWalletBalance > 0): ?>
                     <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-greenx animate-pulse pointer-events-none z-10"></span>
                     <?php endif; ?>
@@ -105,11 +102,9 @@ $_isPendingVendor = false;
                     } catch (\Throwable $e) {}
                 ?>
                 <a href="<?= BASE_PATH ?>/chat"
-                   class="hidden md:flex nav-icon-btn group relative h-9 rounded-xl border items-center justify-center transition-all px-2.5 <?= $currentPage === 'chat' ? 'border-greenx/40 bg-greenx/[0.08] text-greenx' : 'border-white/[0.08] text-zinc-400 hover:text-white hover:border-white/[0.15]' ?>"
-                   style="min-width:36px"
-                   title="Chat">
-                    <i data-lucide="message-circle" class="w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110"></i>
-                    <span class="nav-btn-label max-w-0 overflow-hidden whitespace-nowrap text-xs font-medium opacity-0 transition-all duration-300 group-hover:max-w-[80px] group-hover:opacity-100 group-hover:ml-1.5">Chat</span>
+                   class="hidden md:flex nav-icon-btn relative h-9 w-9 rounded-xl border items-center justify-center transition-colors <?= $currentPage === 'chat' ? 'border-greenx/40 bg-greenx/[0.08] text-greenx' : 'border-white/[0.08] text-zinc-400 hover:text-white hover:border-white/[0.15]' ?>"
+                   title="Chat" aria-label="Chat">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
                     <?php if ($sfChatUnread > 0): ?>
                     <span class="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] flex items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white px-1 ring-2 ring-blackx pointer-events-none z-10"><?= $sfChatUnread > 99 ? '99+' : $sfChatUnread ?></span>
                     <?php endif; ?>
@@ -126,10 +121,9 @@ $_isPendingVendor = false;
                 ?>
                 <div class="relative" x-data="{openNotif:false}" @click.away="openNotif=false">
                     <button @click="openNotif=!openNotif; if(openNotif) $dispatch('notif-open')"
-                            class="hidden md:flex nav-icon-btn group relative h-9 rounded-xl border items-center justify-center transition-all px-2.5 <?= $_notifCount > 0 ? 'border-yellow-400/30 bg-yellow-500/[0.06] text-yellow-400' : 'border-white/[0.08] text-zinc-400 hover:text-white hover:border-white/[0.15]' ?>"
-                            style="min-width:36px" title="Notificações" id="notifBellBtn">
-                        <i data-lucide="bell" class="w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110"></i>
-                        <span class="nav-btn-label max-w-0 overflow-hidden whitespace-nowrap text-xs font-medium opacity-0 transition-all duration-300 group-hover:max-w-[100px] group-hover:opacity-100 group-hover:ml-1.5">Notificações</span>
+                            class="hidden md:flex nav-icon-btn relative h-9 w-9 rounded-xl border items-center justify-center transition-colors <?= $_notifCount > 0 ? 'border-yellow-400/30 bg-yellow-500/[0.06] text-yellow-400' : 'border-white/[0.08] text-zinc-400 hover:text-white hover:border-white/[0.15]' ?>"
+                            title="Notificações" aria-label="Notificações" id="notifBellBtn">
+                        <i data-lucide="bell" class="w-4 h-4"></i>
                         <?php if ($_notifCount > 0): ?>
                         <span id="notifBadge" class="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] flex items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white px-1 ring-2 ring-blackx pointer-events-none z-10"><?= $_notifCount > 99 ? '99+' : $_notifCount ?></span>
                         <?php else: ?>
@@ -186,19 +180,17 @@ $_isPendingVendor = false;
                 <!-- Favorites -->
                 <?php if ($isLoggedIn): ?>
                 <a href="<?= BASE_PATH ?>/favoritos"
-                   class="relative flex nav-icon-btn group h-9 rounded-xl border transition-all px-2.5 items-center justify-center <?= ($currentPage ?? '') === 'favoritos' ? 'border-red-400/40 bg-red-500/[0.08] text-red-400' : 'border-white/[0.08] text-zinc-400 hover:text-red-400 hover:border-red-400/30' ?>"
-                   style="min-width:36px" title="Favoritos">
-                    <i data-lucide="heart" class="w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110"></i>
-                    <span class="nav-btn-label max-w-0 overflow-hidden whitespace-nowrap text-xs font-medium opacity-0 transition-all duration-300 group-hover:max-w-[80px] group-hover:opacity-100 group-hover:ml-1.5">Favoritos</span>
+                   class="relative flex nav-icon-btn h-9 w-9 rounded-xl border transition-colors items-center justify-center <?= ($currentPage ?? '') === 'favoritos' ? 'border-red-400/40 bg-red-500/[0.08] text-red-400' : 'border-white/[0.08] text-zinc-400 hover:text-red-400 hover:border-red-400/30' ?>"
+                   title="Favoritos" aria-label="Favoritos">
+                    <i data-lucide="heart" class="w-4 h-4"></i>
                 </a>
                 <?php endif; ?>
 
                 <!-- Cart -->
                 <a href="<?= BASE_PATH ?>/carrinho"
-                   class="relative flex nav-icon-btn group h-9 rounded-xl border transition-all px-2.5 items-center justify-center <?= $currentPage === 'carrinho' ? 'border-greenx/40 bg-greenx/[0.08] text-greenx' : 'border-white/[0.08] text-zinc-400 hover:text-white hover:border-white/[0.15]' ?>"
-                   style="min-width:36px">
-                    <i data-lucide="shopping-bag" class="w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110"></i>
-                    <span class="nav-btn-label max-w-0 overflow-hidden whitespace-nowrap text-xs font-medium opacity-0 transition-all duration-300 group-hover:max-w-[80px] group-hover:opacity-100 group-hover:ml-1.5">Carrinho</span>
+                   class="relative flex nav-icon-btn h-9 w-9 rounded-xl border transition-colors items-center justify-center <?= $currentPage === 'carrinho' ? 'border-greenx/40 bg-greenx/[0.08] text-greenx' : 'border-white/[0.08] text-zinc-400 hover:text-white hover:border-white/[0.15]' ?>"
+                   title="Carrinho" aria-label="Carrinho">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
                     <?php if ($cartCount > 0): ?>
                     <span class="absolute -top-2 -right-2 min-w-[20px] h-[20px] flex items-center justify-center rounded-full bg-greenx text-[10px] font-bold text-white px-1 shadow-lg shadow-greenx/30 ring-2 ring-blackx pointer-events-none z-10" data-cart-count><?= (int)$cartCount ?></span>
                     <?php endif; ?>

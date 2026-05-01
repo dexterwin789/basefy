@@ -449,9 +449,15 @@ try {
         }).catch(()=>showThread(convId,'Vendedor','','',''));
     };
 
-    /* ── Auto-open from URL param ── */
-    const oc=new URLSearchParams(window.location.search).get('open_chat');
-    if(oc) setTimeout(()=>window.openUserChat(parseInt(oc)),800);
+    /* ── Auto-open from URL param (resilient: drains queued openChatRequests too) ── */
+    try {
+        const oc = new URLSearchParams(window.location.search).get('open_chat');
+        if(oc) requestAnimationFrame(()=>window.openUserChat(parseInt(oc)));
+        if (Array.isArray(window.__openChatQueue)) {
+            window.__openChatQueue.forEach(id => window.openUserChat(parseInt(id)));
+            window.__openChatQueue = [];
+        }
+    } catch(_) {}
 
     /* ── Offset if vendor widget also on page ── */
     if(document.querySelector('.vchat-fab')){ fab.style.bottom='96px'; panel.style.bottom='164px'; }
