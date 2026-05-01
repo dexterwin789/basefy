@@ -62,98 +62,164 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
 ?>
 
 <style>
+/* ============================================================
+   HERO — fluid responsive (single source of truth via clamp)
+   No more breakpoint cliffs, no more !important wars.
+   ============================================================ */
+.hero-section {
+    /* Vertical rhythm scales with viewport — no fixed min-height that explodes 768px screens */
+    padding-top: clamp(96px, 11vh, 140px);
+    padding-bottom: clamp(20px, 4vh, 60px);
+    min-height: clamp(620px, 96svh, 920px);
+    display: flex;
+    align-items: center;
+}
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(20px, 3vw, 40px);
+    align-items: center;
+}
+.hero-text-col { max-width: 760px; position: relative; z-index: 10; }
+
+.hero-badge {
+    font-size: clamp(13px, 1.05vw, 22px) !important;
+    padding: clamp(7px, 0.7vw, 12px) clamp(14px, 1.2vw, 22px) !important;
+    line-height: 1.1 !important;
+}
+.hero-title {
+    font-size: clamp(34px, 4.4vw, 60px) !important;
+    line-height: 1.06 !important;
+    font-weight: 600 !important;
+}
+.hero-copy {
+    font-size: clamp(15px, 1.6vw, 28px) !important;
+    line-height: 1.18 !important;
+}
+
+/* Logo container — keep image bounded so it never overflows 768px viewports */
+.hero-logo-wrap {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    max-height: clamp(360px, 70vh, 920px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    overflow: visible;
+}
+.hero-logo-img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: clamp(380px, 60vw, 1100px) !important;
+    max-height: clamp(380px, 70vh, 1100px) !important;
+    object-fit: contain;
+    margin: 0 !important;  /* override the lg:-ml-[95px] etc. tailwind utilities */
+    transform: translateZ(0);
+}
+
+/* Desktop layout: text + logo side-by-side */
 @media (min-width: 1024px) {
-    .hero-section {
-        min-height: 100vh;
-        padding-top: 100px !important;
-        padding-bottom: 0px !important;
-        margin-bottom: -200px;
-        margin-top: -150px;
+    .hero-grid {
+        /* text col fluid 38–48% of viewport, logo col gets the rest */
+        grid-template-columns: minmax(420px, 0.85fr) 1fr;
+        gap: clamp(20px, 2.5vw, 60px);
     }
-    .hero-grid { grid-template-columns: 760px 1fr; }
-    .hero-title { font-size: 60px !important; font-weight: 600 !important; }
-    .hero-logo-img.w-\[960px\] { width: 1300px !important; height: 1300px !important; }
-    .lg\:-ml-\[95px\] { margin-left: -420px !important; }
-}
-/* 1280–1535 — MacBooks 13"/14", notebooks 1366×768, tablets landscape */
-@media (min-width: 1280px) and (max-width: 1535px) {
-    .hero-section {
-        min-height: 92vh;
-        padding-top: 88px !important;
-        margin-bottom: -140px;
-        margin-top: -120px;
+    .hero-logo-wrap {
+        justify-content: flex-start;
+        max-height: clamp(540px, 78vh, 980px);
     }
-    .hero-grid { grid-template-columns: 600px 1fr !important; gap: 0; }
-    .hero-title { font-size: 48px !important; line-height: 108% !important; }
-    .hero-copy  { font-size: 19px !important; }
-    .hero-badge { font-size: 13px !important; padding: 7px 14px !important; }
-    .hero-logo-img.w-\[960px\] { width: 920px !important; height: 920px !important; }
-    .lg\:-ml-\[95px\] { margin-left: -240px !important; }
-    .lg\:-mr-\[120px\] { margin-right: -60px !important; }
-    .hero-logo-wrap { min-height: 540px !important; }
+    .hero-logo-img {
+        max-width: clamp(620px, 58vw, 1180px) !important;
+        max-height: clamp(540px, 78vh, 1180px) !important;
+        margin-left: clamp(-180px, -8vw, -40px) !important;
+    }
 }
-/* 1024–1279 — small laptops, iPad Pro landscape */
-@media (min-width: 1024px) and (max-width: 1279px) {
-    .hero-grid { grid-template-columns: 540px 1fr !important; }
-    .hero-title { font-size: 42px !important; line-height: 110% !important; }
-    .hero-copy  { font-size: 17px !important; }
-    .hero-logo-img.w-\[960px\] { width: 780px !important; height: 780px !important; }
-    .lg\:-ml-\[95px\] { margin-left: -180px !important; }
-    .hero-logo-wrap { min-height: 480px !important; }
-}
+
+/* Mobile-specific tweaks */
 @media (max-width: 1023px) {
-    .hero-section { min-height: auto; padding-top: 108px !important; padding-bottom: 0 !important; margin-bottom: -36px; display: block; }
-    .hero-grid { display: flex; flex-direction: column; gap: 0; }
-    .hero-badge { font-size: 16px !important; }
-    .hero-title { font-size: 44px !important; line-height: 112% !important; }
-    .hero-copy { font-size: 22px !important; line-height: 118% !important; }
-    .hero-logo-wrap { min-height: 0 !important; height: clamp(280px, 52vw, 430px); margin-top: -28px; overflow: hidden; justify-content: center !important; }
-    .hero-logo-img { width: clamp(440px, 118vw, 620px) !important; height: clamp(440px, 118vw, 620px) !important; transform: translateX(12%); }
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-logo-wrap {
+        max-height: clamp(260px, 48vw, 420px);
+        margin-top: -16px;
+    }
+    .hero-logo-img {
+        max-width: clamp(380px, 110vw, 620px) !important;
+        max-height: clamp(380px, 110vw, 620px) !important;
+        transform: translateX(8%);
+    }
 }
 @media (max-width: 480px) {
-    .hero-section { padding-top: 140px !important; margin-bottom: -50px; }
-    .hero-badge { font-size: 14px !important; padding: 8px 14px !important; }
-    .hero-title { font-size: 27px !important; line-height: 108% !important; }
-    .hero-copy { font-size: 14px !important; line-height: 116% !important; }
-    .hero-logo-wrap { height: 500px; margin-top: -385px; margin-left: 158px; opacity: 0.5; }
-    .hero-logo-img { width: 430px !important; height: 430px !important; transform: translateX(11%); }
+    .hero-section { padding-top: clamp(120px, 18vh, 160px); }
+    .hero-logo-wrap {
+        max-height: 280px;
+        margin-top: -8px;
+        opacity: 0.55;
+    }
+    .hero-logo-img { transform: translateX(6%) scale(0.95); }
 }
 </style>
 
 <div class="min-h-screen bg-blackx">
 
     <!-- =========== HERO — BASEFY PREMIUM =========== -->
-    <section class="hero-section relative overflow-hidden min-h-screen pt-24 sm:pt-24 pb-10 flex items-center">
+    <section class="hero-section relative overflow-hidden">
+        <!-- Layered atmospheric backdrop -->
         <div class="absolute inset-0 bg-[#07000f]"></div>
-        <div class="absolute inset-0 opacity-[0.08]" style="background-image:linear-gradient(rgba(168,85,247,.25) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.25) 1px,transparent 1px);background-size:64px 64px"></div>
-        <div class="absolute top-[28%] right-[16%] w-[420px] h-[420px] bg-purple-600/20 blur-[120px] pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-blackx to-transparent"></div>
+        <!-- Gradient mesh -->
+        <div class="absolute inset-0 pointer-events-none opacity-90" style="background:
+            radial-gradient(900px 600px at 78% 22%, rgba(165,33,254,.28), transparent 60%),
+            radial-gradient(700px 500px at 12% 78%, rgba(217,70,239,.18), transparent 65%),
+            radial-gradient(500px 380px at 55% 50%, rgba(56,189,248,.10), transparent 70%);"></div>
+        <!-- Subtle grid -->
+        <div class="absolute inset-0 opacity-[0.06] pointer-events-none" style="background-image:linear-gradient(rgba(168,85,247,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.35) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, #000 30%, transparent 100%)"></div>
+        <!-- Grain overlay (SVG noise, base64) -->
+        <div class="absolute inset-0 opacity-[0.045] pointer-events-none mix-blend-overlay" style="background-image:url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>&quot;)"></div>
+        <!-- Floating orbs -->
+        <div class="hero-orb-1 absolute top-[24%] right-[14%] w-[420px] h-[420px] bg-purple-600/22 blur-[120px] pointer-events-none rounded-full"></div>
+        <div class="hero-orb-2 absolute bottom-[18%] left-[8%] w-[320px] h-[320px] bg-fuchsia-500/14 blur-[110px] pointer-events-none rounded-full"></div>
+        <!-- Bottom fade -->
+        <div class="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-blackx to-transparent pointer-events-none"></div>
 
         <div class="relative w-full max-w-[1440px] mx-auto px-4 sm:px-6">
-            <div class="hero-grid grid lg:grid-cols-[760px_1fr] gap-0 items-center">
-                <div class="max-w-[760px] hero-reveal relative z-10">
-                    <div class="hero-badge inline-flex items-center rounded-full bg-purple-500/10 px-5 py-2.5 text-zinc-300 shadow-lg shadow-purple-500/10" style="font-family:Gotham,Montserrat,sans-serif;font-weight:300;font-size:22.99px;line-height:108%;letter-spacing:0;border:0.85px solid #BE5DFF;">
+            <div class="hero-grid">
+                <div class="hero-text-col hero-reveal">
+                    <div class="hero-badge inline-flex items-center rounded-full bg-purple-500/10 text-zinc-200 shadow-lg shadow-purple-500/10" style="font-family:Gotham,Montserrat,sans-serif;font-weight:300;letter-spacing:0;border:0.85px solid #BE5DFF;backdrop-filter:blur(8px);">
                         Marketplace nº 1 de ativos digitais
                     </div>
 
-                    <h1 class="hero-title mt-6 text-white" style="font-family:Gotham,Montserrat,sans-serif;font-weight:600;font-size:60px;line-height:110%;letter-spacing:0;max-width:760px;">
+                    <h1 class="hero-title mt-5 text-white" style="font-family:Gotham,Montserrat,sans-serif;letter-spacing:-0.01em;">
                         <span class="block">Compre e venda <span style="color:#A521FE">ativos</span></span>
                         <span class="block"><span style="color:#A521FE">digitais</span> com pagamento</span>
                         <span class="block">protegido</span>
                     </h1>
 
-                    <p class="hero-copy mt-6 text-zinc-400 max-w-[760px]" style="font-family:Gotham,Montserrat,sans-serif;font-weight:325;font-size:32px;line-height:108%;letter-spacing:0;">
-                        <span class="block">Contas, gift cards e muito mais. Pix instantâneo</span>
-                        <span class="block">mais liberação só após confirmação.</span>
+                    <p class="hero-copy mt-5 text-zinc-400 max-w-[640px]" style="font-family:Gotham,Montserrat,sans-serif;font-weight:325;letter-spacing:0;">
+                        Contas, gift cards e muito mais. Pix instantâneo, com liberação só após a confirmação.
                     </p>
 
-                    <a href="<?= BASE_PATH ?>/categorias" class="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-fuchsia-500 px-6 py-3.5 text-base font-bold text-white shadow-xl shadow-purple-600/30 hover:shadow-purple-600/45 hover:scale-[1.02] active:scale-[0.98] transition-all">
-                        Buscar produtos <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                    </a>
+                    <div class="mt-7 flex flex-wrap items-center gap-3">
+                        <a href="<?= BASE_PATH ?>/categorias" class="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-fuchsia-500 px-6 py-3.5 text-sm sm:text-base font-bold text-white shadow-xl shadow-purple-600/30 hover:shadow-purple-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                            Buscar produtos
+                            <i data-lucide="arrow-right" class="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-0.5"></i>
+                        </a>
+                        <a href="#categorias" class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] backdrop-blur-md px-5 py-3.5 text-sm font-semibold text-zinc-200 hover:bg-white/[0.08] hover:border-white/25 transition-all">
+                            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                            Explorar categorias
+                        </a>
+                    </div>
+
+                    <!-- Inline trust strip (visible above the fold) -->
+                    <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] text-zinc-400">
+                        <span class="inline-flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i> Escrow ativo</span>
+                        <span class="inline-flex items-center gap-1.5"><i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> PIX instantâneo</span>
+                        <span class="inline-flex items-center gap-1.5"><i data-lucide="badge-check" class="w-3.5 h-3.5 text-violet-400"></i> Vendedores verificados</span>
+                    </div>
                 </div>
 
-                <div class="hero-logo-wrap relative min-h-[420px] lg:min-h-[680px] flex items-center justify-center lg:justify-start pointer-events-none">
-                    <img src="<?= BASE_PATH ?>/assets/img/logobanner.png" alt="" class="hero-logo-img w-[960px] h-[960px] max-w-none object-contain hero-reveal lg:-ml-[95px] lg:-mr-[120px] lg:-mt-[28px]" style="animation-delay:.15s;filter:drop-shadow(-12.06px 9.87px 33.98px rgba(165,33,254,.20)) drop-shadow(-46.04px 41.66px 62.49px rgba(165,33,254,.17)) drop-shadow(-104.15px 93.18px 84.41px rgba(165,33,254,.10)) drop-shadow(-186.37px 165.54px 99.76px rgba(165,33,254,.03));">
+                <div class="hero-logo-wrap">
+                    <img src="<?= BASE_PATH ?>/assets/img/logobanner.png" alt="" class="hero-logo-img hero-reveal" style="animation-delay:.18s;filter:drop-shadow(-12px 10px 34px rgba(165,33,254,.20)) drop-shadow(-46px 42px 62px rgba(165,33,254,.17)) drop-shadow(-104px 93px 84px rgba(165,33,254,.10));">
                 </div>
             </div>
         </div>
@@ -657,6 +723,26 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     50% { transform: translateY(8px); opacity: 0.3; }
 }
 
+/* ===== Premium scroll reveal — fade + lift + blur ease-out-expo ===== */
+.reveal-init {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+    filter: blur(6px);
+    transition:
+        opacity .9s cubic-bezier(0.16, 1, 0.3, 1),
+        transform .9s cubic-bezier(0.16, 1, 0.3, 1),
+        filter .7s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform, filter;
+}
+.reveal-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+}
+@media (prefers-reduced-motion: reduce) {
+    .reveal-init { opacity: 1; transform: none; filter: none; transition: none; }
+}
+
 /* Trust marquee — premium seamless loop with edge masks, pause on hover, varied icons */
 .trust-marquee-section {
     background:
@@ -770,6 +856,29 @@ document.addEventListener('DOMContentLoaded', function() {
     }, { threshold: 0.3 });
     counters.forEach(function(c) { observer.observe(c); });
 });
+
+// Scroll reveal — premium fade+lift+blur as elements enter the viewport.
+// Auto-targets section headings, cards, and any [data-reveal] element.
+(function() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const targets = new Set();
+    document.querySelectorAll('section h2, section .cat-card, section article.product-card, section [data-reveal], .como-icon').forEach(el => targets.add(el));
+    if (!targets.size) return;
+    targets.forEach(el => el.classList.add('reveal-init'));
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach((e, idx) => {
+            if (!e.isIntersecting) return;
+            const el = e.target;
+            // Stagger siblings inside the same parent grid/flex
+            const sibs = Array.from(el.parentElement?.children || []);
+            const i = Math.max(0, sibs.indexOf(el));
+            el.style.transitionDelay = Math.min(i, 8) * 60 + 'ms';
+            el.classList.add('reveal-in');
+            io.unobserve(el);
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    targets.forEach(el => io.observe(el));
+})();
 </script>
 
 <?php
