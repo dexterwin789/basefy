@@ -123,6 +123,7 @@ function _sfEnsureCategorySlugColumn($conn): void
         $conn->query("ALTER TABLE categories ADD COLUMN IF NOT EXISTS slug VARCHAR(191)");
         @$conn->query("CREATE UNIQUE INDEX IF NOT EXISTS idx_categories_slug ON categories(slug)");
         $conn->query("ALTER TABLE categories ADD COLUMN IF NOT EXISTS imagem TEXT DEFAULT NULL");
+        $conn->query("ALTER TABLE categories ADD COLUMN IF NOT EXISTS destaque BOOLEAN NOT NULL DEFAULT FALSE");
     } catch (\Throwable $e) {}
 }
 
@@ -188,6 +189,7 @@ function _sfEnsureSlugColumn($conn): void
         $conn->query("ALTER TABLE products ADD COLUMN IF NOT EXISTS slug VARCHAR(191)");
         // create unique index — ignore error if already exists
         @$conn->query("CREATE UNIQUE INDEX IF NOT EXISTS idx_products_slug ON products(slug)");
+        $conn->query("ALTER TABLE products ADD COLUMN IF NOT EXISTS destaque BOOLEAN NOT NULL DEFAULT FALSE");
     } catch (\Throwable $e) {}
 }
 
@@ -575,6 +577,7 @@ function sfProductColumns($conn): array
     $image = sfPickColumn($cols, ['imagem', 'image']);
     $active = sfPickColumn($cols, ['ativo', 'active']);
     $approvalStatus = sfPickColumn($cols, ['status_aprovacao']);
+    $featured = sfPickColumn($cols, ['destaque', 'featured', 'is_featured']);
 
     return [
         'vendor' => $vendor,
@@ -582,20 +585,45 @@ function sfProductColumns($conn): array
         'image' => $image,
         'active' => $active,
         'approval_status' => $approvalStatus,
+        'featured' => $featured,
     ];
 }
 
-function sfListCategories($conn, string $tipo = ''): array
+function sfListCategories($conn, string $tipo = '', bool $featuredOnly = false, int $limit = 0): array
 {
     _sfBackfillCategorySlugs($conn);
+    $cols = sfTableColumns($conn, 'categories');
+    $hasFeatured = in_array('destaque', $cols, true);
+    $featuredExpr = $hasFeatured ? 'COALESCE(destaque, FALSE) AS destaque' : 'FALSE AS destaque';
+    $where = ['ativo = 1'];
+    $types = '';
+    $params = [];
+
     if ($tipo !== '') {
-        $stmt = $conn->prepare("SELECT id, nome, tipo, slug, imagem FROM categories WHERE ativo = 1 AND tipo = ? ORDER BY nome ASC");
-        $stmt->bind_param('s', $tipo);
-        $stmt->execute();
-        $rs = $stmt->get_result();
-        return $rs ? ($rs->fetch_all(MYSQLI_ASSOC) ?: []) : [];
+        $where[] = 'tipo = ?';
+        $types .= 's';
+        $params[] = $tipo;
     }
-    $rs = $conn->query("SELECT id, nome, tipo, slug, imagem FROM categories WHERE ativo = 1 ORDER BY nome ASC");
+    if ($featuredOnly) {
+        if (!$hasFeatured) return [];
+        $where[] = 'destaque = TRUE';
+    }
+
+    $sql = "SELECT id, nome, tipo, slug, imagem, {$featuredExpr}
+            FROM categories
+            WHERE " . implode(' AND ', $where) . "
+            ORDER BY " . ($hasFeatured ? 'COALESCE(destaque, FALSE) DESC, ' : '') . "id DESC";
+    if ($limit > 0) {
+        $sql .= ' LIMIT ' . max(1, min(100, $limit));
+    }
+
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) return [];
+    if ($types !== '') {
+        $stmt->bind_param('s', $tipo);
+    }
+    $stmt->execute();
+    $rs = $stmt->get_result();
     return $rs ? ($rs->fetch_all(MYSQLI_ASSOC) ?: []) : [];
 }
 
@@ -611,6 +639,7 @@ function sfListProducts($conn, array $filters = []): array
     }
 
     $imageExpr = $cols['image'] ? ('p.' . $cols['image']) : "''";
+    $featuredExpr = $cols['featured'] ? ('COALESCE(p.' . $cols['featured'] . ', FALSE)') : 'FALSE';
     $where = [];
     $types = '';
     $params = [];
@@ -647,10 +676,15 @@ function sfListProducts($conn, array $filters = []): array
         $params[] = $categoryId;
     }
 
+    if (!empty($filters['featured_only'])) {
+        if ($cols['featured'] === null) return [];
+        $where[] = 'p.' . $cols['featured'] . ' = TRUE';
+    }
+
     $limit = max(1, min(100, (int)($filters['limit'] ?? 24)));
 
     $sql = "SELECT p.id, p.nome, p.descricao, p.preco, {$imageExpr} AS imagem,
-                   p.slug, p.variantes,
+                   p.slug, p.variantes, {$featuredExpr} AS destaque,
                    c.id AS categoria_id, c.nome AS categoria_nome, c.tipo AS categoria_tipo, c.slug AS categoria_slug,
                    p." . $cols['vendor'] . " AS vendedor_id, u.nome AS vendedor_nome, u.slug AS vendedor_slug,
                    COALESCE(p.tipo, 'produto') AS tipo,
@@ -664,7 +698,7 @@ function sfListProducts($conn, array $filters = []): array
         $sql .= ' WHERE ' . implode(' AND ', $where);
     }
 
-    $sql .= ' ORDER BY p.id DESC LIMIT ' . $limit;
+    $sql .= ' ORDER BY ' . ($cols['featured'] ? ('COALESCE(p.' . $cols['featured'] . ', FALSE) DESC, ') : '') . 'p.id DESC LIMIT ' . $limit;
 
     $st = $conn->prepare($sql);
     if (!$st) {
@@ -712,13 +746,14 @@ function sfGetProductById($conn, int $productId): ?array
     }
 
     $imageExpr = $cols['image'] ? ('p.' . $cols['image']) : "''";
+    $featuredExpr = $cols['featured'] ? ('COALESCE(p.' . $cols['featured'] . ', FALSE)') : 'FALSE';
     $whereActive = $cols['active'] !== null ? (' AND p.' . $cols['active'] . ' = 1') : '';
     if ($cols['approval_status'] !== null) {
         $whereActive .= " AND COALESCE(p." . $cols['approval_status'] . ", 'aprovado') = 'aprovado'";
     }
 
     $sql = "SELECT p.id, p.nome, p.descricao, p.preco, {$imageExpr} AS imagem,
-                   p.slug, p.variantes,
+                   p.slug, p.variantes, {$featuredExpr} AS destaque,
                    c.id AS categoria_id, c.nome AS categoria_nome, c.tipo AS categoria_tipo, c.slug AS categoria_slug,
                    p." . $cols['vendor'] . " AS vendedor_id, u.nome AS vendedor_nome, u.slug AS vendedor_slug,
                    COALESCE(p.tipo, 'produto') AS tipo,

@@ -36,7 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         (string)($_POST['nome'] ?? ''),
         (string)($_POST['tipo'] ?? 'produto'),
         trim((string)($_POST['slug'] ?? '')),
-        $imagemPath
+        $imagemPath,
+        isset($_POST['destaque'])
     );
 
     if ($success) {
@@ -78,6 +79,13 @@ include __DIR__ . '/../../views/partials/admin_layout_start.php';
         <option value="servico" <?= ($editar['tipo'] ?? '') === 'servico' ? 'selected' : '' ?>>serviço</option>
       </select>
     </div>
+    <label class="flex items-start gap-3 rounded-xl border border-purple-500/25 bg-purple-500/[0.06] p-3 cursor-pointer hover:bg-purple-500/[0.10] transition">
+      <input type="checkbox" name="destaque" value="1" <?= !empty($editar['destaque']) ? 'checked' : '' ?> class="mt-1 h-4 w-4 rounded border-blackx3 accent-purple-500">
+      <span>
+        <span class="block text-sm font-semibold text-zinc-200">Categoria destaque na home</span>
+        <span class="block text-xs text-zinc-500 mt-0.5">Categorias destacadas aparecem primeiro na home. Novas categorias ativas continuam aparecendo automaticamente.</span>
+      </span>
+    </label>
     <div>
       <label class="block text-sm mb-1 text-zinc-400 font-medium">Imagem destaque</label>
       <?php

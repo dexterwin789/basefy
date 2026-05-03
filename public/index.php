@@ -26,9 +26,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
 }
 
 $q          = trim((string)($_GET['q'] ?? ''));
-$destaques  = sfListProducts($conn, ['limit' => 10, 'q' => $q]);
+$destaques  = $q !== ''
+    ? sfListProducts($conn, ['limit' => 10, 'q' => $q])
+    : sfListProducts($conn, ['limit' => 10, 'featured_only' => true]);
+if ($q === '' && !$destaques) {
+    $destaques = sfListProducts($conn, ['limit' => 10]);
+}
 $populares  = sfListProducts($conn, ['limit' => 5]);
-$categorias = sfListCategories($conn, 'produto');
+$categorias = array_values(array_filter(
+    sfListCategories($conn),
+    fn($cat) => strtolower(trim((string)($cat['tipo'] ?? ''))) !== 'blog'
+));
 $cartCount  = sfCartCount();
 
 // Blog posts (safe)

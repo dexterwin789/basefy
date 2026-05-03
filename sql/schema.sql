@@ -51,6 +51,7 @@ CREATE TABLE categories (
     nome VARCHAR(120) NOT NULL,
     tipo VARCHAR(20) NOT NULL DEFAULT 'produto',
     ativo TINYINT(1) NOT NULL DEFAULT 1,
+    destaque TINYINT(1) NOT NULL DEFAULT 0,
     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     KEY idx_categories_tipo (tipo),
     KEY idx_categories_ativo (ativo)
@@ -69,6 +70,7 @@ CREATE TABLE products (
     prazo_entrega_dias INT UNSIGNED NULL,
     data_entrega DATE NULL,
     ativo TINYINT(1) NOT NULL DEFAULT 1,
+    destaque TINYINT(1) NOT NULL DEFAULT 0,
     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     KEY idx_products_vendedor (vendedor_id),

@@ -28,12 +28,15 @@ function listarVendedoresAprovados($conn): array
 
 function listarCategoriasProdutoAtivas($conn): array
 {
-    $q = $conn->query("SELECT id, nome FROM categories WHERE tipo='produto' AND ativo=1 ORDER BY nome");
+    _sfEnsureCategorySlugColumn($conn);
+    $q = $conn->query("SELECT id, nome, tipo FROM categories WHERE ativo=1 AND tipo != 'blog' ORDER BY nome");
     return $q ? $q->fetch_all(MYSQLI_ASSOC) : [];
 }
 
 function listarProdutos($conn, array|string $f = [], int $pagina = 1, int $pp = 15): array
 {
+    _sfEnsureSlugColumn($conn);
+
     if (!is_array($f)) $f = ['q' => (string)$f];
 
     $pagina = max(1, $pagina);
@@ -45,6 +48,7 @@ function listarProdutos($conn, array|string $f = [], int $pagina = 1, int $pp = 
 
     $colCategoria = colunaExiste($conn, 'products', 'categoria_id') ? 'categoria_id' : null;
     $selectImagem = colunaExiste($conn, 'products', 'imagem') ? 'p.imagem' : 'NULL AS imagem';
+    $selectDestaque = colunaExiste($conn, 'products', 'destaque') ? 'COALESCE(p.destaque, FALSE) AS destaque' : 'FALSE AS destaque';
 
     if ($colVendedor === null || $colCategoria === null) {
         return ['itens' => []];
@@ -66,6 +70,7 @@ function listarProdutos($conn, array|string $f = [], int $pagina = 1, int $pp = 
                    COALESCE(p.tipo, 'produto') AS tipo,
                    COALESCE(p.quantidade, 0) AS quantidade,
                    p.variantes,
+                   {$selectDestaque},
                    c.nome AS categoria_nome, u.nome AS vendedor_nome
             FROM products p
             INNER JOIN categories c ON c.id = p.{$colCategoria}
@@ -98,7 +103,7 @@ function listarProdutos($conn, array|string $f = [], int $pagina = 1, int $pp = 
     ];
 }
 
-function salvarProduto($conn, int $id, int $vendedorId, int $categoriaId, string $nome, string $descricao, float $preco, ?string $imagem, string $tipo = 'produto', int $quantidade = 0, ?int $prazoEntregaDias = null, ?string $dataEntrega = null, string $customSlug = '', ?string $variantes = null): array
+function salvarProduto($conn, int $id, int $vendedorId, int $categoriaId, string $nome, string $descricao, float $preco, ?string $imagem, string $tipo = 'produto', int $quantidade = 0, ?int $prazoEntregaDias = null, ?string $dataEntrega = null, string $customSlug = '', ?string $variantes = null, bool $destaque = false): array
 {
     if ($vendedorId <= 0 || $categoriaId <= 0 || trim($nome) === '') return [false, 'Dados inválidos.'];
     if (!in_array($tipo, ['produto', 'servico', 'dinamico'], true)) $tipo = 'produto';
@@ -143,29 +148,32 @@ function salvarProduto($conn, int $id, int $vendedorId, int $categoriaId, string
 
     // Auto-migrate: ensure variantes column exists
     try { $conn->query("ALTER TABLE products ADD COLUMN IF NOT EXISTS variantes TEXT DEFAULT NULL"); } catch (\Throwable $e) {}
+    _sfEnsureSlugColumn($conn);
+    $destaqueInt = $destaque ? 1 : 0;
 
     if ($id > 0) {
         $slug = trim($customSlug) !== '' ? sfCreateUniqueSlug($conn, $customSlug, $id) : sfCreateUniqueSlug($conn, $nome, $id);
         if ($imagem) {
-            $st = $conn->prepare("UPDATE products SET vendedor_id=?, categoria_id=?, nome=?, descricao=?, preco=?, imagem=?, tipo=?, quantidade=?, prazo_entrega_dias=?, data_entrega=?, slug=?, variantes=? WHERE id=?");
-            $st->bind_param('iissdsisssssi', $vendedorId, $categoriaId, $nome, $descricao, $preco, $imagem, $tipo, $quantidade, $prazoEntregaDias, $dataEntrega, $slug, $variantes, $id);
+            $st = $conn->prepare("UPDATE products SET vendedor_id=?, categoria_id=?, nome=?, descricao=?, preco=?, imagem=?, tipo=?, quantidade=?, prazo_entrega_dias=?, data_entrega=?, slug=?, variantes=?, destaque=? WHERE id=?");
+            $st->bind_param('iissdssiisssii', $vendedorId, $categoriaId, $nome, $descricao, $preco, $imagem, $tipo, $quantidade, $prazoEntregaDias, $dataEntrega, $slug, $variantes, $destaqueInt, $id);
         } else {
-            $st = $conn->prepare("UPDATE products SET vendedor_id=?, categoria_id=?, nome=?, descricao=?, preco=?, tipo=?, quantidade=?, prazo_entrega_dias=?, data_entrega=?, slug=?, variantes=? WHERE id=?");
-            $st->bind_param('iissdssisssi', $vendedorId, $categoriaId, $nome, $descricao, $preco, $tipo, $quantidade, $prazoEntregaDias, $dataEntrega, $slug, $variantes, $id);
+            $st = $conn->prepare("UPDATE products SET vendedor_id=?, categoria_id=?, nome=?, descricao=?, preco=?, tipo=?, quantidade=?, prazo_entrega_dias=?, data_entrega=?, slug=?, variantes=?, destaque=? WHERE id=?");
+            $st->bind_param('iissdsiisssii', $vendedorId, $categoriaId, $nome, $descricao, $preco, $tipo, $quantidade, $prazoEntregaDias, $dataEntrega, $slug, $variantes, $destaqueInt, $id);
         }
         $st->execute();
         return [true, 'Produto atualizado.'];
     }
 
     $slug = trim($customSlug) !== '' ? sfCreateUniqueSlug($conn, $customSlug) : sfCreateUniqueSlug($conn, $nome);
-    $st = $conn->prepare("INSERT INTO products (vendedor_id, categoria_id, nome, descricao, preco, imagem, ativo, tipo, quantidade, prazo_entrega_dias, data_entrega, slug, variantes) VALUES (?,?,?,?,?,?,1,?,?,?,?,?,?)");
-    $st->bind_param('iissdsisssss', $vendedorId, $categoriaId, $nome, $descricao, $preco, $imagem, $tipo, $quantidade, $prazoEntregaDias, $dataEntrega, $slug, $variantes);
+    $st = $conn->prepare("INSERT INTO products (vendedor_id, categoria_id, nome, descricao, preco, imagem, ativo, tipo, quantidade, prazo_entrega_dias, data_entrega, slug, variantes, destaque) VALUES (?,?,?,?,?,?,1,?,?,?,?,?,?,?)");
+    $st->bind_param('iissdssiisssi', $vendedorId, $categoriaId, $nome, $descricao, $preco, $imagem, $tipo, $quantidade, $prazoEntregaDias, $dataEntrega, $slug, $variantes, $destaqueInt);
     $st->execute();
     return [true, 'Produto criado.'];
 }
 
 function obterProdutoPorId($conn, int $id): ?array
 {
+    _sfEnsureSlugColumn($conn);
     $st = $conn->prepare("SELECT * FROM products WHERE id=? LIMIT 1");
     $st->bind_param('i', $id);
     $st->execute();

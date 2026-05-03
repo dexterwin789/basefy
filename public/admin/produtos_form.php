@@ -65,7 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         (string)($_POST['nome'] ?? ''),
         (string)($_POST['descricao'] ?? ''),
         $preco, $imagemFinal,
-        $tipo, $quantidade, $prazoEntregaDias, $dataEntrega, $customSlug, $variantes
+        $tipo, $quantidade, $prazoEntregaDias, $dataEntrega, $customSlug, $variantes,
+        isset($_POST['destaque'])
     );
 
     if ($ok) {
@@ -257,6 +258,13 @@ $dataEntregaAtual = $produto['data_entrega'] ?? '';
                     <label class="block text-sm mb-1.5 text-zinc-400 font-medium">Slug <span class="text-zinc-600 font-normal">(Opcional — gerado automaticamente se vazio)</span></label>
                     <input name="slug" maxlength="191" value="<?= htmlspecialchars((string)($produto['slug'] ?? '')) ?>" class="w-full rounded-xl bg-blackx border border-blackx3 px-3.5 py-2.5 focus:border-greenx outline-none transition-colors" placeholder="ex: meu-produto-personalizado">
                 </div>
+                <label class="flex items-start gap-3 rounded-xl border border-fuchsia-500/25 bg-fuchsia-500/[0.06] p-3 cursor-pointer hover:bg-fuchsia-500/[0.10] transition">
+                    <input type="checkbox" name="destaque" value="1" <?= !empty($produto['destaque']) ? 'checked' : '' ?> class="mt-1 h-4 w-4 rounded border-blackx3 accent-fuchsia-500">
+                    <span>
+                        <span class="block text-sm font-semibold text-zinc-200">Produto destaque na home</span>
+                        <span class="block text-xs text-zinc-500 mt-0.5">Produtos destacados alimentam a seção Em destaque; se nenhum estiver marcado, a home usa os mais recentes.</span>
+                    </span>
+                </label>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div x-show="tipo !== 'dinamico'" x-transition>
                         <label class="block text-sm mb-1.5 text-zinc-400 font-medium">Valor (R$)</label>

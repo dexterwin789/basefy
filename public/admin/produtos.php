@@ -102,6 +102,7 @@ include __DIR__ . '/../../views/partials/admin_layout_start.php';
           <th class="text-left py-3 pr-3">Vendedor</th>
           <th class="text-left py-3 pr-3">Preço</th>
           <th class="text-left py-3 pr-3">Qtd</th>
+          <th class="text-left py-3 pr-3">Destaque</th>
           <th class="text-left py-3 pr-3">Status</th>
           <th class="text-left py-3">Ações</th>
         </tr>
@@ -168,6 +169,15 @@ include __DIR__ . '/../../views/partials/admin_layout_start.php';
               <?php endif; ?>
             </td>
             <td class="py-3 pr-3">
+              <?php if (!empty($row['destaque'])): ?>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-fuchsia-500/15 border border-fuchsia-400/40 text-fuchsia-300">
+                  <i data-lucide="star" class="w-3 h-3"></i> Home
+                </span>
+              <?php else: ?>
+                <span class="text-xs text-zinc-600">-</span>
+              <?php endif; ?>
+            </td>
+            <td class="py-3 pr-3">
               <span id="prod-status-<?= (int)$row['id'] ?>" class="px-2.5 py-1 rounded-full text-xs font-medium <?= $isAtivo ? 'bg-greenx/15 border border-greenx/40 text-greenx' : 'bg-red-500/15 border border-red-400/40 text-red-300' ?>">
                 <?= $isAtivo ? 'Ativo' : 'Inativo' ?>
               </span>
@@ -193,7 +203,7 @@ include __DIR__ . '/../../views/partials/admin_layout_start.php';
         <?php endforeach; ?>
 
         <?php if (!$lista['itens']): ?>
-          <tr><td colspan="10" class="py-6 text-zinc-500">Nenhum produto encontrado.</td></tr>
+          <tr><td colspan="11" class="py-6 text-zinc-500">Nenhum produto encontrado.</td></tr>
         <?php endif; ?>
         </tbody>
       </table>

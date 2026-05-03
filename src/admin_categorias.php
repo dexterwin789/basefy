@@ -6,6 +6,9 @@ require_once __DIR__ . '/db.php';
 
 function listarCategorias($conn, array $filtros = [], int $pagina = 1, int $porPagina = 15): array
 {
+    require_once __DIR__ . '/storefront.php';
+    _sfEnsureCategorySlugColumn($conn);
+
     $pagina = max(1, $pagina);
     $offset = ($pagina - 1) * $porPagina;
 
@@ -38,7 +41,7 @@ function listarCategorias($conn, array $filtros = [], int $pagina = 1, int $porP
     $stmtCount->execute();
     $total = (int)($stmtCount->get_result()->fetch_assoc()['total'] ?? 0);
 
-    $sqlList = "SELECT id, nome, tipo, ativo, criado_em, imagem
+    $sqlList = "SELECT id, nome, tipo, ativo, criado_em, imagem, COALESCE(destaque, FALSE) AS destaque
                 FROM categories
                 WHERE $whereSql
                 ORDER BY id DESC
@@ -68,7 +71,7 @@ function obterCategoriaPorId($conn, int $id): ?array
 
     require_once __DIR__ . '/storefront.php';
     _sfEnsureCategorySlugColumn($conn);
-    $stmt = $conn->prepare("SELECT id, nome, tipo, ativo, criado_em, slug, imagem FROM categories WHERE id = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT id, nome, tipo, ativo, criado_em, slug, imagem, COALESCE(destaque, FALSE) AS destaque FROM categories WHERE id = ? LIMIT 1");
     $stmt->bind_param('i', $id);
     $stmt->execute();
 
@@ -76,7 +79,7 @@ function obterCategoriaPorId($conn, int $id): ?array
     return $row ?: null;
 }
 
-function salvarCategoria($conn, int $id, string $nome, string $tipo, string $customSlug = '', ?string $imagem = null): array
+function salvarCategoria($conn, int $id, string $nome, string $tipo, string $customSlug = '', ?string $imagem = null, bool $destaque = false): array
 {
     $nome = trim($nome);
     if ($nome === '' || !in_array($tipo, ['produto', 'servico'], true)) {
@@ -85,24 +88,26 @@ function salvarCategoria($conn, int $id, string $nome, string $tipo, string $cus
 
     // Generate slug — use custom slug if provided, otherwise from name
     require_once __DIR__ . '/storefront.php';
+    _sfEnsureCategorySlugColumn($conn);
     $slugBase = trim($customSlug) !== '' ? $customSlug : $nome;
     $slug = sfCreateUniqueCategorySlug($conn, $slugBase, $id);
+    $destaqueInt = $destaque ? 1 : 0;
 
     if ($id > 0) {
         if ($imagem !== null) {
-            $stmt = $conn->prepare("UPDATE categories SET nome = ?, tipo = ?, slug = ?, imagem = ? WHERE id = ?");
-            $stmt->bind_param('ssssi', $nome, $tipo, $slug, $imagem, $id);
+            $stmt = $conn->prepare("UPDATE categories SET nome = ?, tipo = ?, slug = ?, imagem = ?, destaque = ? WHERE id = ?");
+            $stmt->bind_param('ssssii', $nome, $tipo, $slug, $imagem, $destaqueInt, $id);
         } else {
-            $stmt = $conn->prepare("UPDATE categories SET nome = ?, tipo = ?, slug = ? WHERE id = ?");
-            $stmt->bind_param('sssi', $nome, $tipo, $slug, $id);
+            $stmt = $conn->prepare("UPDATE categories SET nome = ?, tipo = ?, slug = ?, destaque = ? WHERE id = ?");
+            $stmt->bind_param('sssii', $nome, $tipo, $slug, $destaqueInt, $id);
         }
         $stmt->execute();
         return [true, 'Categoria atualizada.'];
     }
 
-    $stmt = $conn->prepare("INSERT INTO categories (nome, tipo, ativo, slug, imagem) VALUES (?, ?, TRUE, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO categories (nome, tipo, ativo, slug, imagem, destaque) VALUES (?, ?, TRUE, ?, ?, ?)");
     $imgVal = $imagem ?? '';
-    $stmt->bind_param('ssss', $nome, $tipo, $slug, $imgVal);
+    $stmt->bind_param('ssssi', $nome, $tipo, $slug, $imgVal, $destaqueInt);
     $stmt->execute();
     return [true, 'Categoria criada.'];
 }

@@ -46,6 +46,7 @@ CREATE TABLE categories (
     nome VARCHAR(120) NOT NULL,
     tipo VARCHAR(20) NOT NULL DEFAULT 'produto',
     ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    destaque BOOLEAN NOT NULL DEFAULT FALSE,
     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX idx_categories_tipo ON categories(tipo);
@@ -65,6 +66,7 @@ CREATE TABLE products (
     prazo_entrega_dias INT,
     data_entrega DATE,
     ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    destaque BOOLEAN NOT NULL DEFAULT FALSE,
     auto_delivery_enabled BOOLEAN NOT NULL DEFAULT FALSE,
     auto_delivery_items TEXT,
     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
