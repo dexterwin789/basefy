@@ -1,0 +1,117 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="900" fill="#020106"/>
+  <defs>
+    <radialGradient id="bgViolet" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 444) rotate(90) scale(470 620)">
+      <stop stop-color="#40108A" stop-opacity="0.56"/>
+      <stop offset="0.42" stop-color="#180528" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#020106" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="floorGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 752) scale(390 88)">
+      <stop stop-color="#A521FE" stop-opacity="0.8"/>
+      <stop offset="0.42" stop-color="#9D4EDD" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#020106" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="tilePurple" x1="323" y1="237" x2="894" y2="667" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F3E8FF" stop-opacity="0.94"/>
+      <stop offset="0.21" stop-color="#A855F7" stop-opacity="0.82"/>
+      <stop offset="0.56" stop-color="#4C1D95" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#160023" stop-opacity="0.88"/>
+    </linearGradient>
+    <linearGradient id="tileBlue" x1="480" y1="172" x2="850" y2="620" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E0F2FE" stop-opacity="0.98"/>
+      <stop offset="0.24" stop-color="#22D3EE" stop-opacity="0.86"/>
+      <stop offset="0.61" stop-color="#2563EB" stop-opacity="0.62"/>
+      <stop offset="1" stop-color="#071A52" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="tilePink" x1="335" y1="324" x2="755" y2="690" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE4F3" stop-opacity="0.96"/>
+      <stop offset="0.28" stop-color="#FF2DAA" stop-opacity="0.83"/>
+      <stop offset="0.68" stop-color="#7E22CE" stop-opacity="0.58"/>
+      <stop offset="1" stop-color="#180019" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="tileGreen" x1="527" y1="354" x2="842" y2="716" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ECFCCB" stop-opacity="0.94"/>
+      <stop offset="0.27" stop-color="#84CC16" stop-opacity="0.76"/>
+      <stop offset="0.62" stop-color="#10B981" stop-opacity="0.56"/>
+      <stop offset="1" stop-color="#052E16" stop-opacity="0.9"/>
+    </linearGradient>
+    <filter id="softBloom" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1.5 0 0 0 0  0 0.4 0 0 0  0 0 2.2 0 0  0 0 0 1 0" result="bloom"/>
+      <feMerge>
+        <feMergeNode in="bloom"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="outerGlow" x="-55%" y="-55%" width="210%" height="210%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#A521FE" flood-opacity="1"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="24" flood-color="#D946EF" flood-opacity="0.8"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="45" flood-color="#22D3EE" flood-opacity="0.36"/>
+    </filter>
+    <filter id="cyanGlow" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#22D3EE" flood-opacity="1"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="24" flood-color="#38BDF8" flood-opacity="0.65"/>
+    </filter>
+    <filter id="pinkGlow" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#F0ABFC" flood-opacity="1"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="24" flood-color="#EC4899" flood-opacity="0.68"/>
+    </filter>
+    <filter id="greenGlow" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#A3E635" flood-opacity="1"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="24" flood-color="#22C55E" flood-opacity="0.58"/>
+    </filter>
+    <filter id="reflectionBlur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#bgViolet)"/>
+  <ellipse cx="600" cy="752" rx="420" ry="92" fill="url(#floorGlow)" opacity="0.82"/>
+
+  <g opacity="0.35" filter="url(#softBloom)">
+    <path d="M191 204C328 89 528 79 662 164C788 243 980 227 1081 111" stroke="#7C3AED" stroke-width="3" stroke-linecap="round"/>
+    <path d="M137 641C304 511 457 555 611 626C759 695 910 684 1068 551" stroke="#22D3EE" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <g transform="translate(600 428) rotate(-8)" filter="url(#outerGlow)">
+    <rect x="-255" y="-176" width="256" height="256" rx="50" fill="url(#tilePurple)" stroke="#D8B4FE" stroke-width="8"/>
+    <rect x="-255" y="-176" width="256" height="256" rx="50" stroke="#A521FE" stroke-width="18" opacity="0.42"/>
+    <path d="M-204 -128C-157 -156 -85 -154 -36 -126" stroke="white" stroke-opacity="0.48" stroke-width="9" stroke-linecap="round"/>
+
+    <rect x="19" y="-214" width="256" height="256" rx="50" fill="url(#tileBlue)" stroke="#BAE6FD" stroke-width="8" filter="url(#cyanGlow)"/>
+    <rect x="19" y="-214" width="256" height="256" rx="50" stroke="#22D3EE" stroke-width="18" opacity="0.42"/>
+    <path d="M72 -166C123 -190 197 -181 235 -145" stroke="white" stroke-opacity="0.55" stroke-width="9" stroke-linecap="round"/>
+
+    <rect x="-214" y="98" width="256" height="256" rx="50" fill="url(#tilePink)" stroke="#FBCFE8" stroke-width="8" filter="url(#pinkGlow)"/>
+    <rect x="-214" y="98" width="256" height="256" rx="50" stroke="#F472B6" stroke-width="18" opacity="0.42"/>
+    <path d="M-165 146C-110 118 -42 124 1 157" stroke="white" stroke-opacity="0.5" stroke-width="9" stroke-linecap="round"/>
+
+    <rect x="61" y="61" width="256" height="256" rx="50" fill="url(#tileGreen)" stroke="#D9F99D" stroke-width="8" filter="url(#greenGlow)"/>
+    <rect x="61" y="61" width="256" height="256" rx="50" stroke="#84CC16" stroke-width="18" opacity="0.42"/>
+    <path d="M111 110C164 82 236 92 276 124" stroke="white" stroke-opacity="0.48" stroke-width="9" stroke-linecap="round"/>
+
+    <circle cx="31" cy="41" r="78" fill="#08010F" fill-opacity="0.72" stroke="#F5D0FE" stroke-width="8"/>
+    <circle cx="31" cy="41" r="78" stroke="#A521FE" stroke-width="20" opacity="0.42"/>
+    <path d="M31 -7V89" stroke="#F5D0FE" stroke-width="22" stroke-linecap="round" filter="url(#pinkGlow)"/>
+    <path d="M-17 41H79" stroke="#BAE6FD" stroke-width="22" stroke-linecap="round" filter="url(#cyanGlow)"/>
+  </g>
+
+  <g opacity="0.45" transform="translate(600 690) scale(1 -0.26) rotate(-8)" filter="url(#reflectionBlur)">
+    <rect x="-255" y="-176" width="256" height="256" rx="50" fill="#A521FE" opacity="0.22"/>
+    <rect x="19" y="-214" width="256" height="256" rx="50" fill="#22D3EE" opacity="0.22"/>
+    <rect x="-214" y="98" width="256" height="256" rx="50" fill="#EC4899" opacity="0.24"/>
+    <rect x="61" y="61" width="256" height="256" rx="50" fill="#84CC16" opacity="0.18"/>
+    <circle cx="31" cy="41" r="86" fill="#A521FE" opacity="0.23"/>
+  </g>
+
+  <g filter="url(#softBloom)" opacity="0.95">
+    <circle cx="350" cy="207" r="4" fill="#F5D0FE"/>
+    <circle cx="858" cy="232" r="4" fill="#BAE6FD"/>
+    <circle cx="310" cy="585" r="4" fill="#F0ABFC"/>
+    <circle cx="911" cy="590" r="4" fill="#D9F99D"/>
+    <path d="M951 339H1009M980 310V368" stroke="#22D3EE" stroke-width="8" stroke-linecap="round" filter="url(#cyanGlow)"/>
+    <path d="M224 364H276M250 338V390" stroke="#F472B6" stroke-width="8" stroke-linecap="round" filter="url(#pinkGlow)"/>
+  </g>
+
+  <rect x="1" y="1" width="1198" height="898" stroke="white" stroke-opacity="0.02" stroke-width="2"/>
+</svg>

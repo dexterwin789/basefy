@@ -49,10 +49,13 @@ CREATE TABLE users (
 CREATE TABLE categories (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(120) NOT NULL,
+    slug VARCHAR(191) NULL,
     tipo VARCHAR(20) NOT NULL DEFAULT 'produto',
     ativo TINYINT(1) NOT NULL DEFAULT 1,
     destaque TINYINT(1) NOT NULL DEFAULT 0,
+    imagem VARCHAR(255) NULL,
     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY idx_categories_slug (slug),
     KEY idx_categories_tipo (tipo),
     KEY idx_categories_ativo (ativo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -44,13 +44,16 @@ CREATE INDEX idx_users_status_vendedor ON users(status_vendedor);
 CREATE TABLE categories (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nome VARCHAR(120) NOT NULL,
+    slug VARCHAR(191),
     tipo VARCHAR(20) NOT NULL DEFAULT 'produto',
     ativo BOOLEAN NOT NULL DEFAULT TRUE,
     destaque BOOLEAN NOT NULL DEFAULT FALSE,
+    imagem TEXT,
     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX idx_categories_tipo ON categories(tipo);
 CREATE INDEX idx_categories_ativo ON categories(ativo);
+CREATE UNIQUE INDEX idx_categories_slug ON categories(slug);
 
 CREATE TABLE products (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
