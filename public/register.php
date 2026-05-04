@@ -71,6 +71,7 @@ $googleError = isset($_GET['google_error']) ? htmlspecialchars((string)$_GET['go
   @keyframes blob{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-50px) scale(1.1)}50%{transform:translate(-20px,20px) scale(0.9)}75%{transform:translate(20px,40px) scale(1.05)}}
   .auth-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.15;animation:blob 20s ease-in-out infinite}
   .auth-input{transition:all .3s cubic-bezier(.4,0,.2,1)}
+  @media (max-width:767px){.auth-input{font-size:16px!important}}
   .auth-input:focus{box-shadow:0 0 0 3px rgba(var(--t-accent-rgb),.15);border-color:var(--t-accent)!important;transform:translateY(-1px)}
   .auth-icon{position:absolute;left:0.875rem;top:50%;transform:translateY(-50%);width:1rem;height:1rem;color:#71717a;pointer-events:none;z-index:10;transition:color .3s}
   .auth-input:focus ~ .auth-icon, .relative:focus-within .auth-icon{color:var(--t-accent)}

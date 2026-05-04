@@ -131,6 +131,7 @@ $googleAuthUrl = $googleConfigured ? googleAuthUrl($conn, $redirectUrl, 'login')
   @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
   .auth-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.15;animation:blob 20s ease-in-out infinite}
   .auth-input{transition:all .3s cubic-bezier(.4,0,.2,1)}
+  @media (max-width:767px){.auth-input{font-size:16px!important}}
   .auth-input:focus{box-shadow:0 0 0 3px rgba(var(--t-accent-rgb),.15);border-color:var(--t-accent)!important;transform:translateY(-1px)}
   .auth-input:focus ~ .auth-icon-fix, .auth-input:focus + .auth-icon-fix{} /* keep icons visible */
   .auth-icon{position:absolute;left:0.875rem;top:50%;transform:translateY(-50%);width:1rem;height:1rem;color:#71717a;pointer-events:none;z-index:10;transition:color .3s}

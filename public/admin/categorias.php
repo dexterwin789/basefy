@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../src/auth.php';
 require_once __DIR__ . '/../../src/db.php';
 require_once __DIR__ . '/../../src/media.php';
 require_once __DIR__ . '/../../src/admin_categorias.php';
+require_once __DIR__ . '/../../src/storefront.php';
 exigirAdmin();
 
 $db = new Database();
@@ -14,12 +15,28 @@ $conn = $db->connect();
 $erro = '';
 $ok = '';
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') === 'save_home_featured_category') {
+  $rawCategoryId = trim((string)($_POST['featured_category_id'] ?? ''));
+  $featuredCategoryId = $rawCategoryId === '' ? '' : (string)max(0, (int)$rawCategoryId);
+  try {
+    sfHomeSettingSet($conn, 'featured_category_id', $featuredCategoryId);
+    $ok = 'Categoria destaque da home atualizada.';
+  } catch (\Throwable $e) {
+    $erro = 'Erro ao salvar categoria destaque.';
+  }
+}
+
 $q = trim((string)($_GET['q'] ?? ''));
 $tipo = (string)($_GET['tipo'] ?? '');
 $ativo = (string)($_GET['ativo'] ?? '');
 $pagina = max(1, (int)($_GET['p'] ?? 1));
 $pp = in_array(($_pp = (int)($_GET['pp'] ?? 10)), [5,10,20]) ? $_pp : 10;
 $lista = listarCategorias($conn, ['q' => $q, 'tipo' => $tipo, 'ativo' => $ativo], $pagina, $pp);
+$homeCategoryOptions = array_values(array_filter(
+  sfListCategories($conn),
+  fn($cat) => strtolower(trim((string)($cat['tipo'] ?? ''))) !== 'blog'
+));
+$homeFeaturedCategorySetting = sfHomeSettingGet($conn, 'featured_category_id', '');
 
 $pageTitle = 'Categorias';
 $activeMenu = 'categorias';
@@ -39,6 +56,26 @@ include __DIR__ . '/../../views/partials/admin_layout_start.php';
     <?php if ($ok): ?><div class="mb-3 rounded-lg bg-greenx/20 border border-greenx text-greenx px-3 py-2 text-sm"><?= htmlspecialchars($ok) ?></div><?php endif; ?>
 
     <!-- Premium Filter -->
+    <form method="post" class="mb-4 rounded-2xl border border-purple-500/20 bg-purple-500/[0.05] p-3 md:p-4">
+      <input type="hidden" name="action" value="save_home_featured_category">
+      <div class="flex flex-col md:flex-row md:items-end gap-3">
+        <div class="md:flex-1">
+          <label class="block text-xs text-zinc-400 mb-1 font-semibold uppercase tracking-wide">Categoria destaque abaixo da home</label>
+          <select name="featured_category_id" class="w-full bg-blackx border border-blackx3 rounded-xl px-3 py-2.5 outline-none focus:border-greenx">
+            <option value="" <?= $homeFeaturedCategorySetting === '' ? 'selected' : '' ?>>Automático: Ativos Meta quando existir</option>
+            <option value="0" <?= $homeFeaturedCategorySetting === '0' ? 'selected' : '' ?>>Não exibir seção</option>
+            <?php foreach ($homeCategoryOptions as $cat): ?>
+            <option value="<?= (int)$cat['id'] ?>" <?= $homeFeaturedCategorySetting === (string)(int)$cat['id'] ? 'selected' : '' ?>><?= htmlspecialchars((string)$cat['nome']) ?></option>
+            <?php endforeach; ?>
+          </select>
+          <p class="text-xs text-zinc-500 mt-1">Controla a nova seção de produtos exibida logo abaixo de Categorias na home.</p>
+        </div>
+        <button class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-greenx to-greenxd hover:from-greenx2 hover:to-greenxd text-white font-semibold px-4 py-2.5 whitespace-nowrap transition-all">
+          <i data-lucide="save" class="w-4 h-4"></i> Salvar destaque
+        </button>
+      </div>
+    </form>
+
     <form method="get" class="mb-4 rounded-2xl border border-blackx3 bg-blackx/50 p-3 md:p-4">
       <div class="flex flex-col md:flex-row md:items-end md:flex-nowrap gap-3">
         <div class="md:flex-1">

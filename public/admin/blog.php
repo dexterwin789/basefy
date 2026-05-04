@@ -142,7 +142,7 @@ include __DIR__ . '/../../views/partials/admin_layout_start.php';
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                     <?php
                     $toggles = [
-                        'enabled'          => ['Blog ativo', 'Ativa ou desativa o blog completamente'],
+                        'enabled'          => ['Blog ativo no site', 'Ativa ou desativa as páginas e listagens do blog'],
                         'visible_public'   => ['Visitantes', 'Visível para não logados'],
                         'visible_usuario'  => ['Usuários', 'Visível para compradores'],
                         'visible_vendedor' => ['Vendedores', 'Visível para vendedores'],

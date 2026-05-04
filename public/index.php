@@ -37,27 +37,32 @@ $categorias = array_values(array_filter(
     sfListCategories($conn),
     fn($cat) => strtolower(trim((string)($cat['tipo'] ?? ''))) !== 'blog'
 ));
-$cartCount  = sfCartCount();
+$homeCategorias = array_slice($categorias, 0, 5);
 
-// Blog posts (safe)
-$blogPosts = [];
-try {
-    require_once __DIR__ . '/../src/blog.php';
-    if (blogIsEnabled($conn)) {
-        $blogPosts = blogLatest($conn, 3);
+$homeFeaturedCategorySetting = sfHomeSettingGet($conn, 'featured_category_id', '');
+$homeFeaturedCategory = null;
+if ($homeFeaturedCategorySetting !== '') {
+    $wantedCategoryId = (int)$homeFeaturedCategorySetting;
+    foreach ($categorias as $cat) {
+        if ((int)($cat['id'] ?? 0) === $wantedCategoryId) {
+            $homeFeaturedCategory = $cat;
+            break;
+        }
     }
-} catch (\Throwable $e) {}
-
-// Fallback example blog posts if none exist
-if (empty($blogPosts)) {
-    $blogPosts = [
-        ['slug' => '#', 'imagem' => '', 'titulo' => 'Como vender suas contas de jogos com segurança', 'resumo' => 'Dicas essenciais para anunciar suas contas no marketplace, garantir a segurança da transação e evitar problemas com compradores.', 'author_nome' => 'Admin', 'criado_em' => date('Y-m-d H:i:s', strtotime('-2 days'))],
-        ['slug' => '#', 'imagem' => '', 'titulo' => 'Gift Cards: Guia completo de compra e venda', 'resumo' => 'Tudo sobre o mercado de gift cards digitais — Steam, PlayStation, Xbox, Google Play e mais. Saiba como lucrar com revendas.', 'author_nome' => 'Admin', 'criado_em' => date('Y-m-d H:i:s', strtotime('-5 days'))],
-        ['slug' => '#', 'imagem' => '', 'titulo' => 'Novidades da plataforma: PIX instantâneo e escrow', 'resumo' => 'Conheça o sistema de pagamento PIX com confirmação automática e o escrow que protege compradores e vendedores.', 'author_nome' => 'Admin', 'criado_em' => date('Y-m-d H:i:s', strtotime('-7 days'))],
-    ];
+} else {
+    foreach ($categorias as $cat) {
+        $catName = mb_strtolower(trim((string)($cat['nome'] ?? '')));
+        $catSlug = mb_strtolower(trim((string)($cat['slug'] ?? '')));
+        if ($catSlug === 'ativos-meta' || $catName === 'ativos meta') {
+            $homeFeaturedCategory = $cat;
+            break;
+        }
+    }
 }
-
-
+$homeFeaturedProducts = $homeFeaturedCategory
+    ? sfListProducts($conn, ['limit' => 5, 'category_id' => (int)$homeFeaturedCategory['id']])
+    : [];
+$cartCount  = sfCartCount();
 
 $currentPage = 'home';
 $pageTitle   = 'Basefy — Marketplace Digital';
@@ -284,8 +289,8 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
     <?php endif; ?>
 
     <!-- =========== CATEGORIAS — Premium cards =========== -->
-    <?php if ($categorias): ?>
-    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 py-14 sm:py-20">
+    <?php if ($homeCategorias): ?>
+    <section id="categorias" class="max-w-[1440px] mx-auto px-4 sm:px-6 py-14 sm:py-20">
         <div class="flex items-center justify-between mb-8 sm:mb-10">
             <div>
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-greenx/10 border border-greenx/20 text-greenx text-[11px] font-bold uppercase tracking-wider mb-3">
@@ -301,7 +306,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
             $catIcons = ['gamepad-2','swords','crown','gem','box','tag','music','film','book-open','cpu','palette','globe'];
         ?>
         <div class="flex gap-2.5 overflow-x-auto pb-3 scrollbar-hide snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 sm:gap-5 sm:overflow-visible">
-            <?php foreach ($categorias as $i => $cat):
+            <?php foreach ($homeCategorias as $i => $cat):
                 $icon = $catIcons[$i % count($catIcons)];
                 $catImg = trim((string)($cat['imagem'] ?? ''));
                 $catImgUrl = ($catImg !== '' && $catImg !== 'https://placehold.co/1200x800/111827/9ca3af?text=Produto') ? sfImageUrl($catImg) : '';
@@ -326,6 +331,75 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
         </div>
         <div class="mt-5 text-center sm:hidden">
             <a href="<?= BASE_PATH ?>/categorias" class="text-xs text-greenx hover:underline font-semibold inline-flex items-center gap-1">Ver todas as categorias <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
+        </div>
+    </section>
+    <?php endif; ?>
+
+    <!-- =========== DESTAQUES POR CATEGORIA =========== -->
+    <?php if ($homeFeaturedCategory && $homeFeaturedProducts && $q === ''): ?>
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 py-10 sm:py-14">
+        <div class="flex items-center justify-between mb-8 sm:mb-10">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-greenx/10 border border-greenx/20 text-greenx text-[11px] font-bold uppercase tracking-wider mb-3">
+                    <i data-lucide="sparkles" class="w-3 h-3"></i>
+                    Categoria destaque
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-bold">Destaques de <?= htmlspecialchars((string)$homeFeaturedCategory['nome'], ENT_QUOTES, 'UTF-8') ?></h2>
+                <p class="text-sm text-zinc-500 mt-1">Produtos selecionados desta categoria</p>
+            </div>
+            <a href="<?= sfCategoryUrl($homeFeaturedCategory) ?>" class="hidden sm:inline-flex items-center gap-1.5 text-xs text-greenx hover:underline font-semibold">Ver categoria <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-5">
+            <?php foreach ($homeFeaturedProducts as $i => $p): ?>
+            <article class="product-card group bg-blackx2 border border-white/[0.06] rounded-2xl overflow-hidden flex flex-col hover:border-greenx/20 hover:shadow-2xl hover:shadow-greenx/[0.06] hover:-translate-y-1 transition-all duration-400 animate-fade-in-up stagger-<?= min($i + 1, 5) ?>">
+                <a href="<?= sfProductUrl($p) ?>" class="block relative overflow-hidden">
+                    <div class="aspect-square overflow-hidden bg-blackx">
+                        <img src="<?= htmlspecialchars(sfImageUrl((string)($p['imagem'] ?? '')), ENT_QUOTES, 'UTF-8') ?>"
+                             alt="<?= htmlspecialchars((string)($p['nome'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy">
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <span class="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[8px] sm:text-[9px] font-bold uppercase tracking-wide bg-greenx text-white shadow-md">
+                        <?= htmlspecialchars((string)($p['categoria_nome'] ?? 'Geral'), ENT_QUOTES, 'UTF-8') ?>
+                    </span>
+                </a>
+                <button type="button" class="fav-btn absolute top-2 right-2 sm:top-2.5 sm:right-2.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-zinc-400 hover:text-red-400 hover:border-red-400/40 hover:bg-red-500/10 transition-all z-10" data-product-id="<?= (int)$p['id'] ?>" title="Favoritar">
+                    <i data-lucide="heart" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
+                </button>
+                <div class="p-1.5 sm:p-4 flex flex-col flex-1">
+                    <a href="<?= sfProductUrl($p) ?>" class="font-bold text-[10px] sm:text-sm line-clamp-2 min-h-[2rem] sm:min-h-[2.4rem] leading-snug hover:text-greenx transition-colors block">
+                        <?= htmlspecialchars((string)($p['nome'] ?? 'Produto'), ENT_QUOTES, 'UTF-8') ?>
+                    </a>
+                    <?php if (!empty($p['vendedor_nome'])): ?>
+                    <div class="hidden sm:flex items-center gap-1.5 text-[10px] text-zinc-500 mt-2">
+                        <i data-lucide="store" class="w-3 h-3 text-greenx/70 shrink-0"></i>
+                        <span class="truncate"><?= htmlspecialchars((string)$p['vendedor_nome'], ENT_QUOTES, 'UTF-8') ?></span>
+                    </div>
+                    <?php endif; ?>
+                    <div class="mt-auto pt-2">
+                        <span class="text-xs sm:text-base font-bold text-greenx whitespace-nowrap"><?= sfDisplayPrice($p) ?></span>
+                    </div>
+                    <?php
+                    $hasCategoryVariants = (($p['tipo'] ?? '') === 'dinamico' && !empty($p['variantes']));
+                    $categoryVarsJson = $hasCategoryVariants ? htmlspecialchars(is_string($p['variantes']) ? $p['variantes'] : json_encode($p['variantes']), ENT_QUOTES, 'UTF-8') : '';
+                    ?>
+                    <form method="post" class="mt-2 sm:mt-3"
+                        <?= $hasCategoryVariants ? 'data-variants="' . $categoryVarsJson . '" data-product-name="' . htmlspecialchars((string)($p['nome'] ?? ''), ENT_QUOTES, 'UTF-8') . '" data-product-image="' . htmlspecialchars(sfImageUrl((string)($p['imagem'] ?? '')), ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
+                        <input type="hidden" name="action" value="add_cart">
+                        <input type="hidden" name="product_id" value="<?= (int)$p['id'] ?>">
+                        <input type="hidden" name="qty" value="1">
+                        <button class="w-full flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl bg-gradient-to-r from-greenx to-greenxd hover:from-greenx2 hover:to-greenxd text-white font-bold px-2 py-2 sm:px-3 sm:py-2.5 text-[10px] sm:text-xs shadow-lg shadow-greenx/15 hover:shadow-greenx/30 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                            <i data-lucide="shopping-bag" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
+                            Comprar
+                        </button>
+                    </form>
+                </div>
+            </article>
+            <?php endforeach; ?>
+        </div>
+        <div class="mt-5 text-center sm:hidden">
+            <a href="<?= sfCategoryUrl($homeFeaturedCategory) ?>" class="text-xs text-greenx hover:underline font-semibold inline-flex items-center gap-1">Ver categoria <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
         </div>
     </section>
     <?php endif; ?>
@@ -532,51 +606,6 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                     </form>
                 </div>
             </article>
-            <?php endforeach; ?>
-        </div>
-    </section>
-    <?php endif; ?>
-
-    <!-- =========== BLOG POSTS =========== -->
-    <?php if ($blogPosts && $q === ''): ?>
-    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 py-10 sm:py-14">
-        <div class="flex items-center justify-between mb-8 sm:mb-10">
-            <div>
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-greenx/10 border border-greenx/20 text-greenx text-[11px] font-bold uppercase tracking-wider mb-3">
-                    <i data-lucide="newspaper" class="w-3 h-3"></i>
-                    Blog
-                </div>
-                <h2 class="text-2xl sm:text-3xl font-bold">Blog &amp; Novidades</h2>
-                <p class="text-sm text-zinc-500 mt-1">Dicas, novidades e conteúdo sobre o marketplace</p>
-            </div>
-            <a href="<?= BASE_PATH ?>/blog" class="hidden sm:inline-flex items-center gap-1.5 text-xs text-greenx hover:underline font-semibold">Ver todos <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
-            <?php foreach ($blogPosts as $bi => $bp): ?>
-            <a href="<?= BASE_PATH ?>/blog/<?= htmlspecialchars((string)($bp['slug'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
-               class="group rounded-2xl border border-white/[0.06] bg-blackx2 overflow-hidden hover:border-greenx/20 hover:shadow-lg hover:shadow-greenx/[0.03] hover:-translate-y-1 transition-all duration-400 animate-fade-in-up stagger-<?= min($bi + 1, 3) ?>">
-                <?php if (!empty($bp['imagem'])): ?>
-                <div class="aspect-[2/1] overflow-hidden bg-blackx">
-                    <img src="<?= htmlspecialchars(sfImageUrl((string)$bp['imagem']), ENT_QUOTES, 'UTF-8') ?>"
-                         alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
-                </div>
-                <?php else: ?>
-                <div class="aspect-[2/1] bg-gradient-to-br from-greenx/10 to-transparent flex items-center justify-center">
-                    <i data-lucide="book-open" class="w-10 h-10 text-greenx/30"></i>
-                </div>
-                <?php endif; ?>
-                <div class="p-5 sm:p-6">
-                    <h3 class="font-bold text-sm sm:text-base line-clamp-2 group-hover:text-greenx transition-colors mb-2"><?= htmlspecialchars((string)($bp['titulo'] ?? ''), ENT_QUOTES, 'UTF-8') ?></h3>
-                    <?php if (!empty($bp['resumo'])): ?>
-                    <p class="text-xs text-zinc-500 line-clamp-2 leading-relaxed"><?= htmlspecialchars((string)$bp['resumo'], ENT_QUOTES, 'UTF-8') ?></p>
-                    <?php endif; ?>
-                    <div class="flex items-center gap-2 mt-3 text-[10px] text-zinc-500">
-                        <span><?= htmlspecialchars((string)($bp['author_nome'] ?? 'Admin'), ENT_QUOTES, 'UTF-8') ?></span>
-                        <span class="w-1 h-1 rounded-full bg-zinc-600"></span>
-                        <span><?= date('d/m/Y', strtotime((string)($bp['criado_em'] ?? 'now'))) ?></span>
-                    </div>
-                </div>
-            </a>
             <?php endforeach; ?>
         </div>
     </section>

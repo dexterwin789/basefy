@@ -442,6 +442,30 @@ function sfImageUrl(string $raw): string
     return mediaResolveUrl($raw, 'https://placehold.co/1200x800/111827/9ca3af?text=Produto');
 }
 
+function sfHomeSettingGet($conn, string $key, string $default = ''): string
+{
+    $fullKey = 'home.' . $key;
+    $st = $conn->prepare("SELECT setting_value FROM platform_settings WHERE setting_key = ? LIMIT 1");
+    if (!$st) return $default;
+    $st->bind_param('s', $fullKey);
+    $st->execute();
+    $row = $st->get_result()->fetch_assoc();
+    $st->close();
+    return $row ? (string)$row['setting_value'] : $default;
+}
+
+function sfHomeSettingSet($conn, string $key, string $value): void
+{
+    $fullKey = 'home.' . $key;
+    $st = $conn->prepare("INSERT INTO platform_settings (setting_key, setting_value) VALUES (?, ?)
+                          ON CONFLICT (setting_key) DO UPDATE SET setting_value = EXCLUDED.setting_value");
+    if ($st) {
+        $st->bind_param('ss', $fullKey, $value);
+        $st->execute();
+        $st->close();
+    }
+}
+
 function sfGetCart(): array
 {
     sfStartSession();
