@@ -22,7 +22,23 @@ function colunaExiste($conn, string $tabela, string $coluna): bool
 
 function listarVendedoresAprovados($conn): array
 {
-    $q = $conn->query("SELECT id, nome FROM users WHERE role='vendedor' AND ativo=1 AND status_vendedor='aprovado' ORDER BY nome");
+    $colVendedor = colunaExiste($conn, 'products', 'vendedor_id')
+        ? 'vendedor_id'
+        : (colunaExiste($conn, 'products', 'user_id') ? 'user_id' : null);
+    $ownerFilter = $colVendedor !== null
+        ? " OR id IN (SELECT DISTINCT {$colVendedor} FROM products WHERE {$colVendedor} IS NOT NULL)"
+        : '';
+
+    $q = $conn->query("SELECT id, nome
+                       FROM users
+                       WHERE ativo=1
+                         AND (
+                           role='vendedor'
+                           OR status_vendedor='aprovado'
+                           OR COALESCE(is_vendedor, FALSE) = TRUE
+                           {$ownerFilter}
+                         )
+                       ORDER BY nome");
     return $q ? $q->fetch_all(MYSQLI_ASSOC) : [];
 }
 

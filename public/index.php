@@ -223,7 +223,7 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                             Buscar produtos
                             <i data-lucide="arrow-right" class="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-0.5"></i>
                         </a>
-                        <a href="#categorias" class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] backdrop-blur-md px-5 py-3.5 text-sm font-semibold text-zinc-200 hover:bg-white/[0.08] hover:border-white/25 transition-all">
+                        <a href="<?= BASE_PATH ?>/categorias" class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] backdrop-blur-md px-5 py-3.5 text-sm font-semibold text-zinc-200 hover:bg-white/[0.08] hover:border-white/25 transition-all">
                             <i data-lucide="layout-grid" class="w-4 h-4"></i>
                             Explorar categorias
                         </a>
