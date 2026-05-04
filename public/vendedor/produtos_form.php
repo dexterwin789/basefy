@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Delete gallery images marked for deletion
             $deleteIds = $_POST['delete_gallery'] ?? [];
             if (is_array($deleteIds)) {
-                foreach ($deleteIds as $delId) { mediaDelete((int)$delId); }
+                foreach ($deleteIds as $delId) { mediaDeleteForEntity((int)$delId, 'product_gallery', (int)$productId); }
             }
 
             // Redirect to edit form of the saved product (PRG pattern)
@@ -387,14 +387,15 @@ $adEnabled = (bool)($produto['auto_delivery_enabled'] ?? false);
             <?php if ($galleryImages): ?>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-4">
                 <?php foreach ($galleryImages as $gi): ?>
-                <div class="relative group rounded-xl overflow-hidden border border-blackx3 bg-blackx">
+                <div class="relative group rounded-xl overflow-hidden border border-blackx3 bg-blackx transition-all" :class="isMarked(<?= (int)$gi['id'] ?>) ? 'opacity-50 ring-2 ring-red-500 border-red-500' : ''">
                     <img src="<?= htmlspecialchars(mediaUrl((int)$gi['id'])) ?>" class="w-full aspect-square object-cover" alt="">
+                    <input type="hidden" name="delete_gallery[]" value="<?= (int)$gi['id'] ?>" disabled :disabled="!isMarked(<?= (int)$gi['id'] ?>)">
                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <label class="cursor-pointer inline-flex items-center gap-1 rounded-lg bg-red-500/20 text-red-300 px-3 py-1.5 text-xs hover:bg-red-500/40 transition-all">
-                            <input type="checkbox" name="delete_gallery[]" value="<?= (int)$gi['id'] ?>" class="hidden" @change="$el.closest('.relative').classList.toggle('ring-2');$el.closest('.relative').classList.toggle('ring-red-500')">
+                        <button type="button" @click.stop="toggleDelete(<?= (int)$gi['id'] ?>)" class="cursor-pointer inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs transition-all" :class="isMarked(<?= (int)$gi['id'] ?>) ? 'bg-zinc-700 text-zinc-100 hover:bg-zinc-600' : 'bg-red-500/20 text-red-300 hover:bg-red-500/40'">
                             <i data-lucide="trash-2" class="w-3 h-3"></i> Excluir
-                        </label>
+                        </button>
                     </div>
+                    <div class="absolute inset-x-2 bottom-2 rounded-lg bg-red-500/90 px-2 py-1 text-center text-[11px] font-semibold text-white transition-opacity pointer-events-none" :class="isMarked(<?= (int)$gi['id'] ?>) ? 'opacity-100' : 'opacity-0'">Será excluída ao salvar</div>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -443,6 +444,28 @@ $adEnabled = (bool)($produto['auto_delivery_enabled'] ?? false);
                     Salve o produto primeiro para gerenciar o estoque automático.
                 </div>
                 <?php endif; ?>
+            </div>
+
+            <div x-show="!adEnabled" x-transition x-cloak x-init="$watch('adEnabled', v => { if(!v) $nextTick(() => { if(window.lucide) lucide.createIcons() }) })">
+                <div class="flex items-start gap-3 p-4 rounded-xl bg-greenx/[0.06] border border-greenx/15 mb-5">
+                    <div class="w-8 h-8 rounded-lg bg-greenx/10 border border-greenx/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i data-lucide="clock" class="w-4 h-4 text-greenx"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-greenx mb-1">Entrega manual</p>
+                        <p class="text-xs text-zinc-400 leading-relaxed">Informe em quanto tempo você entrega depois da confirmação do pagamento. Esse prazo aparece na página pública do produto.</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm mb-1.5 text-zinc-400 font-medium">Prazo em dias</label>
+                        <input type="number" name="prazo_entrega_dias" min="1" max="365" value="<?= htmlspecialchars((string)$prazoAtual) ?>" :disabled="adEnabled" class="w-full rounded-xl bg-blackx border border-blackx3 px-3.5 py-2.5 focus:border-greenx outline-none transition-colors" placeholder="Ex: 2">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1.5 text-zinc-400 font-medium">Ou data específica</label>
+                        <input type="date" name="data_entrega" value="<?= htmlspecialchars((string)$dataEntregaAtual) ?>" min="<?= date('Y-m-d') ?>" :disabled="adEnabled" class="w-full rounded-xl bg-blackx border border-blackx3 px-3.5 py-2.5 focus:border-greenx outline-none transition-colors [color-scheme:dark]">
+                    </div>
+                </div>
             </div>
         </div>
         </template>
@@ -527,7 +550,9 @@ function imageUpload(existingUrl) {
 
 function galleryUpload() {
     return {
-        dragging:false, galleryCount:0,
+        dragging:false, galleryCount:0, deleteIds:[],
+        isMarked(id){ return this.deleteIds.includes(Number(id)); },
+        toggleDelete(id){ id=Number(id); this.deleteIds=this.isMarked(id)?this.deleteIds.filter(v=>v!==id):[...this.deleteIds,id]; },
         handleGallerySelect(e){ this.galleryCount=e.target.files?.length??0; },
         handleGalleryDrop(e){ this.dragging=false;const fs=e.dataTransfer?.files;if(!fs||!fs.length)return;const dt=new DataTransfer();for(const f of fs){if(f.type.startsWith('image/'))dt.items.add(f);}this.$refs.galleryInput.files=dt.files;this.galleryCount=dt.files.length; }
     };

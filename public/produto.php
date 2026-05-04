@@ -190,8 +190,11 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                 <?php
                 // Build gallery array: cover first, then gallery images
                 $galleryImages = [];
-                $coverUrl = sfImageUrl((string)($produto['imagem'] ?? ''));
-                $galleryImages[] = $coverUrl;
+                $coverRaw = trim((string)($produto['imagem'] ?? ''));
+                $coverUrl = $coverRaw !== '' ? sfImageUrl($coverRaw) : '';
+                if ($coverUrl !== '') {
+                    $galleryImages[] = $coverUrl;
+                }
                 if (!empty($produto['gallery']) && is_array($produto['gallery'])) {
                     foreach ($produto['gallery'] as $gImg) {
                         $gUrl = !empty($gImg['id']) ? mediaUrl((int)$gImg['id']) : '';
@@ -205,10 +208,17 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                 <!-- Main Image (swipe/drag enabled) -->
                 <div class="rounded-2xl overflow-hidden border border-white/[0.06] bg-blackx2 relative" id="mainImageWrap">
                     <div class="aspect-square overflow-hidden relative group cursor-pointer" id="mainImageContainer"
-                         onclick="openLightbox(galleryIdx)">
+                         <?= $totalImages > 0 ? 'onclick="openLightbox(galleryIdx)"' : '' ?>>
+                        <?php if ($totalImages > 0): ?>
                         <img id="mainImage" src="<?= htmlspecialchars($galleryImages[0], ENT_QUOTES, 'UTF-8') ?>"
                              alt="<?= htmlspecialchars((string)$produto['nome'], ENT_QUOTES, 'UTF-8') ?>"
                              class="w-full h-full object-cover transition-transform duration-300 select-none" draggable="false">
+                        <?php else: ?>
+                        <div class="w-full h-full flex flex-col items-center justify-center gap-3 bg-white/[0.02] text-zinc-500">
+                            <i data-lucide="image-off" class="w-12 h-12 text-zinc-600"></i>
+                            <span class="text-sm font-semibold">Produto sem imagem</span>
+                        </div>
+                        <?php endif; ?>
                         <!-- Category badge -->
                         <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide bg-greenx/90 text-white pointer-events-none">
                             <?= htmlspecialchars((string)($produto['categoria_nome'] ?? 'Geral'), ENT_QUOTES, 'UTF-8') ?>
@@ -510,6 +520,16 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                 <hr class="border-white/[0.06]">
                 <div>
                     <h2 class="text-sm font-black uppercase tracking-wide mb-4">Características</h2>
+                    <?php
+                    $deliveryText = '';
+                    if (!empty($produto['auto_delivery_enabled'])) {
+                        $deliveryText = 'Automática após confirmação do pagamento';
+                    } elseif (!empty($produto['data_entrega'])) {
+                        $deliveryText = 'Até ' . date('d/m/Y', strtotime((string)$produto['data_entrega']));
+                    } elseif (!empty($produto['prazo_entrega_dias'])) {
+                        $deliveryText = 'Até ' . (int)$produto['prazo_entrega_dias'] . ' dia(s) após confirmação do pagamento';
+                    }
+                    ?>
                     <div class="border border-white/[0.06] rounded-xl overflow-hidden">
                         <table class="w-full text-sm">
                             <tbody class="divide-y divide-white/[0.06]">
@@ -525,10 +545,10 @@ include __DIR__ . '/../views/partials/storefront_nav.php';
                                     <td class="px-4 py-3 bg-white/[0.02] text-zinc-400 font-medium">Estoque</td>
                                     <td class="px-4 py-3"><?= $_dispQtd ?> unidade(s)</td>
                                 </tr>
-                                <?php if (!empty($produto['prazo_entrega_dias'])): ?>
+                                <?php if ($deliveryText !== ''): ?>
                                 <tr>
                                     <td class="px-4 py-3 bg-white/[0.02] text-zinc-400 font-medium">Prazo de Entrega</td>
-                                    <td class="px-4 py-3"><?= (int)$produto['prazo_entrega_dias'] ?> dia(s)</td>
+                                    <td class="px-4 py-3"><?= htmlspecialchars($deliveryText, ENT_QUOTES, 'UTF-8') ?></td>
                                 </tr>
                                 <?php endif; ?>
                                 <tr>

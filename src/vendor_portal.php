@@ -162,14 +162,12 @@ function salvarMeuProduto($c, int $uid, int $id, int $categoriaId, string $nome,
     // Only normal products require price > 0 and quantity >= 1
     if ($tipo === 'produto' && $preco < 0) return [false, 'Dados inválidos.'];
     if ($tipo === 'produto' && $quantidade < 1) return [false, 'A quantidade mínima para produtos é 1.'];
-    if ($tipo === 'produto') { $prazoEntregaDias = null; $dataEntrega = null; }
+    if ($prazoEntregaDias !== null && $prazoEntregaDias < 1) $prazoEntregaDias = null;
 
     // Dynamic product: validate variants JSON
     if ($tipo === 'dinamico') {
         $preco = 0;
         $quantidade = 0;
-        $prazoEntregaDias = null;
-        $dataEntrega = null;
         if ($variantes !== null && $variantes !== '') {
             $varArr = json_decode($variantes, true);
             if (!is_array($varArr) || count($varArr) < 1) return [false, 'Produto dinâmico precisa de pelo menos 1 variante.'];
@@ -220,6 +218,11 @@ function salvarMeuProduto($c, int $uid, int $id, int $categoriaId, string $nome,
         }
     } else {
         $autoDeliveryItems = null;
+    }
+
+    if ($autoDeliveryInt === 1) {
+        $prazoEntregaDias = null;
+        $dataEntrega = null;
     }
 
     if ($id > 0) {

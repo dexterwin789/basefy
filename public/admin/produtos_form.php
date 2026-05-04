@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Delete gallery images marked for deletion
         $deleteIds = $_POST['delete_gallery'] ?? [];
         if (is_array($deleteIds)) {
-            foreach ($deleteIds as $delId) { mediaDelete((int)$delId); }
+            foreach ($deleteIds as $delId) { mediaDeleteForEntity((int)$delId, 'product_gallery', (int)$productId); }
         }
 
         // Redirect to edit form of the saved product (PRG pattern)
@@ -293,10 +293,10 @@ $dataEntregaAtual = $produto['data_entrega'] ?? '';
             </div>
         </div>
 
-        <!-- ═══ Prazo (serviços) ═══ -->
-        <template x-if="tipo === 'servico'">
+        <!-- ═══ Prazo de entrega manual ═══ -->
+        <template x-if="tipo === 'servico' || tipo === 'produto' || tipo === 'dinamico'">
         <div class="bg-blackx2 border border-blackx3 rounded-2xl p-5 md:p-6 shadow-2xl shadow-black/20" x-init="$nextTick(()=>{if(window.lucide)lucide.createIcons()})">
-            <h3 class="text-sm font-semibold text-zinc-300 mb-4 flex items-center gap-2"><i data-lucide="calendar-clock" class="w-4 h-4 text-greenx"></i> Prazo de entrega</h3>
+            <h3 class="text-sm font-semibold text-zinc-300 mb-4 flex items-center gap-2"><i data-lucide="calendar-clock" class="w-4 h-4 text-greenx"></i> Prazo de entrega manual</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm mb-1.5 text-zinc-400 font-medium">Prazo em dias</label>
@@ -374,14 +374,15 @@ $dataEntregaAtual = $produto['data_entrega'] ?? '';
             <?php if ($galleryImages): ?>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-4">
                 <?php foreach ($galleryImages as $gi): ?>
-                <div class="relative group rounded-xl overflow-hidden border border-blackx3 bg-blackx">
+                <div class="relative group rounded-xl overflow-hidden border border-blackx3 bg-blackx transition-all" :class="isMarked(<?= (int)$gi['id'] ?>) ? 'opacity-50 ring-2 ring-red-500 border-red-500' : ''">
                     <img src="<?= htmlspecialchars(mediaUrl((int)$gi['id'])) ?>" class="w-full aspect-square object-cover" alt="">
+                    <input type="hidden" name="delete_gallery[]" value="<?= (int)$gi['id'] ?>" disabled :disabled="!isMarked(<?= (int)$gi['id'] ?>)">
                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <label class="cursor-pointer inline-flex items-center gap-1 rounded-lg bg-red-500/20 text-red-300 px-3 py-1.5 text-xs hover:bg-red-500/40 transition-all">
-                            <input type="checkbox" name="delete_gallery[]" value="<?= (int)$gi['id'] ?>" class="hidden" @change="$el.closest('.relative').classList.toggle('ring-2');$el.closest('.relative').classList.toggle('ring-red-500')">
+                        <button type="button" @click.stop="toggleDelete(<?= (int)$gi['id'] ?>)" class="cursor-pointer inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs transition-all" :class="isMarked(<?= (int)$gi['id'] ?>) ? 'bg-zinc-700 text-zinc-100 hover:bg-zinc-600' : 'bg-red-500/20 text-red-300 hover:bg-red-500/40'">
                             <i data-lucide="trash-2" class="w-3 h-3"></i> Excluir
-                        </label>
+                        </button>
                     </div>
+                    <div class="absolute inset-x-2 bottom-2 rounded-lg bg-red-500/90 px-2 py-1 text-center text-[11px] font-semibold text-white transition-opacity pointer-events-none" :class="isMarked(<?= (int)$gi['id'] ?>) ? 'opacity-100' : 'opacity-0'">Será excluída ao salvar</div>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -459,7 +460,9 @@ function imageUpload(existingUrl) {
 
 function galleryUpload() {
     return {
-        dragging:false, galleryCount:0,
+        dragging:false, galleryCount:0, deleteIds:[],
+        isMarked(id){ return this.deleteIds.includes(Number(id)); },
+        toggleDelete(id){ id=Number(id); this.deleteIds=this.isMarked(id)?this.deleteIds.filter(v=>v!==id):[...this.deleteIds,id]; },
         handleGallerySelect(e){ this.galleryCount=e.target.files?.length??0; },
         handleGalleryDrop(e){ this.dragging=false;const fs=e.dataTransfer?.files;if(!fs||!fs.length)return;const dt=new DataTransfer();for(const f of fs){if(f.type.startsWith('image/'))dt.items.add(f);}this.$refs.galleryInput.files=dt.files;this.galleryCount=dt.files.length; }
     };

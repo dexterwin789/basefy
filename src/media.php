@@ -196,6 +196,22 @@ function mediaDelete(int $id): bool {
     return $ok && $affected > 0;
 }
 
+function mediaDeleteForEntity(int $id, string $entityType, int $entityId): bool {
+    if ($id <= 0 || $entityId <= 0) return false;
+
+    $conn = mediaGetConnection();
+    $st = $conn->prepare("DELETE FROM media_files WHERE id = ? AND entity_type = ? AND entity_id = ?");
+    $st->bind_param('isi', $id, $entityType, $entityId);
+    try {
+        $ok = $st->execute();
+    } catch (\Throwable) {
+        return false;
+    }
+    $affected = (int)$st->affected_rows;
+    $st->close();
+    return $ok && $affected > 0;
+}
+
 /**
  * Delete all media for an entity.
  */

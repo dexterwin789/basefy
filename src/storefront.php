@@ -190,6 +190,9 @@ function _sfEnsureSlugColumn($conn): void
         // create unique index — ignore error if already exists
         @$conn->query("CREATE UNIQUE INDEX IF NOT EXISTS idx_products_slug ON products(slug)");
         $conn->query("ALTER TABLE products ADD COLUMN IF NOT EXISTS destaque BOOLEAN NOT NULL DEFAULT FALSE");
+        $conn->query("ALTER TABLE products ADD COLUMN IF NOT EXISTS auto_delivery_enabled BOOLEAN NOT NULL DEFAULT FALSE");
+        $conn->query("ALTER TABLE products ADD COLUMN IF NOT EXISTS prazo_entrega_dias INT DEFAULT NULL");
+        $conn->query("ALTER TABLE products ADD COLUMN IF NOT EXISTS data_entrega DATE DEFAULT NULL");
     } catch (\Throwable $e) {}
 }
 
@@ -277,7 +280,8 @@ function sfGetProductBySlug($conn, string $slug): ?array
                    p." . $cols['vendor'] . " AS vendedor_id, u.nome AS vendedor_nome, u.slug AS vendedor_slug,
                    COALESCE(p.tipo, 'produto') AS tipo,
                    COALESCE(p.quantidade, 0) AS quantidade,
-                   p.prazo_entrega_dias, p.data_entrega
+                   p.prazo_entrega_dias, p.data_entrega,
+                   COALESCE(p.auto_delivery_enabled, FALSE) AS auto_delivery_enabled
             FROM products p
             LEFT JOIN categories c ON c.id = p." . $cols['category'] . "
             LEFT JOIN users u ON u.id = p." . $cols['vendor'] . "
@@ -713,7 +717,8 @@ function sfListProducts($conn, array $filters = []): array
                    p." . $cols['vendor'] . " AS vendedor_id, u.nome AS vendedor_nome, u.slug AS vendedor_slug,
                    COALESCE(p.tipo, 'produto') AS tipo,
                    COALESCE(p.quantidade, 0) AS quantidade,
-                   p.prazo_entrega_dias, p.data_entrega
+                   p.prazo_entrega_dias, p.data_entrega,
+                   COALESCE(p.auto_delivery_enabled, FALSE) AS auto_delivery_enabled
             FROM products p
             LEFT JOIN categories c ON c.id = p." . $cols['category'] . "
             LEFT JOIN users u ON u.id = p." . $cols['vendor'];
@@ -782,7 +787,8 @@ function sfGetProductById($conn, int $productId): ?array
                    p." . $cols['vendor'] . " AS vendedor_id, u.nome AS vendedor_nome, u.slug AS vendedor_slug,
                    COALESCE(p.tipo, 'produto') AS tipo,
                    COALESCE(p.quantidade, 0) AS quantidade,
-                   p.prazo_entrega_dias, p.data_entrega
+                   p.prazo_entrega_dias, p.data_entrega,
+                   COALESCE(p.auto_delivery_enabled, FALSE) AS auto_delivery_enabled
             FROM products p
             LEFT JOIN categories c ON c.id = p." . $cols['category'] . "
             LEFT JOIN users u ON u.id = p." . $cols['vendor'] . "
