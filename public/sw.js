@@ -4,13 +4,14 @@
  */
 
 const API_BASE = self.location.pathname.replace(/\/sw\.js$/, '') || '';
+const NOTIFICATION_ICON = self.location.origin + API_BASE + '/assets/img/logo123.png';
 
 self.addEventListener('push', function (event) {
   let title   = 'Nova notificação';
   let options = {
     body   : 'Você tem uma nova notificação.',
-    icon   : API_BASE + '/assets/img/icon-192.png',
-    badge  : API_BASE + '/assets/img/badge-72.png',
+    icon   : NOTIFICATION_ICON,
+    badge  : NOTIFICATION_ICON,
     tag    : 'mercado-push',
     renotify: true,
     data   : { url: '/' }
@@ -23,7 +24,12 @@ self.addEventListener('push', function (event) {
       title        = d.title || title;
       options.body = d.body  || options.body;
       if (d.url)  options.data = { url: d.url };
-      if (d.icon) options.icon = d.icon;
+      if (d.icon) {
+        try {
+          const iconCandidate = new URL(d.icon, self.location.origin);
+          if (iconCandidate.origin === self.location.origin) options.icon = iconCandidate.href;
+        } catch (_) {}
+      }
     } catch (_) {
       /* Not JSON – attempt as plain text */
       const txt = event.data.text();

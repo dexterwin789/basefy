@@ -14,6 +14,7 @@
   var BASE     = window.__BASE_PATH || '';
   var API      = BASE + '/api/notifications.php';
   var PUSH_API = BASE + '/api/push_subscribe.php';
+  var NOTIF_ICON = window.location.origin + BASE + '/assets/img/logo123.png';
 
   /* ── State ────────────────────────────────────────────────────── */
   var lastSeenCount     = parseInt(document.getElementById('notifBadge')?.textContent || '0', 10);
@@ -261,7 +262,8 @@
             var diff = n - lastSeenCount;
             new Notification('Basefy', {
               body: 'Você tem ' + diff + ' nova' + (diff > 1 ? 's' : '') + ' notificaç' + (diff > 1 ? 'ões' : 'ão'),
-              icon: BASE + '/assets/img/icon-192.png'
+              icon: NOTIF_ICON,
+              badge: NOTIF_ICON
             });
           }
         }

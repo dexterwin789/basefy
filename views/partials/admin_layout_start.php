@@ -132,17 +132,17 @@ $menuGroups = [
     </aside>
 
     <div class="flex-1 min-w-0">
-      <header class="h-16 sticky top-0 z-20 bg-blackx/90 backdrop-blur border-b border-blackx3 px-4 md:px-5 flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <button id="btnAdminOpenSidebar" class="md:hidden rounded-lg border border-blackx3 bg-blackx2 px-2.5 py-1.5 text-zinc-400 hover:text-white transition">
+      <header class="h-16 sticky top-0 z-20 w-full max-w-full overflow-x-hidden bg-blackx/90 backdrop-blur border-b border-blackx3 px-3 sm:px-4 md:px-5 flex items-center gap-2 sm:gap-3">
+        <div class="min-w-0 flex flex-1 items-center gap-2 sm:gap-3">
+          <button id="btnAdminOpenSidebar" class="md:hidden shrink-0 rounded-lg border border-blackx3 bg-blackx2 px-2.5 py-1.5 text-zinc-400 hover:text-white transition">
             <i data-lucide="menu" class="w-4 h-4"></i>
           </button>
-          <h1 class="text-base md:text-xl font-semibold truncate"><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></h1>
+          <h1 class="min-w-0 flex-1 text-sm sm:text-base md:text-xl font-semibold truncate"><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></h1>
         </div>
-        <div class="flex items-center gap-2">
-          <span class="border border-blackx3 rounded-xl px-2 md:px-3 py-2 text-xs md:text-sm bg-blackx2 inline-flex items-center gap-1.5"><i data-lucide="wallet" class="w-4 h-4 text-zinc-300 hidden sm:block"></i><span class="hidden sm:inline">Saldo:</span> <span class="text-greenx font-semibold">R$ <?= number_format($adminWalletSaldo, 2, ',', '.') ?></span></span>
+        <div class="flex shrink-0 items-center gap-1 sm:gap-2">
+          <span class="hidden sm:inline-flex shrink-0 border border-blackx3 rounded-xl px-2 md:px-3 py-2 text-xs md:text-sm bg-blackx2 items-center gap-1.5"><i data-lucide="wallet" class="w-4 h-4 text-zinc-300 hidden sm:block"></i><span class="hidden sm:inline">Saldo:</span> <span class="text-greenx font-semibold">R$ <?= number_format($adminWalletSaldo, 2, ',', '.') ?></span></span>
           <?php foreach ($topActions as $a): ?>
-            <a class="px-3 py-2 rounded-lg bg-blackx2 border border-blackx3 hover:bg-blackx3 text-sm"
+            <a class="hidden md:inline-flex px-3 py-2 rounded-lg bg-blackx2 border border-blackx3 hover:bg-blackx3 text-sm"
                href="<?= htmlspecialchars((string)($a['href'] ?? '#'), ENT_QUOTES, 'UTF-8') ?>">
               <?= htmlspecialchars((string)($a['label'] ?? 'Ação'), ENT_QUOTES, 'UTF-8') ?>
             </a>
@@ -153,11 +153,11 @@ $menuGroups = [
           ?>
           <div class="relative" x-data="{openNotif:false}" @click.away="openNotif=false">
             <button @click="openNotif=!openNotif; if(openNotif) $dispatch('notif-open')"
-                    class="relative rounded-xl border px-2 py-2 transition <?= $_adminNotifCount > 0 ? 'border-yellow-400/30 bg-yellow-500/[0.06] text-yellow-400' : 'border-blackx3 text-zinc-400 hover:text-white' ?>" title="Notificações" id="notifBellBtn">
+                    class="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition <?= $_adminNotifCount > 0 ? 'border-yellow-400/30 bg-yellow-500/[0.06] text-yellow-400' : 'border-blackx3 text-zinc-400 hover:text-white' ?>" title="Notificações" id="notifBellBtn">
               <i data-lucide="bell" class="w-4 h-4"></i>
-              <span id="notifBadge" class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-[9px] font-bold text-white flex items-center justify-center <?= $_adminNotifCount > 0 ? '' : 'hidden' ?>"><?= $_adminNotifCount ?></span>
+              <span id="notifBadge" class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-[9px] font-bold text-white flex items-center justify-center <?= $_adminNotifCount > 0 ? '' : 'hidden' ?>"><?= $_adminNotifCount > 99 ? '99+' : $_adminNotifCount ?></span>
             </button>
-            <div x-show="openNotif" x-transition class="absolute right-0 mt-2 w-[400px] bg-blackx2 border border-blackx3 rounded-2xl shadow-2xl overflow-hidden z-50" style="display:none">
+            <div x-show="openNotif" x-transition class="fixed inset-x-0 top-16 mx-2 max-w-[calc(100vw-1rem)] sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mx-0 sm:mt-2 sm:w-[400px] sm:max-w-[400px] bg-blackx2 border border-blackx3 rounded-2xl shadow-2xl overflow-hidden z-50" style="display:none;max-height:calc(100vh - 5rem)">
               <div class="p-3 border-b border-blackx3 flex items-center justify-between">
                 <h3 class="font-semibold text-sm">Notificações</h3>
                 <div class="flex items-center gap-2">
@@ -165,20 +165,20 @@ $menuGroups = [
                   <button onclick="markAllNotifRead()" class="text-xs text-greenx hover:underline">Marcar tudo lido</button>
                 </div>
               </div>
-              <div class="flex">
-                <div class="w-[50px] shrink-0 border-r border-blackx3 py-2 flex flex-col gap-1 bg-blackx/40">
-                  <button onclick="filterNotif('all')" class="notif-tab flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg mx-1 transition-all text-zinc-400 hover:text-white hover:bg-white/[0.06]" data-tab="all" title="Todos"><i data-lucide="inbox" class="w-4 h-4"></i><span class="text-[8px] font-semibold">Todos</span></button>
-                  <button onclick="filterNotif('anuncio')" class="notif-tab flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg mx-1 transition-all text-zinc-400 hover:text-white hover:bg-white/[0.06]" data-tab="anuncio" title="Anúncios"><i data-lucide="megaphone" class="w-4 h-4"></i><span class="text-[8px] font-semibold">Anúnc.</span></button>
-                  <button onclick="filterNotif('venda')" class="notif-tab flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg mx-1 transition-all text-zinc-400 hover:text-white hover:bg-white/[0.06]" data-tab="venda" title="Vendas"><i data-lucide="shopping-bag" class="w-4 h-4"></i><span class="text-[8px] font-semibold">Vendas</span></button>
-                  <button onclick="filterNotif('chat')" class="notif-tab flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg mx-1 transition-all text-zinc-400 hover:text-white hover:bg-white/[0.06]" data-tab="chat" title="Chats"><i data-lucide="message-circle" class="w-4 h-4"></i><span class="text-[8px] font-semibold">Chats</span></button>
-                  <button onclick="filterNotif('ticket')" class="notif-tab flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg mx-1 transition-all text-zinc-400 hover:text-white hover:bg-white/[0.06]" data-tab="ticket" title="Tickets"><i data-lucide="flag" class="w-4 h-4"></i><span class="text-[8px] font-semibold">Tickets</span></button>
+              <div class="flex flex-col sm:flex-row">
+                <div class="flex sm:flex-col sm:w-[50px] shrink-0 border-b sm:border-b-0 sm:border-r border-blackx3 py-1 sm:py-2 px-1 sm:px-0 gap-0 sm:gap-1 bg-blackx/40 overflow-x-auto">
+                  <button onclick="filterNotif('all')" class="notif-tab flex flex-col items-center gap-0.5 px-2 sm:px-1 py-1.5 sm:py-2 rounded-lg sm:mx-1 transition-all text-zinc-400 hover:text-white hover:bg-white/[0.06] shrink-0" data-tab="all" title="Todos"><i data-lucide="inbox" class="w-4 h-4"></i><span class="text-[8px] font-semibold">Todos</span></button>
+                  <button onclick="filterNotif('anuncio')" class="notif-tab flex flex-col items-center gap-0.5 px-2 sm:px-1 py-1.5 sm:py-2 rounded-lg sm:mx-1 transition-all text-zinc-400 hover:text-white hover:bg-white/[0.06] shrink-0" data-tab="anuncio" title="Anúncios"><i data-lucide="megaphone" class="w-4 h-4"></i><span class="text-[8px] font-semibold">Anúnc.</span></button>
+                  <button onclick="filterNotif('venda')" class="notif-tab flex flex-col items-center gap-0.5 px-2 sm:px-1 py-1.5 sm:py-2 rounded-lg sm:mx-1 transition-all text-zinc-400 hover:text-white hover:bg-white/[0.06] shrink-0" data-tab="venda" title="Vendas"><i data-lucide="shopping-bag" class="w-4 h-4"></i><span class="text-[8px] font-semibold">Vendas</span></button>
+                  <button onclick="filterNotif('chat')" class="notif-tab flex flex-col items-center gap-0.5 px-2 sm:px-1 py-1.5 sm:py-2 rounded-lg sm:mx-1 transition-all text-zinc-400 hover:text-white hover:bg-white/[0.06] shrink-0" data-tab="chat" title="Chats"><i data-lucide="message-circle" class="w-4 h-4"></i><span class="text-[8px] font-semibold">Chats</span></button>
+                  <button onclick="filterNotif('ticket')" class="notif-tab flex flex-col items-center gap-0.5 px-2 sm:px-1 py-1.5 sm:py-2 rounded-lg sm:mx-1 transition-all text-zinc-400 hover:text-white hover:bg-white/[0.06] shrink-0" data-tab="ticket" title="Tickets"><i data-lucide="flag" class="w-4 h-4"></i><span class="text-[8px] font-semibold">Tickets</span></button>
                 </div>
-                <div id="notifList" class="flex-1 max-h-72 overflow-y-auto divide-y divide-white/[0.04]"><div class="p-6 text-center text-zinc-500 text-sm">Carregando...</div></div>
+                <div id="notifList" class="flex-1 max-h-[calc(100vh-12rem)] sm:max-h-72 overflow-y-auto divide-y divide-white/[0.04]"><div class="p-6 text-center text-zinc-500 text-sm">Carregando...</div></div>
               </div>
             </div>
           </div>
-          <a href="<?= BASE_PATH ?>/admin/minha_conta" class="border border-blackx3 rounded-xl px-2 md:px-3 py-2 hover:border-greenx inline-flex items-center gap-2 text-sm"><i data-lucide="user-circle-2" class="w-4 h-4"></i><span class="hidden lg:inline">Minha conta</span></a>
-          <a href="<?= BASE_PATH ?>/logout" class="border border-blackx3 rounded-xl px-2 md:px-3 py-2 hover:border-red-500 inline-flex items-center gap-2 text-sm"><i data-lucide="log-out" class="w-4 h-4"></i><span class="hidden lg:inline">Sair</span></a>
+          <a href="<?= BASE_PATH ?>/admin/minha_conta" class="shrink-0 border border-blackx3 rounded-xl w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 hover:border-greenx inline-flex items-center justify-center gap-2 text-sm"><i data-lucide="user-circle-2" class="w-4 h-4"></i><span class="hidden lg:inline">Minha conta</span></a>
+          <a href="<?= BASE_PATH ?>/logout" class="shrink-0 border border-blackx3 rounded-xl w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 hover:border-red-500 inline-flex items-center justify-center gap-2 text-sm"><i data-lucide="log-out" class="w-4 h-4"></i><span class="hidden lg:inline">Sair</span></a>
         </div>
       </header>
 

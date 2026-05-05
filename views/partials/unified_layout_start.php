@@ -205,12 +205,12 @@ if ($uid > 0) {
     </aside>
 
     <div class="flex-1 min-w-0">
-      <header class="h-16 sticky top-0 z-20 bg-blackx/90 backdrop-blur border-b border-blackx3 px-4 md:px-6 flex items-center gap-3">
-        <button id="btnUniOpenSidebar" class="md:hidden rounded-lg border border-blackx3 bg-blackx2 px-2.5 py-1.5 text-zinc-400 hover:text-white transition">
+      <header class="h-16 sticky top-0 z-20 w-full max-w-full overflow-x-hidden bg-blackx/90 backdrop-blur border-b border-blackx3 px-3 sm:px-4 md:px-6 flex items-center gap-2 sm:gap-3">
+        <button id="btnUniOpenSidebar" class="md:hidden shrink-0 rounded-lg border border-blackx3 bg-blackx2 px-2.5 py-1.5 text-zinc-400 hover:text-white transition">
           <i data-lucide="menu" class="w-4 h-4"></i>
         </button>
-        <h1 class="text-base md:text-lg font-semibold truncate"><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></h1>
-        <div class="ml-auto text-xs md:text-sm border border-blackx3 rounded-xl px-2 md:px-3 py-1.5 bg-blackx2 flex items-center gap-1.5">
+        <h1 class="min-w-0 flex-1 text-sm sm:text-base md:text-lg font-semibold truncate"><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></h1>
+        <div class="ml-auto hidden sm:flex shrink-0 text-xs md:text-sm border border-blackx3 rounded-xl px-2 md:px-3 py-1.5 bg-blackx2 items-center gap-1.5">
           <i data-lucide="wallet" class="w-4 h-4 text-zinc-300 hidden sm:block"></i>
           <span class="hidden sm:inline">Saldo:</span> <span class="text-greenx font-semibold">R$ <?= number_format($walletSaldo, 2, ',', '.') ?></span>
         </div>
@@ -220,11 +220,11 @@ if ($uid > 0) {
         ?>
         <div class="relative" x-data="{openNotif:false}" @click.away="openNotif=false">
           <button @click="openNotif=!openNotif; if(openNotif) $dispatch('notif-open')"
-                  class="relative rounded-xl border px-2 py-1.5 transition <?= $_uniNotifCount > 0 ? 'border-yellow-400/30 bg-yellow-500/[0.06] text-yellow-400' : 'border-blackx3 text-zinc-400 hover:text-white' ?>" title="Notificações" id="notifBellBtn">
+                  class="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition <?= $_uniNotifCount > 0 ? 'border-yellow-400/30 bg-yellow-500/[0.06] text-yellow-400' : 'border-blackx3 text-zinc-400 hover:text-white' ?>" title="Notificações" id="notifBellBtn">
             <i data-lucide="bell" class="w-4 h-4"></i>
-            <span id="notifBadge" class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-[9px] font-bold text-white flex items-center justify-center <?= $_uniNotifCount > 0 ? '' : 'hidden' ?>"><?= $_uniNotifCount ?></span>
+            <span id="notifBadge" class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-[9px] font-bold text-white flex items-center justify-center <?= $_uniNotifCount > 0 ? '' : 'hidden' ?>"><?= $_uniNotifCount > 99 ? '99+' : $_uniNotifCount ?></span>
           </button>
-          <div x-show="openNotif" x-transition class="fixed inset-x-0 top-16 mx-2 sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mx-0 sm:mt-2 w-auto sm:w-[400px] bg-blackx2 border border-blackx3 rounded-2xl shadow-2xl overflow-hidden z-50" style="display:none">
+          <div x-show="openNotif" x-transition class="fixed inset-x-0 top-16 mx-2 max-w-[calc(100vw-1rem)] sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mx-0 sm:mt-2 sm:w-[400px] sm:max-w-[400px] bg-blackx2 border border-blackx3 rounded-2xl shadow-2xl overflow-hidden z-50" style="display:none;max-height:calc(100vh - 5rem)">
             <div class="p-3 border-b border-blackx3 flex items-center justify-between">
               <h3 class="font-semibold text-sm">Notificações</h3>
               <div class="flex items-center gap-2">
@@ -240,11 +240,11 @@ if ($uid > 0) {
                 <button onclick="filterNotif('chat')" class="notif-tab flex flex-col items-center gap-0.5 px-2 sm:px-1 py-1.5 sm:py-2 rounded-lg sm:mx-1 transition-all text-zinc-400 hover:text-white hover:bg-white/[0.06] shrink-0" data-tab="chat" title="Chats"><i data-lucide="message-circle" class="w-4 h-4"></i><span class="text-[8px] font-semibold">Chats</span></button>
                 <button onclick="filterNotif('ticket')" class="notif-tab flex flex-col items-center gap-0.5 px-2 sm:px-1 py-1.5 sm:py-2 rounded-lg sm:mx-1 transition-all text-zinc-400 hover:text-white hover:bg-white/[0.06] shrink-0" data-tab="ticket" title="Tickets"><i data-lucide="flag" class="w-4 h-4"></i><span class="text-[8px] font-semibold">Tickets</span></button>
               </div>
-              <div id="notifList" class="flex-1 max-h-72 overflow-y-auto divide-y divide-white/[0.04]"><div class="p-6 text-center text-zinc-500 text-sm">Carregando...</div></div>
+              <div id="notifList" class="flex-1 max-h-[calc(100vh-12rem)] sm:max-h-72 overflow-y-auto divide-y divide-white/[0.04]"><div class="p-6 text-center text-zinc-500 text-sm">Carregando...</div></div>
             </div>
           </div>
         </div>
-        <a href="<?= BASE_PATH ?>/minha_conta" class="text-sm border border-blackx3 rounded-xl px-2 md:px-3 py-1.5 bg-blackx2 inline-flex items-center gap-2 hover:border-greenx transition"><i data-lucide="user-circle-2" class="w-4 h-4"></i><span class="hidden lg:inline">Minha conta</span></a>
-        <a href="<?= BASE_PATH ?>/logout" class="text-sm border border-blackx3 rounded-xl px-2 md:px-3 py-1.5 bg-blackx2 inline-flex items-center gap-2 hover:border-red-500 transition"><i data-lucide="log-out" class="w-4 h-4"></i><span class="hidden lg:inline">Sair</span></a>
+        <a href="<?= BASE_PATH ?>/minha_conta" class="shrink-0 text-sm border border-blackx3 rounded-xl w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 bg-blackx2 inline-flex items-center justify-center gap-2 hover:border-greenx transition"><i data-lucide="user-circle-2" class="w-4 h-4"></i><span class="hidden lg:inline">Minha conta</span></a>
+        <a href="<?= BASE_PATH ?>/logout" class="shrink-0 text-sm border border-blackx3 rounded-xl w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 bg-blackx2 inline-flex items-center justify-center gap-2 hover:border-red-500 transition"><i data-lucide="log-out" class="w-4 h-4"></i><span class="hidden lg:inline">Sair</span></a>
       </header>
       <main class="p-4 md:p-6">

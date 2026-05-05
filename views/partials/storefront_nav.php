@@ -67,7 +67,7 @@ $_isPendingVendor = false;
             </nav>
 
             <!-- Right side -->
-            <div class="flex items-center gap-1.5">
+            <div class="flex shrink-0 items-center gap-1 sm:gap-1.5">
                 <?php
                     // Wallet balance for logged-in users
                     $_navWalletBalance = 0;
@@ -119,9 +119,9 @@ $_isPendingVendor = false;
                         $_notifCount = notificationsUnreadCount($conn, (int)$userId);
                     } catch (\Throwable $e) {}
                 ?>
-                <div class="relative" x-data="{openNotif:false}" @click.away="openNotif=false">
+                <div class="relative shrink-0" x-data="{openNotif:false}" @click.away="openNotif=false">
                     <button @click="openNotif=!openNotif; if(openNotif) $dispatch('notif-open')"
-                            class="hidden md:flex nav-icon-btn relative h-9 w-9 rounded-xl border items-center justify-center transition-colors <?= $_notifCount > 0 ? 'border-yellow-400/30 bg-yellow-500/[0.06] text-yellow-400' : 'border-white/[0.08] text-zinc-400 hover:text-white hover:border-white/[0.15]' ?>"
+                            class="flex nav-icon-btn relative h-9 w-9 rounded-xl border items-center justify-center transition-colors <?= $_notifCount > 0 ? 'border-yellow-400/30 bg-yellow-500/[0.06] text-yellow-400' : 'border-white/[0.08] text-zinc-400 hover:text-white hover:border-white/[0.15]' ?>"
                             title="Notificações" aria-label="Notificações" id="notifBellBtn">
                         <i data-lucide="bell" class="w-4 h-4"></i>
                         <?php if ($_notifCount > 0): ?>
@@ -132,7 +132,7 @@ $_isPendingVendor = false;
                     </button>
 
                     <!-- Notification dropdown -->
-                    <div x-show="openNotif" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-1" class="fixed inset-x-0 top-16 mx-2 sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mx-0 sm:mt-2 w-auto sm:w-[420px] bg-blackx2 border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/40 overflow-hidden z-50" style="display:none">
+                    <div x-show="openNotif" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-1" class="fixed inset-x-0 top-24 mx-2 max-w-[calc(100vw-1rem)] sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mx-0 sm:mt-2 sm:w-[420px] sm:max-w-[420px] bg-blackx2 border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/40 overflow-hidden z-[70]" style="display:none;max-height:calc(100vh - 6rem)">
                         <div class="p-3 border-b border-white/[0.06] flex items-center justify-between">
                             <h3 class="font-semibold text-sm">Notificações</h3>
                             <div class="flex items-center gap-2">
@@ -169,7 +169,7 @@ $_isPendingVendor = false;
                                 </button>
                             </div>
                             <!-- Notification list -->
-                            <div id="notifList" class="flex-1 max-h-80 overflow-y-auto divide-y divide-white/[0.04]">
+                            <div id="notifList" class="flex-1 max-h-[calc(100vh-14rem)] sm:max-h-80 overflow-y-auto divide-y divide-white/[0.04]">
                                 <div class="p-6 text-center text-zinc-500 text-sm">Carregando...</div>
                             </div>
                         </div>
