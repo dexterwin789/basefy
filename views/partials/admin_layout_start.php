@@ -132,7 +132,7 @@ $menuGroups = [
     </aside>
 
     <div class="flex-1 min-w-0">
-      <header class="h-16 sticky top-0 z-20 w-full max-w-full overflow-x-hidden bg-blackx/90 backdrop-blur border-b border-blackx3 px-3 sm:px-4 md:px-5 flex items-center gap-2 sm:gap-3">
+      <header class="h-16 sticky top-0 z-[80] w-full max-w-full bg-blackx/90 backdrop-blur border-b border-blackx3 px-3 sm:px-4 md:px-5 flex items-center gap-2 sm:gap-3">
         <div class="min-w-0 flex flex-1 items-center gap-2 sm:gap-3">
           <button id="btnAdminOpenSidebar" class="md:hidden shrink-0 rounded-lg border border-blackx3 bg-blackx2 px-2.5 py-1.5 text-zinc-400 hover:text-white transition">
             <i data-lucide="menu" class="w-4 h-4"></i>
@@ -157,7 +157,7 @@ $menuGroups = [
               <i data-lucide="bell" class="w-4 h-4"></i>
               <span id="notifBadge" class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-[9px] font-bold text-white flex items-center justify-center <?= $_adminNotifCount > 0 ? '' : 'hidden' ?>"><?= $_adminNotifCount > 99 ? '99+' : $_adminNotifCount ?></span>
             </button>
-            <div x-show="openNotif" x-transition class="fixed inset-x-0 top-16 mx-2 max-w-[calc(100vw-1rem)] sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mx-0 sm:mt-2 sm:w-[400px] sm:max-w-[400px] bg-blackx2 border border-blackx3 rounded-2xl shadow-2xl overflow-hidden z-50" style="display:none;max-height:calc(100vh - 5rem)">
+            <div x-show="openNotif" x-transition class="fixed left-2 right-2 top-[4.5rem] sm:left-auto sm:right-4 sm:w-[400px] sm:max-w-[calc(100vw-2rem)] bg-blackx2 border border-blackx3 rounded-2xl shadow-2xl overflow-hidden z-[9999]" style="display:none;max-height:calc(100vh - 5rem);max-height:calc(100dvh - 5rem)">
               <div class="p-3 border-b border-blackx3 flex items-center justify-between">
                 <h3 class="font-semibold text-sm">Notificações</h3>
                 <div class="flex items-center gap-2">

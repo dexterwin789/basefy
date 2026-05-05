@@ -132,7 +132,7 @@ $_isPendingVendor = false;
                     </button>
 
                     <!-- Notification dropdown -->
-                    <div x-show="openNotif" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-1" class="fixed inset-x-0 top-24 mx-2 max-w-[calc(100vw-1rem)] sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mx-0 sm:mt-2 sm:w-[420px] sm:max-w-[420px] bg-blackx2 border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/40 overflow-hidden z-[70]" style="display:none;max-height:calc(100vh - 6rem)">
+                    <div x-show="openNotif" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-1" class="fixed inset-x-0 top-[5.5rem] mx-2 max-w-[calc(100vw-1rem)] sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mx-0 sm:mt-2 sm:w-[420px] sm:max-w-[420px] bg-blackx2 border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/40 overflow-hidden z-[9999]" style="display:none;max-height:calc(100vh - 6rem);max-height:calc(100dvh - 6rem)">
                         <div class="p-3 border-b border-white/[0.06] flex items-center justify-between">
                             <h3 class="font-semibold text-sm">Notificações</h3>
                             <div class="flex items-center gap-2">

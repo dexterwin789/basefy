@@ -4,14 +4,16 @@
  */
 
 const API_BASE = self.location.pathname.replace(/\/sw\.js$/, '') || '';
-const NOTIFICATION_ICON = self.location.origin + API_BASE + '/assets/img/logo123.png';
+const NOTIFICATION_ICON = self.location.origin + API_BASE + '/assets/img/icon-192.png';
+const NOTIFICATION_BADGE = self.location.origin + API_BASE + '/assets/img/badge-72.png';
 
 self.addEventListener('push', function (event) {
   let title   = 'Nova notificação';
   let options = {
     body   : 'Você tem uma nova notificação.',
     icon   : NOTIFICATION_ICON,
-    badge  : NOTIFICATION_ICON,
+    badge  : NOTIFICATION_BADGE,
+    image  : NOTIFICATION_ICON,
     tag    : 'mercado-push',
     renotify: true,
     data   : { url: '/' }
