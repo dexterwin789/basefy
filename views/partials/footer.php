@@ -28,6 +28,8 @@ declare(strict_types=1);
   })();
   </script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script>window.__BASE_PATH = '<?= defined("BASE_PATH") ? BASE_PATH : "" ?>'; window.__BASEFY_PUSH_ONLY = true;</script>
+  <script src="<?= defined('BASE_PATH') ? BASE_PATH : '' ?>/assets/js/push-notifications.js"></script>
   <script>
     window.lucide && window.lucide.createIcons();
     // Prevent browser "resubmit form?" dialog after POST submissions (PRG fallback)
@@ -334,6 +336,12 @@ declare(strict_types=1);
       return Math.floor(diff/86400) + 'd';
     }
 
+    function htmlEsc(value) {
+      return String(value || '').replace(/[&<>"']/g, function(ch) {
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch];
+      });
+    }
+
     function renderNotifList() {
       var container = document.getElementById('notifList');
       if (!container) return;
@@ -350,8 +358,8 @@ declare(strict_types=1);
         html += '<div class="w-8 h-8 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center shrink-0 '+notifTypeColor(n.tipo)+'">';
         html += '<i data-lucide="'+notifTypeIcon(n.tipo)+'" class="w-4 h-4"></i></div>';
         html += '<div class="flex-1 min-w-0">';
-        html += '<p class="text-sm font-medium truncate">'+n.titulo+'</p>';
-        if (n.mensagem) html += '<p class="text-xs text-zinc-500 truncate">'+n.mensagem+'</p>';
+        html += '<p class="text-sm font-medium truncate">'+htmlEsc(n.titulo)+'</p>';
+        if (n.mensagem) html += '<p class="text-xs text-zinc-500 truncate">'+htmlEsc(n.mensagem)+'</p>';
         html += '<span class="text-[10px] text-zinc-600">'+timeAgo(n.criado_em)+'</span>';
         html += '</div>';
         if (!n.lida) html += '<span class="w-2 h-2 rounded-full bg-greenx shrink-0 mt-2"></span>';

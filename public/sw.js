@@ -56,8 +56,14 @@ self.addEventListener('notificationclick', function (event) {
   event.notification.close();
 
   const rawUrl = event.notification.data?.url || '/';
-  // Resolve relative URLs to absolute using SW scope origin
-  const fullUrl = new URL(rawUrl, self.location.origin).href;
+  let target = new URL('/', self.location.origin);
+  try {
+    const candidate = new URL(rawUrl, self.location.origin);
+    if (candidate.origin === self.location.origin) {
+      target = candidate;
+    }
+  } catch (_) {}
+  const fullUrl = target.href;
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {

@@ -8,6 +8,9 @@
 (function () {
   'use strict';
 
+  if (window.__BASEFY_PUSH_NOTIFICATIONS_INIT) return;
+  window.__BASEFY_PUSH_NOTIFICATIONS_INIT = true;
+
   var BASE     = window.__BASE_PATH || '';
   var API      = BASE + '/api/notifications.php';
   var PUSH_API = BASE + '/api/push_subscribe.php';
@@ -41,6 +44,7 @@
 
   function subscribeToPush() {
     if (!swReg) return;
+    if (!('Notification' in window)) return;
 
     // Don't auto-prompt — wait for user gesture (see requestPermOnce below)
     if (Notification.permission !== 'granted') return;
@@ -61,7 +65,7 @@
           var keys = newSub.toJSON().keys;
           return fetch(PUSH_API, {
             method : 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             body   : JSON.stringify({
               action  : 'subscribe',
               endpoint: newSub.endpoint,
@@ -81,6 +85,12 @@
     var out     = new Uint8Array(raw.length);
     for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
     return out;
+  }
+
+  if (window.__BASEFY_PUSH_ONLY) {
+    registerSW();
+    document.addEventListener('click', requestPermissionOnce, { once: true });
+    return;
   }
 
   /* ══════════════════════════════════════════════════════════════
@@ -294,13 +304,15 @@
   registerSW();
 
   // Ask notification permission on first user interaction
-  document.addEventListener('click', function askPerm() {
+  function requestPermissionOnce() {
+    if (!('Notification' in window)) return;
     if (Notification.permission === 'default') {
       Notification.requestPermission().then(function (perm) {
         if (perm === 'granted') subscribeToPush();
       });
     }
-    document.removeEventListener('click', askPerm);
-  }, { once: true });
+  }
+
+  document.addEventListener('click', requestPermissionOnce, { once: true });
 
 })();

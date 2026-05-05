@@ -9,6 +9,26 @@ require_once __DIR__ . '/../../src/push.php';
 iniciarSessao();
 header('Content-Type: application/json');
 
+function pushApiSameOriginPost(): bool
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') return true;
+    $origin = trim((string)($_SERVER['HTTP_ORIGIN'] ?? ''));
+    if ($origin === '') return true;
+    $host = trim((string)($_SERVER['HTTP_HOST'] ?? ''));
+    if ($host === '') return false;
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https'
+        ? 'https'
+        : 'http';
+    return hash_equals($scheme . '://' . $host, rtrim($origin, '/'));
+}
+
+if (!pushApiSameOriginPost()) {
+    http_response_code(403);
+    echo json_encode(['ok' => false, 'msg' => 'Origem inválida.']);
+    exit;
+}
+
 $db   = new Database();
 $conn = $db->connect();
 

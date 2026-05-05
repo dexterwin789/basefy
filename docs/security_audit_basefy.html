@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Basefy - Auditoria de Segurança e Continuidade</title>
+  <style>
+    :root {
+      --bg: #07080b;
+      --panel: #101218;
+      --panel-2: #161a22;
+      --line: #28303d;
+      --text: #edf1f7;
+      --muted: #9aa6b8;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --risk: #ef4444;
+      --info: #38bdf8;
+      --accent: #8b5cf6;
+      --soft: rgba(255,255,255,.06);
+      --shadow: 0 24px 80px rgba(0,0,0,.42);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(34,197,94,.18), transparent 34rem),
+        radial-gradient(circle at top right, rgba(139,92,246,.22), transparent 32rem),
+        linear-gradient(180deg, #090b10 0%, var(--bg) 48%, #050608 100%);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+    main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 44px 0 64px; }
+    header { display: grid; grid-template-columns: 1.4fr .8fr; gap: 24px; align-items: stretch; margin-bottom: 24px; }
+    .hero, .panel, .card {
+      border: 1px solid rgba(255,255,255,.09);
+      background: linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.025));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+    .hero { border-radius: 18px; padding: 32px; position: relative; overflow: hidden; }
+    .hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, rgba(34,197,94,.14), transparent 42%, rgba(56,189,248,.1)); pointer-events: none; }
+    .hero > * { position: relative; }
+    .eyebrow { color: var(--ok); font-weight: 800; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { font-size: clamp(32px, 5vw, 58px); line-height: .98; margin: 12px 0 14px; letter-spacing: -.02em; }
+    .lead { max-width: 760px; color: #c7d0df; font-size: 16px; margin: 0; }
+    .stamp { display: flex; flex-direction: column; justify-content: space-between; border-radius: 18px; padding: 24px; background: #0d1118; border: 1px solid rgba(255,255,255,.09); }
+    .stamp strong { font-size: 42px; line-height: 1; }
+    .stamp span, .muted { color: var(--muted); }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 24px 0; }
+    .metric { border-radius: 14px; padding: 16px; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.08); }
+    .metric b { display: block; font-size: 26px; margin-bottom: 4px; }
+    .metric span { color: var(--muted); font-size: 12px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin: 26px 0 18px; }
+    button { border: 1px solid rgba(255,255,255,.1); color: var(--text); background: rgba(255,255,255,.05); border-radius: 999px; padding: 9px 14px; cursor: pointer; font-weight: 700; }
+    button.active { background: var(--text); color: #080a0f; }
+    section { margin-top: 24px; }
+    h2 { font-size: 22px; margin: 0 0 12px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .card { border-radius: 16px; padding: 18px; min-height: 176px; }
+    .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+    .card h3 { margin: 0; font-size: 16px; }
+    .tag { display: inline-flex; align-items: center; gap: 7px; border-radius: 999px; padding: 6px 9px; font-size: 11px; font-weight: 900; white-space: nowrap; }
+    .tag::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .ok { color: var(--ok); background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.22); }
+    .warn { color: var(--warn); background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.25); }
+    .risk { color: var(--risk); background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.25); }
+    .info { color: var(--info); background: rgba(56,189,248,.12); border: 1px solid rgba(56,189,248,.24); }
+    .accent { color: #c4b5fd; background: rgba(139,92,246,.13); border: 1px solid rgba(139,92,246,.28); }
+    p { color: #cbd5e1; margin: 0 0 12px; }
+    ul { margin: 0; padding-left: 18px; color: #cbd5e1; }
+    li + li { margin-top: 6px; }
+    .plan { border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.09); background: rgba(255,255,255,.035); }
+    .row { display: grid; grid-template-columns: 140px 1fr 210px; gap: 16px; padding: 16px; border-top: 1px solid rgba(255,255,255,.07); }
+    .row:first-child { border-top: 0; }
+    .row b { color: var(--text); }
+    .safe { color: var(--ok); font-weight: 800; }
+    .note { border-left: 4px solid var(--info); padding: 14px 16px; border-radius: 12px; background: rgba(56,189,248,.08); color: #d7efff; }
+    code { color: #dbeafe; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.09); padding: 2px 6px; border-radius: 7px; }
+    footer { margin-top: 34px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 860px) {
+      header, .grid, .metrics { grid-template-columns: 1fr; }
+      .row { grid-template-columns: 1fr; gap: 6px; }
+      .hero { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="hero">
+        <div class="eyebrow">Auditoria web security - Basefy</div>
+        <h1>Mapa de segurança sem travar o checkout</h1>
+        <p class="lead">Relatório interno com o estado atual dos controles, pontos de melhoria e um plano incremental para reforçar a plataforma mantendo fluxos de anúncio, compra, carteira, entrega e pagamentos funcionando.</p>
+      </div>
+      <aside class="stamp">
+        <span>Última revisão</span>
+        <strong>05/05</strong>
+        <span>Produção verificada em <code>basefy.io</code></span>
+      </aside>
+    </header>
+
+    <div class="metrics">
+      <div class="metric"><b>10</b><span>assinaturas push salvas</span></div>
+      <div class="metric"><b>7</b><span>usuários com push ativo</span></div>
+      <div class="metric"><b>178</b><span>notificações no banco</span></div>
+      <div class="metric"><b>69</b><span>notificações não lidas</span></div>
+    </div>
+
+    <p class="note">Status das notificações de navegador: VAPID configurado, Service Worker publicado, API de chave respondendo e assinaturas reais registradas. Nesta revisão foram reforçados o carregamento do push no footer global, escaping de notificações no HTML e bloqueio de navegação externa via clique em push.</p>
+
+    <div class="toolbar" aria-label="Filtros de status">
+      <button class="active" data-filter="all">Todos</button>
+      <button data-filter="ok">Operacional</button>
+      <button data-filter="accent">Reforçado</button>
+      <button data-filter="warn">Atenção</button>
+      <button data-filter="risk">Prioridade alta</button>
+      <button data-filter="info">Planejado</button>
+    </div>
+
+    <section>
+      <h2>Controles e Estados</h2>
+      <div class="grid" id="cards">
+        <article class="card" data-status="accent">
+          <div class="card-head"><h3>Web Push / Notificações no navegador</h3><span class="tag accent">Reforçado</span></div>
+          <p>O fluxo tem VAPID, Service Worker, PushManager e fallback por polling. Produção contém assinaturas reais para FCM e Windows Push.</p>
+          <ul><li>Manter diagnóstico admin para envio controlado.</li><li>Adicionar limpeza automática de endpoints 404/410.</li></ul>
+        </article>
+
+        <article class="card" data-status="accent">
+          <div class="card-head"><h3>Renderização de notificações</h3><span class="tag accent">Reforçado</span></div>
+          <p>Textos de título/mensagem agora são escapados no footer antigo antes de entrar em <code>innerHTML</code>.</p>
+          <ul><li>Reduz risco de XSS se algum texto dinâmico entrar em notificação.</li></ul>
+        </article>
+
+        <article class="card" data-status="accent">
+          <div class="card-head"><h3>Click em notificação push</h3><span class="tag accent">Reforçado</span></div>
+          <p>O Service Worker agora só navega para URLs da própria origem. Links externos/malformados caem para a home.</p>
+          <ul><li>Evita abuso de payload para redirecionamento externo.</li></ul>
+        </article>
+
+        <article class="card" data-status="warn">
+          <div class="card-head"><h3>Assinaturas push antigas</h3><span class="tag warn">Atenção</span></div>
+          <p>Existem assinaturas associadas a usuários ausentes ou antigos. Não quebra envio, mas cria ruído operacional.</p>
+          <ul><li>Limpar órfãs por job seguro.</li><li>Remover endpoint quando push retornar 404/410.</li></ul>
+        </article>
+
+        <article class="card" data-status="warn">
+          <div class="card-head"><h3>CSRF em formulários sensíveis</h3><span class="tag warn">Atenção</span></div>
+          <p>As APIs de notificações/push receberam barreira de origem. O próximo passo é token CSRF padronizado em admin, vendedor e APIs mutáveis.</p>
+          <ul><li>Implantar primeiro em modo compatível.</li><li>Não aplicar direto em webhooks de pagamento.</li></ul>
+        </article>
+
+        <article class="card" data-status="risk">
+          <div class="card-head"><h3>Webhooks e pagamentos</h3><span class="tag risk">Prioridade alta</span></div>
+          <p>Fluxos financeiros devem ter assinatura de webhook, idempotência, validação de valor/moeda/status e proteção contra replay.</p>
+          <ul><li>Implementar em shadow mode antes de bloquear.</li><li>Registrar divergências sem interromper pagamentos válidos.</li></ul>
+        </article>
+
+        <article class="card" data-status="info">
+          <div class="card-head"><h3>CSP e headers de segurança</h3><span class="tag info">Planejado</span></div>
+          <p>Adicionar <code>Content-Security-Policy-Report-Only</code>, <code>HSTS</code>, <code>X-Frame-Options</code>/<code>frame-ancestors</code> e <code>Referrer-Policy</code>.</p>
+          <ul><li>Começar em Report-Only para não quebrar Tailwind CDN, Alpine, Lucide ou checkout.</li></ul>
+        </article>
+
+        <article class="card" data-status="ok">
+          <div class="card-head"><h3>Sessões e cookies</h3><span class="tag ok">Parcial OK</span></div>
+          <p>Cookies usam <code>HttpOnly</code>, <code>Secure</code> quando HTTPS e <code>SameSite=Lax</code>. Sessões persistem no banco para Railway.</p>
+          <ul><li>Adicionar rotação de ID no login/elevação de privilégio.</li></ul>
+        </article>
+
+        <article class="card" data-status="warn">
+          <div class="card-head"><h3>Uploads e mídia</h3><span class="tag warn">Atenção</span></div>
+          <p>Uploads validam imagem e tamanho. Melhorias seguras: recodificar imagens, bloquear SVG executável e remover metadados.</p>
+          <ul><li>Aplicar em pipeline de upload sem alterar visual dos produtos.</li></ul>
+        </article>
+
+        <article class="card" data-status="warn">
+          <div class="card-head"><h3>CDNs e dependências</h3><span class="tag warn">Atenção</span></div>
+          <p>Tailwind CDN, Alpine e Lucide facilitam operação, mas ampliam superfície de supply chain.</p>
+          <ul><li>Fixar versões e migrar assets críticos para local gradualmente.</li></ul>
+        </article>
+
+        <article class="card" data-status="info">
+          <div class="card-head"><h3>Admin e privilégios</h3><span class="tag info">Planejado</span></div>
+          <p>Adicionar MFA para admin, logs de ações críticas e revisão de permissões por rota.</p>
+          <ul><li>Primeiro registrar eventos, depois exigir MFA em ações financeiras.</li></ul>
+        </article>
+
+        <article class="card" data-status="info">
+          <div class="card-head"><h3>Observabilidade antifraude</h3><span class="tag info">Planejado</span></div>
+          <p>Adicionar trilha de auditoria para login, troca de chave PIX, alteração de taxas, webhook, saque e moderação.</p>
+          <ul><li>Somente log estruturado no início, sem bloquear usuário.</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Plano Seguro de Execução</h2>
+      <div class="plan">
+        <div class="row"><b>Fase 1</b><span>Observabilidade: logs estruturados, inventário de rotas mutáveis, alerta de webhook divergente.</span><span class="safe">Sem risco para checkout</span></div>
+        <div class="row"><b>Fase 2</b><span>Headers em modo Report-Only: CSP, frame-ancestors, Referrer-Policy e Permissions-Policy.</span><span class="safe">Sem bloqueio inicial</span></div>
+        <div class="row"><b>Fase 3</b><span>CSRF gradual em admin/vendedor/APIs internas, mantendo webhooks fora dessa regra.</span><span class="safe">Testável por rota</span></div>
+        <div class="row"><b>Fase 4</b><span>Pagamento: idempotência e validação shadow antes de rejeitar eventos suspeitos.</span><span class="safe">Não perde venda legítima</span></div>
+        <div class="row"><b>Fase 5</b><span>Hardening de conta: MFA admin, rate limit de login, rotação de sessão e revisão de permissões.</span><span class="safe">Ativação por perfil</span></div>
+      </div>
+    </section>
+
+    <footer>
+      Documento gerado para manutenção interna. Não publicar com detalhes operacionais sensíveis em página pública.
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('[data-filter]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('[data-filter]').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var filter = btn.getAttribute('data-filter');
+        document.querySelectorAll('#cards .card').forEach(function(card) {
+          card.style.display = filter === 'all' || card.getAttribute('data-status') === filter ? '' : 'none';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

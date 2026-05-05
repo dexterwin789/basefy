@@ -9,6 +9,26 @@ require_once __DIR__ . '/../../src/notifications.php';
 iniciarSessao();
 header('Content-Type: application/json');
 
+function notificationApiSameOriginPost(): bool
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') return true;
+    $origin = trim((string)($_SERVER['HTTP_ORIGIN'] ?? ''));
+    if ($origin === '') return true;
+    $host = trim((string)($_SERVER['HTTP_HOST'] ?? ''));
+    if ($host === '') return false;
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https'
+        ? 'https'
+        : 'http';
+    return hash_equals($scheme . '://' . $host, rtrim($origin, '/'));
+}
+
+if (!notificationApiSameOriginPost()) {
+    http_response_code(403);
+    echo json_encode(['ok' => false, 'msg' => 'Origem inválida.']);
+    exit;
+}
+
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['ok' => false, 'msg' => 'Login necessário.', 'login' => true]);
     exit;
